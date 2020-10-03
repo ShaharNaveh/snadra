@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+      branches:
+        - "**"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  style:
+    name: Check code style
+
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+        os:
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python (${{ matrix.python-version }})
+        uses: actions/setup-python@v2 
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup environment
+        run: "ci/setup_environment.sh"
+
+      - name: Check lint
+        run: "ci/code_check.sh lint"
+

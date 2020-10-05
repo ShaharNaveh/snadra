@@ -6,6 +6,10 @@ import os
 
 from snadra._constants.input import YES, NO
 
+#import snadra
+#print(dir(snadra))
+#print(type(snadra))
+
 
 class Console(cmd.Cmd):
     """

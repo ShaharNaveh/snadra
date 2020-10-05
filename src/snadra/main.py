@@ -4,11 +4,7 @@ foo bar baz
 import cmd
 import os
 
-from snadra._constants.input import YES, NO
-
-#import snadra
-#print(dir(snadra))
-#print(type(snadra))
+from snadra._constants.input import NO, YES
 
 
 class Console(cmd.Cmd):
@@ -38,9 +34,7 @@ class Console(cmd.Cmd):
         """
         args = line.split(" ")
 
-
         return True
-
 
     def do_pwd(self: "Console", line: str) -> None:
         """

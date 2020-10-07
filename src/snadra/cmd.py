@@ -283,7 +283,7 @@ class Cmd:
                     except AttributeError:
                         compfunc = self.completedefault
             else:
-                compfunc = self.completenames
+                compfunc = self.completenames  # type: ignore
             self.completion_matches = compfunc(text, line, begidx, endidx)
         try:
             return self.completion_matches[state]

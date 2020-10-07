@@ -4,8 +4,6 @@ foo bar baz
 import cmd
 import os
 
-from snadra._constants.input import NO, YES
-
 
 class Console(cmd.Cmd):
     """
@@ -32,8 +30,6 @@ class Console(cmd.Cmd):
         bool
             True when ever you call this command.
         """
-        args = line.split(" ")
-
         return True
 
     def do_pwd(self: "Console", line: str) -> None:

@@ -3,7 +3,4 @@ flake8
 isort
 ipython
 mypy
-pip
 pytest
-setuptools
-wheel

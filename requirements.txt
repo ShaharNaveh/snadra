@@ -1,3 +1,4 @@
 pip
+prompt_toolkit
 setuptools
 wheel

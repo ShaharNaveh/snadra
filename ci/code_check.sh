@@ -30,6 +30,7 @@ then
     MSG='Doctests src/' ; echo $MSG
     pytest -q --doctest-modules src/
     RET_SUM=$(($RET_SUM + $?))
+
     MSG='DONE' ; echo $MSG
 fi
 
@@ -101,6 +102,7 @@ then
     MSG='Performing static type checking on tests/' ; echo $MSG
     mypy tests/
     RET_SUM=$(($RET_SUM + $?))
+
     MSG='DONE' ; echo $MSG
 fi
 

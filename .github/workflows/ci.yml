@@ -63,7 +63,9 @@ jobs:
     strategy:
       matrix:
         python-version:
+          - "3.7"
           - "3.8"
+          - "3.9"
         os:
           - ubuntu-latest
 
@@ -110,6 +112,8 @@ jobs:
     name: Test and build the documentation
     needs: [lint, test]
     runs-on: ubuntu-latest
+    if: false # Disable this for now
+
 
     steps:
       - uses: actions/checkout@v2

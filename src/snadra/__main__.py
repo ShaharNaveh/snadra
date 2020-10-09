@@ -41,7 +41,6 @@ class Console(cmd.Cmd):
         self: snadra.Console
         line: str
             Arguments that comes after the command.
-
         """
         current_working_directory = os.getcwd()
         print(current_working_directory)

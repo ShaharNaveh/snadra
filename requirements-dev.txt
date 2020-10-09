@@ -1,7 +1,7 @@
 black
 flake8
-isort
 ipython
+isort
 mypy
 pip
 pytest

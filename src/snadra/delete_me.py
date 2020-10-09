@@ -3,7 +3,7 @@ File so doctest will pass
 """
 
 
-def delete_me():
+def delete_me() -> bool:
     """
     Foo bar baz
 

@@ -99,9 +99,9 @@ then
     mypy src/
     RET_SUM=$(($RET_SUM + $?))
 
-    MSG='Performing static type checking on tests/' ; echo $MSG
-    mypy tests/
-    RET_SUM=$(($RET_SUM + $?))
+#    MSG='Performing static type checking on tests/' ; echo $MSG
+#    mypy tests/
+#    RET_SUM=$(($RET_SUM + $?))
 
     MSG='DONE' ; echo $MSG
 fi

@@ -27,7 +27,7 @@ jobs:
         id: pip-cache
         run: |
           # `pip cache dir` was introduced in version 20.1
-          python -m pip install --upgrade 'pip>=20.1'
+          python -m pip install 'pip>=20.1'
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip
@@ -78,7 +78,7 @@ jobs:
         id: pip-cache
         run: |
           # `pip cache dir` was introduced in version 20.1
-          python -m pip install --upgrade 'pip>=20.1'
+          python -m pip install 'pip>=20.1'
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip
@@ -118,7 +118,7 @@ jobs:
         id: pip-cache
         run: |
           # `pip cache dir` was introduced in version 20.1
-          python -m pip install --upgrade 'pip>=20.1'
+          python -m pip install 'pip>=20.1'
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip

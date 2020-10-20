@@ -1,10 +1,8 @@
 """
 foo bar baz
 """
-"""
-foo bar baz
-"""
 import argparse
+import functools
 import typing
 
 
@@ -20,7 +18,8 @@ class Group:
 
 
 class Parameter:
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, group: typing.Optional[str], *args, **kwargs) -> None:
+        self.group = group
         self.args = args
         self.kwargs = kwargs
 
@@ -29,7 +28,7 @@ class CommandDefinition:
     PROG = "unimplemented"
     ARGS: typing.Dict[str, Parameter] = {}
     GROUPS: typing.Dict[str, Group] = {}
-    DEFAULTS = {}
+    DEFAULTS: typing.Dict = {}
 
     def __init__(self):
         """
@@ -71,7 +70,7 @@ class CommandDefinition:
         :param args: the ARGS dictionary
         """
 
-        groups = {}
+        groups: typing.Dict = {}
         for name, definition in group_defs.items():
             if definition.mutex:
                 groups[name] = parser.add_mutually_exclusive_group(**definition.kwargs)
@@ -108,7 +107,7 @@ class CommandDefinition:
                 and isinstance(param.kwargs["type"], tuple)
                 and param.kwargs["type"][0] == "method"
             ):
-                param.kwargs["type"] = partial(param.kwargs["type"][1], self)
+                param.kwargs["type"] = functools.partial(param.kwargs["type"][1], self)
 
             group.add_argument(*names, *param.args, **param.kwargs)
 

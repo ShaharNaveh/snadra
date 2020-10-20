@@ -27,7 +27,7 @@ class CommandParser:
         foo bar baz
         """
         self.commands: typing.List["CommandDefinition"] = []
-        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):
+        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):  # type: ignore # noqa: E501
             if module_name == "_base":
                 continue
             self.commands.append(
@@ -35,7 +35,7 @@ class CommandParser:
             )
 
         logger.debug(f"Registered commands: {self.commands}")
-        self.prompt: "PromptSession" = None
+        self.prompt: typing.Optional["PromptSession"] = None
 
     def setup_prompt(self):
         """
@@ -62,7 +62,7 @@ class CommandParser:
             except KeyboardInterrupt:
                 continue
 
-    def dispatch_line(self, line: str, prog_name: typing.Optional = None):
+    def dispatch_line(self, line: str, prog_name: typing.Optional[str] = None):
         """
         foo bar baz
         """
@@ -85,8 +85,8 @@ class CommandParser:
             logger.error(f"Erro: {argv[0]}: unknown command")
             return
 
-        args = argv[1:]
-        args = [a.encode("utf-8").decode("unicode_escape") for a in args]
+        args: typing.Union[str, typing.List[str]] = argv[1:]
+        args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
             if prog_name:

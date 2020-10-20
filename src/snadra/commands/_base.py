@@ -5,13 +5,13 @@ foo bar baz
 foo bar baz
 """
 import argparse
-import pkgutil
 import typing
 
 
 class Group:
     """
-    This just wraps the parameters to the add_argument_group and add_mutually_exclusive_group
+    This just wraps the parameters to the
+    add_argument_group and add_mutually_exclusive_group
     """
 
     def __init__(self, mutex: bool = False, **kwargs):

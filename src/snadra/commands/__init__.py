@@ -73,7 +73,37 @@ class CommandParser:
         try:
             argv = shlex.split(line)
         except ValueError as err:
-            logger.log(f"Error: {err.args[0]}")
+            logger.error(f"Error: {err.args[0]}")
+            return
 
         line = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
-        logger.debug(line)
+
+        for command in self.commands:
+            if command.PROG == argv[0]:
+                break
+        else:
+            logger.error(f"Erro: {argv[0]}: unknown command")
+            return
+
+        args = argv[1:]
+        args = [a.encode("utf-8").decode("unicode_escape") for a in args]
+
+        try:
+            if prog_name:
+                temp_name = command.parser.prog
+                command.parser.prog = prog_name
+                prog_name = temp_name
+
+            if command.parser:
+                args = command.parser.parse_args(args)
+            else:
+                args = line
+
+            command.run(args)
+
+            if prog_name:
+                command.parser.prog = prog_name
+
+        except SystemExit:
+            logger.error("A")
+            return

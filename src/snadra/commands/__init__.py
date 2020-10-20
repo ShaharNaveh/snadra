@@ -21,7 +21,9 @@ class CommandParser:
     """
     foo bar baz
     """
-def __init__(self) -> None: """
+
+    def __init__(self) -> None:
+        """
         foo bar baz
         """
         self.commands: typing.List["CommandDefinition"] = []

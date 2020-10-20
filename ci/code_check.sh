@@ -9,7 +9,6 @@
 # ./ci/code_check.sh lint       # Run lint checks
 # ./ci/code_checks.sh type      # Run typing checks
 
-BASE_DIR="$(dirname $0)/.."
 RET_SUM=0
 CHECK_TYPE=$1
 
@@ -99,9 +98,9 @@ then
     mypy src/
     RET_SUM=$(($RET_SUM + $?))
 
-#    MSG='Performing static type checking on tests/' ; echo $MSG
-#    mypy tests/
-#    RET_SUM=$(($RET_SUM + $?))
+    MSG='Performing static type checking on tests/' ; echo $MSG
+    mypy tests/
+    RET_SUM=$(($RET_SUM + $?))
 
     MSG='DONE' ; echo $MSG
 fi

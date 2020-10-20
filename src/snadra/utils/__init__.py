@@ -43,5 +43,5 @@ def get_logger(name: str) -> Logger:
     def trace(self, message: str, *args: typing.Any, **kwargs: typing.Any) -> None:
         logger.log(TRACE_LOG_LEVEL, message, *args, **kwargs)
 
-    logger.trace = trace
+    logger.trace = trace  # type: ignore
     return typing.cast(Logger, logger)

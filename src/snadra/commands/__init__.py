@@ -79,7 +79,7 @@ class CommandParser:
         line = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
 
         for command in self.commands:
-            if command.PROG == argv[0]:
+            if any(keyword == argv[0] for keyword in command.KEYWORDS):
                 break
         else:
             logger.error(f"Erro: {argv[0]}: unknown command")

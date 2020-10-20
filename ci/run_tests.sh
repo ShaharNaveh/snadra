@@ -9,7 +9,8 @@ echo "pytest version"
 pytest --version
 
 MSG='Testing'; echo $MSG
-pytest tests/
+#pytest --cov --cov-fail-under=100
+pytest --cov
 RET_SUM=$(($RET_SUM + $?))
 
 exit $RET_SUM

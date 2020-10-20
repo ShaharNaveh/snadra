@@ -27,7 +27,7 @@ class CommandParser:
         foo bar baz
         """
         self.commands: typing.List["CommandDefinition"] = []
-        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):  # type: ignore
+        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):  # type: ignore # noqa: E501
             if module_name == "_base":
                 continue
             self.commands.append(

@@ -14,7 +14,8 @@ class Command(CommandDefinition):
     Help message for "exit"
     """
 
-    PROG = "exit"
+    KEYWORDS = ["exit", "quit"]
+    HELP_TEXT = "Exit the console"
 
     def run(self, args: typing.Optional["argparse.Namespace"] = None):
         raise EOFError("Got an exit signal")

@@ -25,7 +25,8 @@ class Parameter:
 
 
 class CommandDefinition:
-    PROG = "unimplemented"
+    KEYWORDS: typing.List[str] = ["unimplemented"]
+    HELP_TEXT: str = ""
     ARGS: typing.Dict[str, Parameter] = {}
     GROUPS: typing.Dict[str, Group] = {}
     DEFAULTS: typing.Dict = {}
@@ -38,12 +39,13 @@ class CommandDefinition:
 
         # Create the parser object
         if self.ARGS is not None:
-            self.parser = argparse.ArgumentParser(
-                prog=self.PROG,
-                description=self.__doc__,
-                formatter_class=argparse.RawDescriptionHelpFormatter,
-            )
-            self.build_parser(self.parser, self.ARGS, self.GROUPS)
+            for keyword in self.KEYWORDS:
+                self.parser = argparse.ArgumentParser(
+                    prog=keyword,
+                    description=self.HELP_TEXT,
+                    formatter_class=argparse.RawDescriptionHelpFormatter,
+                )
+                self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
             self.parser = None
 

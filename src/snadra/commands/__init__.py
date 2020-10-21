@@ -12,44 +12,59 @@ from prompt_toolkit.history import InMemoryHistory
 import snadra.utils as utils
 
 if typing.TYPE_CHECKING:
+    import types
+
     from snadra.commands._base import CommandDefinition
 
 logger = utils.get_logger(__name__)
 
 
+def _gather_modules(path: typing.List[str]) -> typing.Iterable["types.ModuleType"]:
+    """
+    Gather the modules from a given path.
+
+    Parameters
+    ----------
+    path : str
+        Path where the modules are located.
+
+    Yields
+    ------
+    types.ModuleType
+        A module containing a `Command` class.
+    """
+    print(path)
+    to_ignore = {"_base"}
+    for loader, module_name, is_pkg in pkgutil.walk_packages(path):
+        if module_name in to_ignore:
+            continue
+
+        yield loader.find_module(module_name).load_module(module_name)
+
+
 class CommandParser:
     """
-    foo bar baz
+    Responsible for handling the commands entered.
+
+    Maps each command and it's arguments to the desired action.
     """
 
     def __init__(self) -> None:
-        """
-        foo bar baz
-        """
-        self.commands: typing.List["CommandDefinition"] = []
-        for loader, module_name, is_pkg in pkgutil.walk_packages(__path__):  # type: ignore # noqa: E501
-            if module_name == "_base":
-                continue
-            self.commands.append(
-                loader.find_module(module_name).load_module(module_name).Command()
-            )
-
-        logger.debug(f"Registered commands: {self.commands}")
-        self.prompt: typing.Optional["PromptSession"] = None
-
-    def setup_prompt(self):
-        """
-        foo bar baz
-        """
-        history = InMemoryHistory()
-        auto_suggest = AutoSuggestFromHistory()
-        self.prompt = PromptSession(
+        self.commands: typing.List["CommandDefinition"] = [
+            command.Command() for command in _gather_modules(__path__)  # type: ignore
+        ]
+        self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
-            auto_suggest=auto_suggest,
-            history=history,
+            auto_suggest=AutoSuggestFromHistory(),
+            history=InMemoryHistory(),
         )
 
-    def run(self):
+    def run(self) -> None:
+        """
+        The main loop.
+
+        This is an infitine loop, until the user decides to exit.
+        """
         self.running = True
         while self.running:
             try:
@@ -62,9 +77,14 @@ class CommandParser:
             except KeyboardInterrupt:
                 continue
 
-    def dispatch_line(self, line: str, prog_name: typing.Optional[str] = None):
+    def dispatch_line(self, line: str) -> None:
         """
-        foo bar baz
+        Execute each command that was entered to the console.
+
+        Parameters
+        ----------
+        line : str
+            The full command (including arguments) as a string.
         """
         line = line.strip()
         if line == "":
@@ -82,28 +102,18 @@ class CommandParser:
             if any(keyword == argv[0] for keyword in command.KEYWORDS):
                 break
         else:
-            logger.error(f"Erro: {argv[0]}: unknown command")
+            logger.error(f"Error: {argv[0]}: unknown command")
             return
 
         args: typing.Union[str, typing.List[str]] = argv[1:]
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
-            if prog_name:
-                temp_name = command.parser.prog
-                command.parser.prog = prog_name
-                prog_name = temp_name
-
             if command.parser:
                 args = command.parser.parse_args(args)
             else:
                 args = line
-
             command.run(args)
-
-            if prog_name:
-                command.parser.prog = prog_name
-
         except SystemExit:
-            logger.error("A")
+            logger.debug("Incorrect arguments")
             return

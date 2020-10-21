@@ -2,8 +2,25 @@
 foo bar baz
 """
 import argparse
+import enum
 import functools
 import typing
+
+
+class Complete(enum.Enum):
+    """
+    Command arguments, completion options.
+
+    Attributes
+    ----------
+    CHOICES : enum.auto
+        Complete argument from the list of choices specified in ``parameter``.
+    NONE : enum.auto
+        Do not provide argument completions.
+    """
+
+    CHOICES = enum.auto()
+    NONE = enum.auto()
 
 
 class Group:
@@ -18,7 +35,10 @@ class Group:
 
 
 class Parameter:
-    def __init__(self, group: typing.Optional[str], *args, **kwargs) -> None:
+    def __init__(
+        self, complete: Complete, group: typing.Optional[str], *args, **kwargs
+    ) -> None:
+        self.complete = complete
         self.group = group
         self.args = args
         self.kwargs = kwargs

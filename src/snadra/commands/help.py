@@ -1,6 +1,6 @@
 import typing
 
-from snadra.commands._base import CommandDefinition
+from snadra.commands._base import CommandDefinition, Parameter
 
 if typing.TYPE_CHECKING:
     import argparse

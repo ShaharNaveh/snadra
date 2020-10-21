@@ -6,6 +6,8 @@ import enum
 import functools
 from typing import Dict, List, Optional
 
+import pygments.token as ptoken
+
 
 class Complete(enum.Enum):
     """
@@ -36,12 +38,25 @@ class Group:
 
 class Parameter:
     def __init__(
-        self, complete: Complete, group: Optional[str], *args, **kwargs
+        self,
+        complete: Complete,
+        token=ptoken.Name.Label,
+        group: Optional[str] = None,
+        *args,
+        **kwargs,
     ) -> None:
         self.complete = complete
+        self.token = token
         self.group = group
         self.args = args
         self.kwargs = kwargs
+
+
+def parameter(complete, token=ptoken.Name.Label, *args, **kwargs):
+    """
+    foo bar baz
+    """
+    return (complete, token, args, kwargs)
 
 
 class CommandDefinition:

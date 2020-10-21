@@ -6,7 +6,6 @@ from snadra.commands import CommandParser
 
 def main():
     foo = CommandParser()
-    foo.setup_prompt()
     foo.run()
 
 

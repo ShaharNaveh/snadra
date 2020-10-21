@@ -4,14 +4,14 @@ foo bar baz
 import logging
 import os
 import sys
-import typing
+from typing import Any, cast
 
 _LOGGER_INITIALIZED = False
 TRACE_LOG_LEVEL = 5
 
 
 class Logger(logging.Logger):
-    def trace(self, message: str, *args: typing.Any, **kwargs: typing.Any) -> None:
+    def trace(self, message: str, *args: Any, **kwargs: Any) -> None:
         ...
 
 
@@ -40,8 +40,8 @@ def get_logger(name: str) -> Logger:
 
     logger = logging.getLogger(name)
 
-    def trace(self, message: str, *args: typing.Any, **kwargs: typing.Any) -> None:
+    def trace(self, message: str, *args: Any, **kwargs: Any) -> None:
         logger.log(TRACE_LOG_LEVEL, message, *args, **kwargs)
 
     logger.trace = trace  # type: ignore
-    return typing.cast(Logger, logger)
+    return cast(Logger, logger)

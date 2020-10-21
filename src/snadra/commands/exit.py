@@ -1,11 +1,11 @@
 """
 foo
 """
-import typing
+from typing import TYPE_CHECKING, Optional
 
 from snadra.commands._base import CommandDefinition
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     import argparse
 
 
@@ -17,5 +17,5 @@ class Command(CommandDefinition):
     KEYWORDS = ["exit", "quit"]
     HELP_TEXT = "Exit the console"
 
-    def run(self, args: typing.Optional["argparse.Namespace"] = None):
+    def run(self, args: Optional["argparse.Namespace"] = None):
         raise EOFError("Got an exit signal")

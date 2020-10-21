@@ -33,7 +33,6 @@ def _gather_modules(path: typing.List[str]) -> typing.Iterable["types.ModuleType
     types.ModuleType
         A module containing a `Command` class.
     """
-    print(path)
     to_ignore = {"_base"}
     for loader, module_name, is_pkg in pkgutil.walk_packages(path):
         if module_name in to_ignore:

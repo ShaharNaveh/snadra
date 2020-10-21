@@ -43,18 +43,42 @@ class Parameter:
 
 
 class CommandDefinition:
-    KEYWORDS: List[str] = ["unimplemented"]
+    """
+    THe generic structure for commands.
+
+    Attributes
+    ----------
+    KEYWORDS : typing.List[str]
+        List of the keywords for the new command.
+
+    HELP_TEXT : str
+        Help text for the new command.
+
+    ARGS : typing.Dict[str, ``Parameter``]
+        Dictionary of parameter definitions created with the ``Parameter`` class.
+        If this is None, your command will receive the
+        raw argument string and no processing will be done except
+        removing the leading command name.
+
+    GROUPS : typing.Dict[str, ``Group``]
+        Dictionary mapping group definitions to group names.
+        The parameters to Group are passed directly to either
+        add_argument_group or add_mutually_exclusive_group with the exception of the
+        mutex arg, which determines the group type.
+    """
+
+    KEYWORDS: typing.List[str] = ["unimplemented"]
     HELP_TEXT: str = ""
-    ARGS: Dict[str, Parameter] = {}
-    GROUPS: Dict[str, Group] = {}
-    DEFAULTS: Dict = {}
+    ARGS: typing.Dict[str, typing.Optional[Parameter]] = {}
+    GROUPS: typing.Dict[str, Group] = {}
+    DEFAULTS: typing.Dict = {}
 
     def __init__(self):
         """
-        Initialize a new command instance. Parse the local arguments array
-        into an argparse object.
-        """
+        Initialize new command instance.
 
+        Parses the `ARGS` dictionary into an argparse object.
+        """
         # Create the parser object
         if self.ARGS is not None:
             for keyword in self.KEYWORDS:
@@ -69,10 +93,17 @@ class CommandDefinition:
 
     def run(self, args):
         """
-        This is the "main" for your new command. This should perform the action
-        represented by your command.
+        This is what gets run for each command.
 
-        :param args: the argparse Namespace containing your parsed arguments
+        Parameters
+        ----------
+        args : argparse.Namespace
+            The `argparse.Namespace` containing the parsed arguments.
+
+        Raises
+        ------
+        NotImplementedError
+            If there was not `run` method for the new command's class.
         """
         raise NotImplementedError
 
@@ -86,10 +117,17 @@ class CommandDefinition:
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
         for this command. You should not need to overload this.
 
-        :param parser: the parser object to add arguments to
         :param args: the ARGS dictionary
-        """
 
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            Parser object to add arguments to.
+        args : typing.Dict[str, typing.Optional[Parameter]]
+            ``ARGS`` dictionary.
+        group_defs : typing.Dict[str, ``Group``],
+            ``Group`` dictionary.
+        """
         groups: typing.Dict = {}
         for name, definition in group_defs.items():
             if definition.mutex:

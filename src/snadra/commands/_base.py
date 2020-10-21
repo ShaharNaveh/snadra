@@ -2,8 +2,25 @@
 foo bar baz
 """
 import argparse
+import enum
 import functools
-import typing
+from typing import Dict, List, Optional
+
+
+class Complete(enum.Enum):
+    """
+    Command arguments, completion options.
+
+    Attributes
+    ----------
+    CHOICES : enum.auto
+        Complete argument from the list of choices specified in ``parameter``.
+    NONE : enum.auto
+        Do not provide argument completions.
+    """
+
+    CHOICES = enum.auto()
+    NONE = enum.auto()
 
 
 class Group:
@@ -18,7 +35,10 @@ class Group:
 
 
 class Parameter:
-    def __init__(self, group: typing.Optional[str], *args, **kwargs) -> None:
+    def __init__(
+        self, complete: Complete, group: Optional[str], *args, **kwargs
+    ) -> None:
+        self.complete = complete
         self.group = group
         self.args = args
         self.kwargs = kwargs
@@ -30,30 +50,30 @@ class CommandDefinition:
 
     Attributes
     ----------
-    KEYWORDS : typing.List[str]
+    KEYWORDS : List[str]
         List of the keywords for the new command.
 
     HELP_TEXT : str
         Help text for the new command.
 
-    ARGS : typing.Dict[str, ``Parameter``]
+    ARGS : Dict[str, ``Parameter``]
         Dictionary of parameter definitions created with the ``Parameter`` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
 
-    GROUPS : typing.Dict[str, ``Group``]
+    GROUPS : Dict[str, ``Group``]
         Dictionary mapping group definitions to group names.
         The parameters to Group are passed directly to either
         add_argument_group or add_mutually_exclusive_group with the exception of the
         mutex arg, which determines the group type.
     """
 
-    KEYWORDS: typing.List[str] = ["unimplemented"]
+    KEYWORDS: List[str] = ["unimplemented"]
     HELP_TEXT: str = ""
-    ARGS: typing.Dict[str, typing.Optional[Parameter]] = {}
-    GROUPS: typing.Dict[str, Group] = {}
-    DEFAULTS: typing.Dict = {}
+    ARGS: Dict[str, Optional[Parameter]] = {}
+    GROUPS: Dict[str, Group] = {}
+    DEFAULTS: Dict = {}
 
     def __init__(self):
         """
@@ -92,8 +112,8 @@ class CommandDefinition:
     def build_parser(
         self,
         parser: argparse.ArgumentParser,
-        args: typing.Dict[str, Parameter],
-        group_defs: typing.Dict[str, Group],
+        args: Dict[str, Parameter],
+        group_defs: Dict[str, Group],
     ):
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -105,12 +125,12 @@ class CommandDefinition:
         ----------
         parser : argparse.ArgumentParser
             Parser object to add arguments to.
-        args : typing.Dict[str, typing.Optional[Parameter]]
+        args : Dict[str, Optional[Parameter]]
             ``ARGS`` dictionary.
-        group_defs : typing.Dict[str, ``Group``],
+        group_defs : Dict[str, ``Group``],
             ``Group`` dictionary.
         """
-        groups: typing.Dict = {}
+        groups: Dict = {}
         for name, definition in group_defs.items():
             if definition.mutex:
                 groups[name] = parser.add_mutually_exclusive_group(**definition.kwargs)

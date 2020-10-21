@@ -1,9 +1,12 @@
 """
 foo bar baz
 """
+import os
 from typing import TYPE_CHECKING, Optional
 
-from snadra.commands._base import CommandDefinition
+import snadra
+from snadra.commands import CommandParser, _get_modules
+from snadra.commands._base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse
@@ -16,6 +19,7 @@ class Command(CommandDefinition):
 
     KEYWORDS = ["help"]
     HELP_TEXT = "list all known commands and print their help message"
+    # ARGS = {"topic": Parameter(Complete.CHOICES, choices="A")}
 
     def run(self, args: Optional["argparse.Namespace"] = None):
         """

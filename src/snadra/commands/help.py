@@ -1,8 +1,11 @@
-import typing
+"""
+foo bar baz
+"""
+from typing import TYPE_CHECKING, Optional
 
 from snadra.commands._base import CommandDefinition, Parameter
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     import argparse
 
 
@@ -10,9 +13,10 @@ class Command(CommandDefinition):
     """
     The command `help`, for displaying help information about other commands
     """
-
     KEYWORDS = ["help"]
     HELP_TEXT = "list all known commands and print their help message"
-
-    def run(self, args: typing.Optional["argparse.Namespace"] = None):
+    def run(self, args: Optional["argparse.Namespace"] = None):
+        """
+        foo bar baz
+        """
         pass

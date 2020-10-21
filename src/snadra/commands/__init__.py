@@ -3,7 +3,7 @@ foo bar baz
 """
 import pkgutil
 import shlex
-import typing
+from typing import TYPE_CHECKING, Iterable, List, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -11,7 +11,7 @@ from prompt_toolkit.history import InMemoryHistory
 
 import snadra.utils as utils
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     import types
 
     from snadra.commands._base import CommandDefinition
@@ -19,7 +19,7 @@ if typing.TYPE_CHECKING:
 logger = utils.get_logger(__name__)
 
 
-def _gather_modules(path: typing.List[str]) -> typing.Iterable["types.ModuleType"]:
+def _gather_modules(path: List[str]) -> Iterable["types.ModuleType"]:
     """
     Gather the modules from a given path.
 
@@ -49,7 +49,7 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        self.commands: typing.List["CommandDefinition"] = [
+        self.commands: List["CommandDefinition"] = [
             command.Command() for command in _gather_modules(__path__)  # type: ignore
         ]
         self.prompt: "PromptSession[str]" = PromptSession(
@@ -104,7 +104,7 @@ class CommandParser:
             logger.error(f"Error: {argv[0]}: unknown command")
             return
 
-        args: typing.Union[str, typing.List[str]] = argv[1:]
+        args: Union[str, List[str]] = argv[1:]
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:

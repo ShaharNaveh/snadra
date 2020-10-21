@@ -4,7 +4,7 @@ foo bar baz
 import argparse
 import enum
 import functools
-import typing
+from typing import Optional, List, Dict
 
 
 class Complete(enum.Enum):
@@ -35,9 +35,7 @@ class Group:
 
 
 class Parameter:
-    def __init__(
-        self, complete: Complete, group: typing.Optional[str], *args, **kwargs
-    ) -> None:
+    def __init__(self, complete: Complete, group: Optional[str], *args, **kwargs) -> None:
         self.complete = complete
         self.group = group
         self.args = args
@@ -45,11 +43,11 @@ class Parameter:
 
 
 class CommandDefinition:
-    KEYWORDS: typing.List[str] = ["unimplemented"]
+    KEYWORDS: List[str] = ["unimplemented"]
     HELP_TEXT: str = ""
-    ARGS: typing.Dict[str, Parameter] = {}
-    GROUPS: typing.Dict[str, Group] = {}
-    DEFAULTS: typing.Dict = {}
+    ARGS: Dict[str, Parameter] = {}
+    GROUPS: Dict[str, Group] = {}
+    DEFAULTS: Dict = {}
 
     def __init__(self):
         """
@@ -81,8 +79,8 @@ class CommandDefinition:
     def build_parser(
         self,
         parser: argparse.ArgumentParser,
-        args: typing.Dict[str, Parameter],
-        group_defs: typing.Dict[str, Group],
+        args: Dict[str, Parameter],
+        group_defs: Dict[str, Group],
     ):
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser

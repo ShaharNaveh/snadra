@@ -15,7 +15,6 @@ jobs:
   lint:
     name: Check code quality
     runs-on: ubuntu-latest
-    fail-fast: false
 
     steps:
       - name: Checkout
@@ -53,10 +52,12 @@ jobs:
       - name: Linting
         run: |
           ci/code_check.sh lint
+        if: always()
 
       - name: Typing validation
         run: |
           ci/code_check.sh type
+        if: always()
 
   # Test job
   test:
@@ -111,6 +112,7 @@ jobs:
       - name: Running tests
         run: |
           ci/run_tests.sh
+        if: always()
 
   # documentation job
   documentation:

@@ -46,23 +46,6 @@ def find_modules(
         yield loader.find_module(module_name)
 
 
-def load_module(module: "SourceFileLoader") -> "types.ModuleType":
-    """
-    Load a given module.
-
-    Parameters
-    ----------
-    module : ``importlib.machinery.SourceFileLoader``
-        The module to load.
-
-    Returns
-    -------
-    types.ModuleType
-        The loaded module.
-    """
-    return module.load_module(module.name)
-
-
 class CommandParser:
     """
     Responsible for handling the commands entered.
@@ -77,19 +60,20 @@ class CommandParser:
             module for module in find_modules(__path__, to_ignore=IGNORED_MODULES)  # type: ignore # noqa: E501
         ]
         self._loaded_modules: List["types.ModuleType"] = [
-            load_module(module) for module in self._modules
+            module.load_module(module.name) for module in self._modules
         ]
         self.commands: List["CommandDefinition"] = [
             module.Command() for module in self._loaded_modules  # type: ignore
         ]
 
+    def setup_prompt(self):
         self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
         )
 
-    def run(self) -> None:
+    def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma
         """
         The main loop.
 
@@ -105,6 +89,8 @@ class CommandParser:
             except EOFError:
                 self.running = False
             except KeyboardInterrupt:
+                continue
+            except Exception:
                 continue
 
     def dispatch_line(self, line: str) -> None:

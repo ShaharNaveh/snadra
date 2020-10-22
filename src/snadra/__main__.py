@@ -5,8 +5,9 @@ from snadra.commands import CommandParser
 
 
 def main():
-    foo = CommandParser()
-    foo.run()
+    snadra_console = CommandParser()
+    snadra_console.setup_prompt()
+    snadra_console.run()
 
 
 if __name__ == "__main__":

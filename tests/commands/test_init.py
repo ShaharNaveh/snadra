@@ -1,25 +1,61 @@
-import os
-
+"""
+Testing for the functions and classes that are in:
+    snadra/commands/__init__.py
+"""
 import pytest
 
-import snadra
-from snadra.commands import find_modules
-
-_snadra_dir = os.path.dirname(snadra.__file__)
-COMMANDS_DIR = os.path.join(_snadra_dir, "commands")
+from snadra.commands import CommandParser, find_modules
 
 
-# TODO: make this test scale better.
+@pytest.fixture(scope="function")
+def command_parser() -> "CommandParser":
+    """
+    Returns a ``CommandParser`` instance.
+    """
+    return CommandParser()
+
+
 @pytest.mark.parametrize(
-    "dir_path, to_ignore, expected_modules",
+    "to_ignore, expected",
     [
-        (COMMANDS_DIR, None, ["exit", "help", "_base"]),
-        (COMMANDS_DIR, {"_base"}, ["exit", "help"]),
+        (None, ["foo", "bar", "baz"]),
+        ({}, ["foo", "bar", "baz"]),
+        ({"foo"}, ["bar", "baz"]),
+        ({"foo", "bar"}, ["baz"]),
+        ({"foo", "bar", "baz"}, []),
     ],
 )
-def test_find_modules(dir_path, to_ignore, expected_modules):
-    path = [dir_path]
-    expected = sorted(expected_modules)
-    result = sorted([module.name for module in find_modules(path, to_ignore=to_ignore)])
+def test_find_modules(tmpdir, to_ignore, expected):
+    commands_dir = tmpdir.mkdir("commands")
+    files = {"foo", "bar", "baz", "__init__"}
 
-    assert result == expected
+    for file_name in files:
+        commands_dir.join(f"{file_name}.py").write("")
+
+    path = [str(commands_dir)]
+
+    result = [module.name for module in find_modules(path, to_ignore=to_ignore)]
+
+    assert sorted(result) == sorted(expected)
+
+
+class TestCommandParser:
+    def test_loaded_modules(self, command_parser):
+        expected = ["exit", "help"]
+        loaded_modules = command_parser._loaded_modules
+        result = [module.__name__ for module in loaded_modules]
+        assert sorted(result) == sorted(expected)
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "",
+            " ",
+            " " * 3,
+            "\n",
+            "\n" * 3,
+        ],
+    )
+    def test_dispatch_line_empty(self, command_parser, line):
+        result = command_parser.dispatch_line(line)
+        assert result is None

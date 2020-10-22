@@ -12,7 +12,7 @@ TRACE_LOG_LEVEL = 5
 
 class Logger(logging.Logger):
     def trace(self, message: str, *args: Any, **kwargs: Any) -> None:
-        ...
+        ...  # pragma: no cover
 
 
 def get_logger(name: str) -> Logger:

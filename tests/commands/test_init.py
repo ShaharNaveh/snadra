@@ -18,6 +18,7 @@ def test_get_modules(commands_dir):
     assert expected == result
 
 
+#TODO: make this test scale better.
 @pytest.mark.parametrize(
     "dir_path, to_ignore, expected_modules",
     [

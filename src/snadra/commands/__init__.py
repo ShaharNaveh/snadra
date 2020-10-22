@@ -1,7 +1,6 @@
 """
 foo bar baz
 """
-import os
 import pkgutil
 import shlex
 from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Union
@@ -10,7 +9,6 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 
-import snadra
 import snadra.utils as utils
 
 if TYPE_CHECKING:
@@ -22,53 +20,17 @@ if TYPE_CHECKING:
 logger = utils.get_logger(__name__)
 
 
-'''
-def _get_commands_keywords(path: List[str]) -> Iterable[str]:
-    """
-    foo bar baz
-    """
-    snadra_dir = os.path.dirname(snadra.__file__)
-    commands_dir = os.path.join(snadra_dir, "commands")
-    path = [commands_dir]
-    for module in _get_modules(path):
-        command = module.Command()
-        for keyword in command.KEYWORDS:
-            yield keyword
-'''
-
-
-def _get_modules(path: List[str]) -> Iterable["types.ModuleType"]:
-    """
-    Gather the modules from a given path.
-
-    Parameters
-    ----------
-    path : str
-        Path where the modules are located.
-
-    Yields
-    ------
-    types.ModuleType
-        A module containing a `Command` class.
-    """
-    to_ignore = {"_base"}
-    for loader, module_name, is_pkg in pkgutil.walk_packages(path):
-        if module_name in to_ignore:
-            continue
-        yield loader.find_module(module_name).load_module(module_name)
-
-
 def find_modules(
     path: List[str], *, to_ignore: Optional[Set[str]] = None
 ) -> Iterable["SourceFileLoader"]:
     """
-    foo bar baz
+    Find modules in a given path.
 
     Parameters
     ----------
     path : List[str]
         Path where to find the modules.
-    to_ignore : Set[str], default None
+    to_ignore : Set[str], optional
         Set of module names to ignore.
 
     Yields
@@ -83,14 +45,20 @@ def find_modules(
             continue
         yield loader.find_module(module_name)
 
+
 def load_module(module: "SourceFileLoader") -> "types.ModuleType":
     """
     Load a given module.
 
     Parameters
     ----------
-    
+    module : ``importlib.machinery.SourceFileLoader``
+        The module to load.
 
+    Returns
+    -------
+    types.ModuleType
+        The loaded module.
     """
     return module.load_module(module.name)
 
@@ -103,9 +71,18 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        self.commands: List["CommandDefinition"] = [
-            command.Command() for command in _get_modules(__path__)  # type: ignore
+        IGNORED_MODULES = {"_base"}
+
+        self._modules: List["SourceFileLoader"] = [
+            module for module in find_modules(__path__, to_ignore=IGNORED_MODULES)  # type: ignore # noqa: E501
         ]
+        self._loaded_modules: List["types.ModuleType"] = [
+            load_module(module) for module in self._modules
+        ]
+        self.commands: List["CommandDefinition"] = [
+            module.Command() for module in self._loaded_modules  # type: ignore
+        ]
+
         self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),

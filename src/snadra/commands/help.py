@@ -1,12 +1,12 @@
 """
 foo bar baz
 """
-import os
 from typing import TYPE_CHECKING, Optional
 
-import snadra
-from snadra.commands import CommandParser, _get_modules
-from snadra.commands._base import CommandDefinition, Complete, Parameter
+# import snadra
+from snadra.commands._base import CommandDefinition
+
+# Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse

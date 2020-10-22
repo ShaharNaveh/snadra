@@ -3,7 +3,7 @@ foo bar baz
 """
 import pkgutil
 import shlex
-from typing import TYPE_CHECKING, Iterable, List, Union
+from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -12,6 +12,7 @@ from prompt_toolkit.history import InMemoryHistory
 import snadra.utils as utils
 
 if TYPE_CHECKING:
+    from importlib.machinery import SourceFileLoader
     import types
 
     from snadra.commands._base import CommandDefinition
@@ -19,26 +20,47 @@ if TYPE_CHECKING:
 logger = utils.get_logger(__name__)
 
 
-def _gather_modules(path: List[str]) -> Iterable["types.ModuleType"]:
+def find_modules(
+    path: List[str], *, to_ignore: Optional[Set[str]] = None
+) -> Iterable["SourceFileLoader"]:
     """
-    Gather the modules from a given path.
+    Find modules in a given path.
 
     Parameters
     ----------
-    path : str
-        Path where the modules are located.
+    path : List[str]
+        Path where to find the modules.
+    to_ignore : Set[str], optional
+        Set of module names to ignore.
 
     Yields
     ------
-    types.ModuleType
-        A module containing a `Command` class.
+    SourceFileLoader
     """
-    to_ignore = {"_base"}
-    for loader, module_name, is_pkg in pkgutil.walk_packages(path):
+    if to_ignore is None:
+        to_ignore = set()
+
+    for loader, module_name, _ in pkgutil.walk_packages(path):
         if module_name in to_ignore:
             continue
+        yield loader.find_module(module_name)
 
-        yield loader.find_module(module_name).load_module(module_name)
+
+def load_module(module: "SourceFileLoader") -> "types.ModuleType":
+    """
+    Load a given module.
+
+    Parameters
+    ----------
+    module : ``importlib.machinery.SourceFileLoader``
+        The module to load.
+
+    Returns
+    -------
+    types.ModuleType
+        The loaded module.
+    """
+    return module.load_module(module.name)
 
 
 class CommandParser:
@@ -49,9 +71,18 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        self.commands: List["CommandDefinition"] = [
-            command.Command() for command in _gather_modules(__path__)  # type: ignore
+        IGNORED_MODULES = {"_base"}
+
+        self._modules: List["SourceFileLoader"] = [
+            module for module in find_modules(__path__, to_ignore=IGNORED_MODULES)  # type: ignore # noqa: E501
         ]
+        self._loaded_modules: List["types.ModuleType"] = [
+            load_module(module) for module in self._modules
+        ]
+        self.commands: List["CommandDefinition"] = [
+            module.Command() for module in self._loaded_modules  # type: ignore
+        ]
+
         self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),

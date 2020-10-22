@@ -54,6 +54,12 @@ class TestCommandParser:
             " " * 3,
             "\n",
             "\n" * 3,
+            "\n ",
+            "\n " * 3,
+            " \n",
+            " \n" * 3,
+            " \n ",
+            " \n " * 3,
         ],
     )
     def test_dispatch_line_empty(self, command_parser, line):

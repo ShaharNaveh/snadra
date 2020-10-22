@@ -5,12 +5,8 @@ import pytest
 import snadra
 from snadra.commands import _get_modules, find_modules
 
-
-#@pytest.fixture
-
-def commands_dir() -> str:
-    snadra_dir = os.path.dirname(snadra.__file__)
-    return os.path.join(snadra_dir, "commands")
+_snadra_dir = os.path.dirname(snadra.__file__)
+COMMANDS_DIR = os.path.join(_snadra_dir, "commands")
 
 
 def test_get_modules(commands_dir):
@@ -22,13 +18,16 @@ def test_get_modules(commands_dir):
     assert expected == result
 
 
-@pytest.mark.parametrize("dir_path, to_ignore, expected_modules", [
-    (commands_dir(), None, ["_base", "exit", "help"]),
-
-
-    ])
+@pytest.mark.parametrize(
+    "dir_path, to_ignore, expected_modules",
+    [
+        (COMMANDS_DIR, None, ["exit", "help", "_base"]),
+        (COMMANDS_DIR, {"_base"}, ["exit", "help"]),
+    ],
+)
 def test_find_modules(dir_path, to_ignore, expected_modules):
     path = [dir_path]
     expected = sorted(expected_modules)
-    result = sorted([module.name for module in find_modules(path)])
+    result = sorted([module.name for module in find_modules(path, to_ignore=to_ignore)])
 
+    assert result == expected

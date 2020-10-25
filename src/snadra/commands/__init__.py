@@ -3,7 +3,7 @@ foo bar baz
 """
 import pkgutil
 import shlex
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Union
+from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Union, Tuple
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -93,14 +93,26 @@ class CommandParser:
             except Exception:
                 continue
 
-    def dispatch_line(self, line: str) -> None:
-        """
-        Execute each command that was entered to the console.
 
+    @staticmethod
+    def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
+        """
         Parameters
         ----------
         line : str
-            The full command (including arguments) as a string.
+            The full command (including arguments).
+
+
+        Returns
+        -------
+        Optional[Tuple[List[str], str]]
+            Tuple with the line as a list.
+            and the parsed line.
+
+        Raises
+        ------
+        ValueError
+            If could not parse the line correctly.
         """
         line = line.strip()
         if line == "":
@@ -112,7 +124,22 @@ class CommandParser:
             logger.error(f"Error: {err.args[0]}")
             return
 
-        line = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
+        pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
+        return (argv, pline)
+
+    def dispatch_line(self, line: str) -> None:
+        """
+        Execute each command that was entered to the console.
+
+        Parameters
+        ----------
+        line : str
+            The full command (including arguments) as a string.
+        """
+        try:
+            argv, pline = CommandParser._parse_line(line=line)
+        except TypeError:
+            return
 
         for command in self.commands:
             if any(keyword == argv[0] for keyword in command.KEYWORDS):
@@ -128,7 +155,7 @@ class CommandParser:
             if command.parser:
                 args = command.parser.parse_args(args)
             else:
-                args = line
+                args = pline
             command.run(args)
         except SystemExit:
             logger.debug("Incorrect arguments")

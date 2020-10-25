@@ -17,7 +17,7 @@ class Command(CommandDefinition):
     The command `help`, for displaying help information about other commands
     """
 
-    KEYWORDS = ["help"]
+    KEYWORDS = {"help"}
     HELP_TEXT = "list all known commands and print their help message"
     # ARGS = {"topic": Parameter(Complete.CHOICES, choices="A")}
 

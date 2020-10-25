@@ -14,7 +14,7 @@ class Command(CommandDefinition):
     Help message for "exit"
     """
 
-    KEYWORDS = ["exit", "quit"]
+    KEYWORDS = {"exit", "quit"}
     HELP_TEXT = "Exit the console"
 
     ARGS = {

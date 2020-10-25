@@ -138,3 +138,18 @@ class TestCommandParser:
     def test_get_command_valid(self, command_parser, keyword, expected):
         result = command_parser.get_command(keyword)
         assert result == expected
+
+    @pytest.mark.parametrize(
+        "keyword",
+        [
+            "not_a_valid_command",
+            " exit",
+            "help ",
+            "\n",
+            "",
+            " ",
+        ],
+    )
+    def test_get_command_invalid(self, command_parser, keyword):
+        result = command_parser.get_command(keyword)
+        assert result is None

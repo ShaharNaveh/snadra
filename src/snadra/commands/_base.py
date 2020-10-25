@@ -4,7 +4,7 @@ foo bar baz
 import argparse
 import enum
 import functools
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple
 
 import pygments.token as ptoken
 
@@ -112,7 +112,7 @@ class CommandDefinition:
         keywords = "".join(sorted(self.KEYWORDS))
         return (keywords, self.HELP_TEXT)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__key())
 
     def __eq__(self, other: Any) -> bool:

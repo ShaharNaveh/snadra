@@ -3,7 +3,7 @@ flake8
 isort
 mypy
 pip
-pytest
+pytest >= 6.0 # Using pyproject.toml for configuration
 pytest-cov
 setuptools
 wheel

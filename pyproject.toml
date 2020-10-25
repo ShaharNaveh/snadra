@@ -1,19 +1,31 @@
 [build-system]
 requires = [
-    "setuptools",
-    "wheel",
+	"setuptools",
+	"wheel",
 ]
 
 [tool.black]
 target-version = ['py37', 'py38']
 exclude = '''
 (
-      \.egg
-    | \.git
-    | \.mypy_cache
-    | \.venv
-    | build
-    | dist
-    | setup.py
+	\.egg
+	| \.git
+	| \.mypy_cache
+	| \.venv
+	| build
+	| dist
+	| setup.py
 )
 '''
+
+[tool.pytest.ini_options]
+filterwarnings = [
+	"error",
+]
+junit_family = "xunit2"
+minversion = 6.0
+python_files = "test_*.py"
+testpaths = [
+	"tests",
+]
+xfail_strict = true

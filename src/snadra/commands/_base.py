@@ -4,7 +4,7 @@ foo bar baz
 import argparse
 import enum
 import functools
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import pygments.token as ptoken
 
@@ -65,8 +65,8 @@ class CommandDefinition:
 
     Attributes
     ----------
-    KEYWORDS : List[str]
-        List of the keywords for the new command.
+    KEYWORDS : Set[str]
+        Set of the keywords for the new command.
 
     HELP_TEXT : str
         Help text for the new command.
@@ -84,7 +84,7 @@ class CommandDefinition:
         mutex arg, which determines the group type.
     """
 
-    KEYWORDS: List[str] = ["unimplemented"]
+    KEYWORDS: Set[str] = {"unimplemented"}
     HELP_TEXT: str = ""
     ARGS: Dict[str, Optional[Parameter]] = {}
     GROUPS: Dict[str, Group] = {}
@@ -107,6 +107,18 @@ class CommandDefinition:
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
             self.parser = None
+
+    def __key(self) -> Tuple[str, str]:
+        keywords = "".join(sorted(self.KEYWORDS))
+        return (keywords, self.HELP_TEXT)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, CommandDefinition):
+            return self.__key() == other.__key()
+        return NotImplemented
 
     def run(self, args):
         """

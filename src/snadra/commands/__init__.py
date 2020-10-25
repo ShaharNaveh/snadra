@@ -3,7 +3,7 @@ foo bar baz
 """
 import pkgutil
 import shlex
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Union, Tuple
+from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Tuple, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -93,7 +93,6 @@ class CommandParser:
             except Exception:
                 continue
 
-
     @staticmethod
     def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
         """
@@ -116,16 +115,49 @@ class CommandParser:
         """
         line = line.strip()
         if line == "":
-            return
+            return None
 
         try:
             argv = shlex.split(line)
         except ValueError as err:
             logger.error(f"Error: {err.args[0]}")
-            return
+            return None
 
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
         return (argv, pline)
+
+    def has_command(self, keyword: str) -> bool:
+        """
+        Check if a given keyword is mapped to a valid command.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        bool
+            Whether or not the keyword is mapped to a valid command.
+        """
+        for command in self.commands:
+            if any(keyword == known_keyword for known_keyword in command.KEYWORDS):
+                return True
+        return False
+
+    def get_command(self, keyword: str):
+        """
+        Get the command that mapped to a keyword.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+        """
+        for command in self.commands:
+            if keyword in command.KEYWORDS:
+                return command
+        return None
 
     def dispatch_line(self, line: str) -> None:
         """
@@ -137,13 +169,12 @@ class CommandParser:
             The full command (including arguments) as a string.
         """
         try:
-            argv, pline = CommandParser._parse_line(line=line)
+            argv, pline = CommandParser._parse_line(line=line)  # type: ignore
         except TypeError:
             return
 
-        for command in self.commands:
-            if any(keyword == argv[0] for keyword in command.KEYWORDS):
-                break
+        if self.has_command(argv[0]):
+            command = self.get_command(argv[0])
         else:
             logger.error(f"Error: {argv[0]}: unknown command")
             return

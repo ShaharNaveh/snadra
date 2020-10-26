@@ -33,7 +33,6 @@ def test_find_modules(tmpdir, to_ignore, expected):
     assert sorted(result) == sorted(expected)
 
 
-# TODO: Test for no duplicate keywords
 class TestCommandParser:
     def test_loaded_modules(self, command_parser):
         expected = ["exit", "help"]

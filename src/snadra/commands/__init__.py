@@ -54,10 +54,8 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        IGNORED_MODULES = {"_base"}
-
         self._modules: List["SourceFileLoader"] = [
-            module for module in find_modules(__path__, to_ignore=IGNORED_MODULES)  # type: ignore # noqa: E501
+            module for module in find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
         ]
         self._loaded_modules: List["types.ModuleType"] = [
             module.load_module(module.name) for module in self._modules
@@ -65,6 +63,11 @@ class CommandParser:
         self.commands: List["CommandDefinition"] = [
             module.Command() for module in self._loaded_modules  # type: ignore
         ]
+
+        self.keywords: Set[str] = set()
+        for command in self.commands:
+            for keyword in command.KEYWORDS:
+                self.keywords.add(keyword)
 
     def setup_prompt(self):  # pragma: no cover
         """

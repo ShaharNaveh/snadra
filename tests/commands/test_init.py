@@ -156,3 +156,8 @@ class TestCommandParser:
     def test_get_command_invalid(self, command_parser, keyword):
         result = command_parser.get_command(keyword)
         assert result is None
+
+    def test_keywords(self, command_parser):
+        expected = {"exit", "help", "quit"}
+        result = command_parser.keywords
+        assert sorted(result) == sorted(expected)

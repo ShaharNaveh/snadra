@@ -20,30 +20,97 @@ if TYPE_CHECKING:
 logger = utils.get_logger(__name__)
 
 
-def find_modules(
-    path: List[str], *, to_ignore: Optional[Set[str]] = None
-) -> Iterable["SourceFileLoader"]:
-    """
-    Find modules in a given path.
+class Commands:
+    # TODO: Is it good that a lot of stuff here are properties?
+    def _refresh(self):
+        pass
 
-    Parameters
-    ----------
-    path : List[str]
-        Path where to find the modules.
-    to_ignore : Set[str], optional
-        Set of module names to ignore.
+    def __init__(self) -> None:
+        self._commands: Dict[str, "CommandDefinition"] = {}
 
-    Yields
-    ------
-    SourceFileLoader
-    """
-    if to_ignore is None:
-        to_ignore = set()
+        for keyword in self.keywords:
+            self._commands[keyword] = self.get_command(keyword)
 
-    for loader, module_name, _ in pkgutil.walk_packages(path):
-        if module_name in to_ignore:
-            continue
-        yield loader.find_module(module_name)
+
+    @property
+    def keywords(self) -> Set[str]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[str]
+            All the available keywords.
+        """
+        result: Set[str] = set()
+        for command in self.available_commands:
+            for keyword in command.KEYWORDS:
+                result.add(keyword)
+        return result
+
+    def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
+        """
+        Get the command that mapped to a keyword.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        CommandDefinition, or None
+            The command that is mapped to `keyword`, if `keyword` is not mapped to any
+            command, `None` is returned.
+        """
+        for command in self.available_commands:
+            if keyword in command.KEYWORDS:
+                return command
+        return None
+
+    @property
+    def available_commands(self) -> Set["CommandDefinition"]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[CommandDefinition]
+            All the available commands.
+        """
+        return {module.load_module(module.name).Command() for module in self._modules}
+
+    @property
+    def _modules(self) -> Set["SourceFileLoader"]:
+        return {
+            module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
+        }
+
+    @staticmethod
+    def find_modules(
+        path: List[str], *, to_ignore: Optional[Set[str]] = None
+    ) -> Iterable["SourceFileLoader"]:
+        """
+        Find modules in a given path.
+
+        Parameters
+        ----------
+        path : List[str]
+            Path where to find the modules.
+        to_ignore : Set[str], optional
+            Set of module names to ignore.
+
+        Yields
+        ------
+        SourceFileLoader
+        """
+        if to_ignore is None:
+            to_ignore = set()
+
+        for loader, module_name, _ in pkgutil.walk_packages(path):
+            if module_name in to_ignore:
+                continue
+            yield loader.find_module(module_name)
 
 
 class CommandParser:

@@ -4,17 +4,9 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from snadra.commands import CommandParser, find_modules
+from snadra.commands import find_modules
 from snadra.commands.exit import Command as ExitCommand
 from snadra.commands.help import Command as HelpCommand
-
-
-@pytest.fixture(scope="function")
-def command_parser() -> "CommandParser":
-    """
-    Returns a ``CommandParser`` instance.
-    """
-    return CommandParser()
 
 
 @pytest.mark.parametrize(
@@ -138,3 +130,18 @@ class TestCommandParser:
     def test_get_command_valid(self, command_parser, keyword, expected):
         result = command_parser.get_command(keyword)
         assert result == expected
+
+    @pytest.mark.parametrize(
+        "keyword",
+        [
+            "not_a_valid_command",
+            " exit",
+            "help ",
+            "\n",
+            "",
+            " ",
+        ],
+    )
+    def test_get_command_invalid(self, command_parser, keyword):
+        result = command_parser.get_command(keyword)
+        assert result is None

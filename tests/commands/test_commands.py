@@ -2,7 +2,9 @@
 Testing general things about the commands
 """
 from typing import List
+
 import pytest
+
 from snadra.commands import Commands
 from snadra.commands.exit import Command as ExitCommand
 from snadra.commands.help import Command as HelpCommand

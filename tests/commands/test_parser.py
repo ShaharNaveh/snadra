@@ -10,7 +10,6 @@ from snadra.commands.help import Command as HelpCommand
 
 
 class TestCommandParser:
-
     @pytest.mark.parametrize(
         "line",
         [
@@ -127,4 +126,3 @@ class TestCommandParser:
     def test_get_command_invalid(self, command_parser, keyword):
         result = command_parser.get_command(keyword)
         assert result is None
-

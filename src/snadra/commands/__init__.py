@@ -31,7 +31,6 @@ class Commands:
         for keyword in self.keywords:
             self._commands[keyword] = self.get_command(keyword)
 
-
     @property
     def keywords(self) -> Set[str]:
         """

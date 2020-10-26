@@ -151,10 +151,7 @@ class CommandParser:
         bool
             Whether or not the keyword is mapped to a valid command.
         """
-        for command in self.commands:
-            if any(keyword == known_keyword for known_keyword in command.KEYWORDS):
-                return True
-        return False
+        return keyword in self.keywords
 
     def get_command(self, keyword: str):
         """

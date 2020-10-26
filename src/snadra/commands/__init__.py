@@ -48,6 +48,22 @@ class Commands:
                 result.add(keyword)
         return result
 
+    def is_valid_keyword(self, keyword: str) -> bool:
+        """
+        Check if a given keyword is mapped to a valid command.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        bool
+            Whether or not the keyword is mapped to a valid command.
+        """
+        return keyword in self.keywords
+
     def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
         """
         Get the command that mapped to a keyword.

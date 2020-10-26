@@ -4,41 +4,12 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from snadra.commands import find_modules
+from snadra.commands import Commands
 from snadra.commands.exit import Command as ExitCommand
 from snadra.commands.help import Command as HelpCommand
 
 
-@pytest.mark.parametrize(
-    "to_ignore, expected",
-    [
-        (None, ["foo", "bar", "baz"]),
-        ({}, ["foo", "bar", "baz"]),
-        ({"foo"}, ["bar", "baz"]),
-        ({"foo", "bar"}, ["baz"]),
-        ({"foo", "bar", "baz"}, []),
-    ],
-)
-def test_find_modules(tmpdir, to_ignore, expected):
-    commands_dir = tmpdir.mkdir("commands")
-    files = {"foo", "bar", "baz", "__init__"}
-
-    for file_name in files:
-        commands_dir.join(f"{file_name}.py").write("")
-
-    path = [str(commands_dir)]
-
-    result = [module.name for module in find_modules(path, to_ignore=to_ignore)]
-
-    assert sorted(result) == sorted(expected)
-
-
 class TestCommandParser:
-    def test_loaded_modules(self, command_parser):
-        expected = ["exit", "help"]
-        loaded_modules = command_parser._loaded_modules
-        result = [module.__name__ for module in loaded_modules]
-        assert sorted(result) == sorted(expected)
 
     @pytest.mark.parametrize(
         "line",
@@ -157,7 +128,3 @@ class TestCommandParser:
         result = command_parser.get_command(keyword)
         assert result is None
 
-    def test_keywords(self, command_parser):
-        expected = {"exit", "help", "quit"}
-        result = command_parser.keywords
-        assert sorted(result) == sorted(expected)

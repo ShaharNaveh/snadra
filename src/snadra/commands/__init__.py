@@ -138,7 +138,7 @@ class CommandParser:
 
     def __init__(self) -> None:
         self._modules: List["SourceFileLoader"] = [
-            module for module in find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
+            module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
         ]
         self._loaded_modules: List["types.ModuleType"] = [
             module.load_module(module.name) for module in self._modules

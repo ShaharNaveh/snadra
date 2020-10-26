@@ -66,7 +66,15 @@ class CommandParser:
             module.Command() for module in self._loaded_modules  # type: ignore
         ]
 
-    def setup_prompt(self):
+    def setup_prompt(self):  # pragma: no cover
+        """
+        See Notes section.
+
+        Notes
+        -----
+        The only reason for this being in a seperate function is that it changes
+        the `sys.stdout` and `sys.stderr` which disturbes `pytest`.
+        """
         self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),

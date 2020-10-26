@@ -105,6 +105,17 @@ class TestCommandParser:
         result = command_parser._parse_line(line)
         assert result == expected
 
+    @pytest.mark.parametrize(
+        "line",
+        [
+            "'command",
+            '"command',
+        ],
+    )
+    def test__parse_line_shlex_split(self, command_parser, line):
+        result = command_parser._parse_line(line)
+        assert result is None
+
     @pytest.mark.parametrize("keyword", ["exit", "help", "quit"])
     def test_has_command_valid(self, command_parser, keyword):
         assert command_parser.has_command(keyword)

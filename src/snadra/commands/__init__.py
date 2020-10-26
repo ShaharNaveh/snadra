@@ -54,10 +54,8 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        IGNORED_MODULES = {"_base"}
-
         self._modules: List["SourceFileLoader"] = [
-            module for module in find_modules(__path__, to_ignore=IGNORED_MODULES)  # type: ignore # noqa: E501
+            module for module in find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
         ]
         self._loaded_modules: List["types.ModuleType"] = [
             module.load_module(module.name) for module in self._modules
@@ -66,7 +64,20 @@ class CommandParser:
             module.Command() for module in self._loaded_modules  # type: ignore
         ]
 
-    def setup_prompt(self):
+        self.keywords: Set[str] = set()
+        for command in self.commands:
+            for keyword in command.KEYWORDS:
+                self.keywords.add(keyword)
+
+    def setup_prompt(self):  # pragma: no cover
+        """
+        See Notes section.
+
+        Notes
+        -----
+        The only reason for this being in a seperate function is that it changes
+        the `sys.stdout` and `sys.stderr` which disturbes `pytest`.
+        """
         self.prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
@@ -140,10 +151,7 @@ class CommandParser:
         bool
             Whether or not the keyword is mapped to a valid command.
         """
-        for command in self.commands:
-            if any(keyword == known_keyword for known_keyword in command.KEYWORDS):
-                return True
-        return False
+        return keyword in self.keywords
 
     def get_command(self, keyword: str):
         """

@@ -1,5 +1,7 @@
-from snadra.commands import CommandParser
 import pytest
+
+from snadra.commands import CommandParser
+
 
 @pytest.fixture()
 def command_parser() -> "CommandParser":

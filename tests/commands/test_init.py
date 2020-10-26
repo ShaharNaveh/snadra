@@ -4,19 +4,9 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from snadra.commands import CommandParser, find_modules
+from snadra.commands import find_modules
 from snadra.commands.exit import Command as ExitCommand
 from snadra.commands.help import Command as HelpCommand
-
-
-'''
-@pytest.fixture(scope="function")
-def command_parser() -> "CommandParser":
-    """
-    Returns a ``CommandParser`` instance.
-    """
-    return CommandParser()
-'''
 
 
 @pytest.mark.parametrize(

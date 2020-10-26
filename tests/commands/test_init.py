@@ -9,12 +9,14 @@ from snadra.commands.exit import Command as ExitCommand
 from snadra.commands.help import Command as HelpCommand
 
 
+'''
 @pytest.fixture(scope="function")
 def command_parser() -> "CommandParser":
     """
     Returns a ``CommandParser`` instance.
     """
     return CommandParser()
+'''
 
 
 @pytest.mark.parametrize(

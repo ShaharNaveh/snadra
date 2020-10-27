@@ -1,6 +1,7 @@
 """
 foo bar baz
 """
+import logging
 import pkgutil
 import shlex
 from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set, Tuple, Union
@@ -9,14 +10,14 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 
-import snadra.utils as utils
+from snadra._util import console
 
 if TYPE_CHECKING:
     from importlib.machinery import SourceFileLoader
 
     from snadra.commands._base import CommandDefinition
 
-logger = utils.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Commands:
@@ -165,9 +166,9 @@ class CommandParser:
                 self.running = False
             except KeyboardInterrupt:
                 continue
-            except Exception as err:
-                logger.debug("We got an exception which we do not handle")
-                logger.debug(f"{repr(type(err).__name__)}: {err}")
+            except Exception:
+                # Unexpected errors, we catch them so the application won't crash.
+                console.print_exception(width=None)
                 continue
 
     def dispatch_line(self, line: str) -> None:
@@ -187,7 +188,7 @@ class CommandParser:
         if self.commands.is_valid_keyword(argv[0]):
             command = self.commands.get_command(argv[0])
         else:
-            logger.error(f"Error: {argv[0]}: unknown command")
+            console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return
 
         args: Union[str, List[str]] = argv[1:]
@@ -200,7 +201,7 @@ class CommandParser:
                 args = pline
             command.run(args)  # type: ignore
         except SystemExit:
-            logger.debug("Incorrect arguments")
+            console.log("Incorrect arguments")
             return
 
     @staticmethod
@@ -229,7 +230,7 @@ class CommandParser:
         try:
             argv = shlex.split(line)
         except ValueError as err:
-            logger.error(f"Error: {err.args[0]}")
+            console.log(f"[red]Error[/red]: {err.args[0]}")
             return None
 
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))

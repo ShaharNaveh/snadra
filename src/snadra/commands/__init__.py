@@ -24,7 +24,32 @@ class Commands:
     Holds all the relevant commands attributes.
     """
 
-    # TODO: Is it good that a lot of stuff here are properties?
+    def __init__(self) -> None:
+        self._commands_dict: Dict[str, "CommandDefinition"] = self._refresh_command_dict()
+
+    @property
+    def available_commands(self) -> Set["CommandDefinition"]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[CommandDefinition]
+            All the available commands.
+        """
+        return set(self._commands_dict.values())
+
+    def _refresh_command_dict(self) -> Dict[str, "CommandDefinition"]:
+        commands_dict: Dict[str, "CommandDefinition"] = {}
+
+        for module in Commands.find_modules(__path__, to_ignore={"_base"}) :
+            command = module.load_module(module.name).Command()
+            for keyword in command.KEYWORDS:
+                commands_dict[keyword] = command
+        return commands_dict
+
+
+        #return {keyword: self.get_command(keyword) for keyword in self.keywords}
 
     @property
     def keywords(self) -> Set[str]:
@@ -78,17 +103,6 @@ class Commands:
                 return command
         return None
 
-    @property
-    def available_commands(self) -> Set["CommandDefinition"]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[CommandDefinition]
-            All the available commands.
-        """
-        return {module.load_module(module.name).Command() for module in self._modules}  # type: ignore # noqa: E501
 
     @property
     def _modules(self) -> Set["SourceFileLoader"]:
@@ -96,8 +110,8 @@ class Commands:
             module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
         }
 
-    def _refresh(self) -> Dict[str, Optional["CommandDefinition"]]:
-        return {keyword: self.get_command(keyword) for keyword in self.keywords}
+    #def _refresh_commands(self) -> Dict[str, Optional["CommandDefinition"]]:
+        #return {keyword: self.get_command(keyword) for keyword in self.keywords}
 
     @staticmethod
     def find_modules(

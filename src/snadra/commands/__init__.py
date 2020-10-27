@@ -3,7 +3,7 @@ foo bar baz
 """
 import pkgutil
 import shlex
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -13,37 +13,117 @@ import snadra.utils as utils
 
 if TYPE_CHECKING:
     from importlib.machinery import SourceFileLoader
-    import types
 
     from snadra.commands._base import CommandDefinition
 
 logger = utils.get_logger(__name__)
 
 
-def find_modules(
-    path: List[str], *, to_ignore: Optional[Set[str]] = None
-) -> Iterable["SourceFileLoader"]:
+class Commands:
     """
-    Find modules in a given path.
-
-    Parameters
-    ----------
-    path : List[str]
-        Path where to find the modules.
-    to_ignore : Set[str], optional
-        Set of module names to ignore.
-
-    Yields
-    ------
-    SourceFileLoader
+    Holds all the relevant commands attributes.
     """
-    if to_ignore is None:
-        to_ignore = set()
 
-    for loader, module_name, _ in pkgutil.walk_packages(path):
-        if module_name in to_ignore:
-            continue
-        yield loader.find_module(module_name)
+    # TODO: Is it good that a lot of stuff here are properties?
+
+    @property
+    def keywords(self) -> Set[str]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[str]
+            All the available keywords.
+        """
+        result: Set[str] = set()
+        for command in self.available_commands:
+            for keyword in command.KEYWORDS:
+                result.add(keyword)
+        return result
+
+    def is_valid_keyword(self, keyword: str) -> bool:
+        """
+        Check if a given keyword is mapped to a valid command.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        bool
+            Whether or not the keyword is mapped to a valid command.
+        """
+        return keyword in self.keywords
+
+    def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
+        """
+        Get the command that mapped to a keyword.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        CommandDefinition, or None
+            The command that is mapped to `keyword`, if `keyword` is not mapped to any
+            command, `None` is returned.
+        """
+        for command in self.available_commands:
+            if keyword in command.KEYWORDS:
+                return command
+        return None
+
+    @property
+    def available_commands(self) -> Set["CommandDefinition"]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[CommandDefinition]
+            All the available commands.
+        """
+        return {module.load_module(module.name).Command() for module in self._modules}  # type: ignore # noqa: E501
+
+    @property
+    def _modules(self) -> Set["SourceFileLoader"]:
+        return {
+            module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
+        }
+
+    def _refresh(self) -> Dict[str, Optional["CommandDefinition"]]:
+        return {keyword: self.get_command(keyword) for keyword in self.keywords}
+
+    @staticmethod
+    def find_modules(
+        path: List[str], *, to_ignore: Optional[Set[str]] = None
+    ) -> Iterable["SourceFileLoader"]:
+        """
+        Find modules in a given path.
+
+        Parameters
+        ----------
+        path : List[str]
+            Path where to find the modules.
+        to_ignore : Set[str], optional
+            Set of module names to ignore.
+
+        Yields
+        ------
+        SourceFileLoader
+        """
+        if to_ignore is None:
+            to_ignore = set()
+
+        for loader, module_name, _ in pkgutil.walk_packages(path):
+            if module_name in to_ignore:
+                continue
+            yield loader.find_module(module_name)
 
 
 class CommandParser:
@@ -54,20 +134,7 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        self._modules: List["SourceFileLoader"] = [
-            module for module in find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
-        ]
-        self._loaded_modules: List["types.ModuleType"] = [
-            module.load_module(module.name) for module in self._modules
-        ]
-        self.commands: List["CommandDefinition"] = [
-            module.Command() for module in self._loaded_modules  # type: ignore
-        ]
-
-        self.keywords: Set[str] = set()
-        for command in self.commands:
-            for keyword in command.KEYWORDS:
-                self.keywords.add(keyword)
+        self.commands = Commands()
 
     def setup_prompt(self):  # pragma: no cover
         """
@@ -101,7 +168,9 @@ class CommandParser:
                 self.running = False
             except KeyboardInterrupt:
                 continue
-            except Exception:
+            except Exception as err:
+                logger.debug("We got an exception which we do not handle")
+                logger.debug(f"{repr(type(err).__name__)}: {err}")
                 continue
 
     @staticmethod
@@ -111,7 +180,6 @@ class CommandParser:
         ----------
         line : str
             The full command (including arguments).
-
 
         Returns
         -------
@@ -137,36 +205,6 @@ class CommandParser:
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
         return (argv, pline)
 
-    def has_command(self, keyword: str) -> bool:
-        """
-        Check if a given keyword is mapped to a valid command.
-
-        Parameters
-        ----------
-        keyword : str
-            Keyword to check.
-
-        Returns
-        -------
-        bool
-            Whether or not the keyword is mapped to a valid command.
-        """
-        return keyword in self.keywords
-
-    def get_command(self, keyword: str):
-        """
-        Get the command that mapped to a keyword.
-
-        Parameters
-        ----------
-        keyword : str
-            Keyword to check.
-        """
-        for command in self.commands:
-            if keyword in command.KEYWORDS:
-                return command
-        return None
-
     def dispatch_line(self, line: str) -> None:
         """
         Execute each command that was entered to the console.
@@ -181,8 +219,8 @@ class CommandParser:
         except TypeError:
             return
 
-        if self.has_command(argv[0]):
-            command = self.get_command(argv[0])
+        if self.commands.is_valid_keyword(argv[0]):
+            command = self.commands.get_command(argv[0])
         else:
             logger.error(f"Error: {argv[0]}: unknown command")
             return
@@ -191,11 +229,11 @@ class CommandParser:
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
-            if command.parser:
-                args = command.parser.parse_args(args)
+            if command.parser:  # type: ignore
+                args = command.parser.parse_args(args)  # type: ignore
             else:
                 args = pline
-            command.run(args)
+            command.run(args)  # type: ignore
         except SystemExit:
             logger.debug("Incorrect arguments")
             return

@@ -88,7 +88,7 @@ class Commands:
         Set[CommandDefinition]
             All the available commands.
         """
-        return {module.load_module(module.name).Command() for module in self._modules}
+        return {module.load_module(module.name).Command() for module in self._modules}  # type: ignore # noqa: E501
 
     @property
     def _modules(self) -> Set["SourceFileLoader"]:
@@ -96,7 +96,7 @@ class Commands:
             module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
         }
 
-    def _refresh(self) -> Dict[str, "CommandDefinition"]:
+    def _refresh(self) -> Dict[str, Optional["CommandDefinition"]]:
         return {keyword: self.get_command(keyword) for keyword in self.keywords}
 
     @staticmethod
@@ -229,11 +229,11 @@ class CommandParser:
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
-            if command.parser:
-                args = command.parser.parse_args(args)
+            if command.parser:  # type: ignore
+                args = command.parser.parse_args(args)  # type: ignore
             else:
                 args = pline
-            command.run(args)
+            command.run(args)  # type: ignore
         except SystemExit:
             logger.debug("Incorrect arguments")
             return

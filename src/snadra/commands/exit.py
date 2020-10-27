@@ -29,7 +29,7 @@ class Command(CommandDefinition):
         Exit `snadra`.
         """
         if args is None or not args.yes:
-            console.log("[red]Error[/red]: exit not confirmed (use '--yes')")
+            console.log("[red]Error[/red]: Exit not confirmed (use '--yes')")
             return
 
         raise EOFError("Got an exit signal")

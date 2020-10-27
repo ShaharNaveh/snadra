@@ -74,6 +74,27 @@ class TestCommandParser:
     @pytest.mark.parametrize(
         "line",
         [
+            "invalid_command",
+            "INVALID_COMMAND",
+            "_",
+        ],
+    )
+    def test_dispatch_line_invalid_keyword(self, capfd, command_parser, line):
+        expected_out = "unknown command"
+        expected_err = ""
+        command_parser.dispatch_line(line)
+
+        captured = capfd.readouterr()
+        captured_out, captured_err = captured.out, captured.err
+
+        assert expected_out in captured_out
+        assert f"'{line}'" in captured_out
+
+        assert captured_err == expected_err
+
+    @pytest.mark.parametrize(
+        "line",
+        [
             "'command",
             '"command',
         ],

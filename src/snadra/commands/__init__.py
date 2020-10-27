@@ -25,63 +25,19 @@ class Commands:
     """
 
     def __init__(self) -> None:
-        self._commands_dict: Dict[str, "CommandDefinition"] = self._refresh_command_dict()
-
-    @property
-    def available_commands(self) -> Set["CommandDefinition"]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[CommandDefinition]
-            All the available commands.
-        """
-        return set(self._commands_dict.values())
+        self._commands_dict = self._refresh_command_dict()
 
     def _refresh_command_dict(self) -> Dict[str, "CommandDefinition"]:
+        """
+        foo bar baz
+        """
         commands_dict: Dict[str, "CommandDefinition"] = {}
 
-        for module in Commands.find_modules(__path__, to_ignore={"_base"}) :
-            command = module.load_module(module.name).Command()
+        for module in Commands.find_modules(__path__, to_ignore={"_base"}):  # type: ignore # noqa: E501
+            command = module.load_module(module.name).Command()  # type: ignore
             for keyword in command.KEYWORDS:
                 commands_dict[keyword] = command
         return commands_dict
-
-
-        #return {keyword: self.get_command(keyword) for keyword in self.keywords}
-
-    @property
-    def keywords(self) -> Set[str]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[str]
-            All the available keywords.
-        """
-        result: Set[str] = set()
-        for command in self.available_commands:
-            for keyword in command.KEYWORDS:
-                result.add(keyword)
-        return result
-
-    def is_valid_keyword(self, keyword: str) -> bool:
-        """
-        Check if a given keyword is mapped to a valid command.
-
-        Parameters
-        ----------
-        keyword : str
-            Keyword to check.
-
-        Returns
-        -------
-        bool
-            Whether or not the keyword is mapped to a valid command.
-        """
-        return keyword in self.keywords
 
     def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
         """
@@ -98,20 +54,47 @@ class Commands:
             The command that is mapped to `keyword`, if `keyword` is not mapped to any
             command, `None` is returned.
         """
-        for command in self.available_commands:
-            if keyword in command.KEYWORDS:
-                return command
-        return None
+        return self._commands_dict.get(keyword)
 
+    def is_valid_keyword(self, keyword: str) -> bool:
+        """
+        Check if a given keyword is mapped to a valid command.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        bool
+            Whether or not the keyword is mapped to a valid command.
+        """
+        return keyword in self._commands_dict
 
     @property
-    def _modules(self) -> Set["SourceFileLoader"]:
-        return {
-            module for module in Commands.find_modules(__path__, to_ignore={"_base"})  # type: ignore # noqa: E501
-        }
+    def available_commands(self) -> Set["CommandDefinition"]:
+        """
+        Get all the available keywords.
 
-    #def _refresh_commands(self) -> Dict[str, Optional["CommandDefinition"]]:
-        #return {keyword: self.get_command(keyword) for keyword in self.keywords}
+        Returns
+        -------
+        Set[CommandDefinition]
+            All the available commands.
+        """
+        return set(self._commands_dict.values())
+
+    @property
+    def keywords(self) -> Set[str]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[str]
+            All the available keywords.
+        """
+        return set(self._commands_dict.keys())
 
     @staticmethod
     def find_modules(
@@ -187,38 +170,6 @@ class CommandParser:
                 logger.debug(f"{repr(type(err).__name__)}: {err}")
                 continue
 
-    @staticmethod
-    def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
-        """
-        Parameters
-        ----------
-        line : str
-            The full command (including arguments).
-
-        Returns
-        -------
-        Optional[Tuple[List[str], str]]
-            Tuple with the line as a list.
-            and the parsed line.
-
-        Raises
-        ------
-        ValueError
-            If could not parse the line correctly.
-        """
-        line = line.strip()
-        if line == "":
-            return None
-
-        try:
-            argv = shlex.split(line)
-        except ValueError as err:
-            logger.error(f"Error: {err.args[0]}")
-            return None
-
-        pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
-        return (argv, pline)
-
     def dispatch_line(self, line: str) -> None:
         """
         Execute each command that was entered to the console.
@@ -251,3 +202,35 @@ class CommandParser:
         except SystemExit:
             logger.debug("Incorrect arguments")
             return
+
+    @staticmethod
+    def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
+        """
+        Parameters
+        ----------
+        line : str
+            The full command (including arguments).
+
+        Returns
+        -------
+        Optional[Tuple[List[str], str]]
+            Tuple with the line as a list.
+            and the parsed line.
+
+        Raises
+        ------
+        ValueError
+            If could not parse the line correctly.
+        """
+        line = line.strip()
+        if line == "":
+            return None
+
+        try:
+            argv = shlex.split(line)
+        except ValueError as err:
+            logger.error(f"Error: {err.args[0]}")
+            return None
+
+        pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
+        return (argv, pline)

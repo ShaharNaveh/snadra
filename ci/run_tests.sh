@@ -13,9 +13,10 @@ MSG='Running tests'; echo $MSG
 if [[ "$GITHUB_ACTIONS" == "true" ]]
 then
 	pytest --cov --cov-fail-under=$MINIMUM_TEST_COVRAGE
+	RET_SUM=$(($RET_SUM + $?))
 else
 	pytest --cov --cov-fail-under=$MINIMUM_TEST_COVRAGE --cov-report html
+	RET_SUM=$(($RET_SUM + $?))
 fi
-RET_SUM=$(($RET_SUM + $?))
 
 exit $RET_SUM

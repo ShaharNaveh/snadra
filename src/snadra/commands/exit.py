@@ -1,8 +1,9 @@
 """
-foo
+The command to exit snadra.
 """
 from typing import TYPE_CHECKING, Optional
 
+from snadra._util import console
 from snadra.commands._base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
@@ -28,7 +29,7 @@ class Command(CommandDefinition):
         Exit `snadra`.
         """
         if args is None or not args.yes:
-            # TODO: Display some message here, to tell the user how to exit
+            console.log("[red]Error[/red]: exit not confirmed (use '--yes')")
             return
 
         raise EOFError("Got an exit signal")

@@ -12,6 +12,7 @@ def command():
     """
     return module.Command()
 
+
 class TestExitCommand:
     def test_confirm(self, capfd, command):
         expected_err = ""
@@ -23,7 +24,6 @@ class TestExitCommand:
 
         assert expected_out in captured.out
         assert expected_err == captured.err
-
 
     def test_run(self, command):
         assert command.run() is None

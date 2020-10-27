@@ -92,7 +92,6 @@ class TestCommandParser:
 
         assert captured_err == expected_err
 
-
     @pytest.mark.parametrize(
         "line",
         [

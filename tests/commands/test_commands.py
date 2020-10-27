@@ -83,3 +83,30 @@ class TestCommands:
 
         expected = list(set(result))
         assert sorted(result) == sorted(expected)
+
+    @pytest.mark.parametrize(
+        "keyword, expected",
+        [
+            ("help", HelpCommand()),
+            ("quit", ExitCommand()),
+            ("exit", ExitCommand()),
+        ],
+    )
+    def test_get_command_valid(self, commands, keyword, expected):
+        result = commands.get_command(keyword)
+        assert result == expected
+
+    @pytest.mark.parametrize(
+        "keyword",
+        [
+            "not_a_valid_command",
+            " exit",
+            "help ",
+            "\n",
+            " ",
+            "",
+        ],
+    )
+    def test_get_command_invalid(self, commands, keyword):
+        result = commands.get_command(keyword)
+        assert result is None

@@ -4,10 +4,6 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from snadra.commands import Commands
-from snadra.commands.exit import Command as ExitCommand
-from snadra.commands.help import Command as HelpCommand
-
 
 class TestCommandParser:
     @pytest.mark.parametrize(

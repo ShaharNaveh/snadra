@@ -13,7 +13,6 @@ import snadra.utils as utils
 
 if TYPE_CHECKING:
     from importlib.machinery import SourceFileLoader
-    import types
 
     from snadra.commands._base import CommandDefinition
 
@@ -21,11 +20,11 @@ logger = utils.get_logger(__name__)
 
 
 class Commands:
-    # TODO: Is it good that a lot of stuff here are properties?
+    """
+    Holds all the relevant commands attributes.
+    """
 
-    def __init__(self) -> None:
-        # TODO: This feels wrong, but it works *facepalm*
-        self.command_map: Dict[str, "CommandDefinition"] = self._refresh()
+    # TODO: Is it good that a lot of stuff here are properties?
 
     @property
     def keywords(self) -> Set[str]:
@@ -205,40 +204,6 @@ class CommandParser:
 
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
         return (argv, pline)
-
-    '''
-    def has_command(self, keyword: str) -> bool:
-        """
-        Check if a given keyword is mapped to a valid command.
-
-        Parameters
-        ----------
-        keyword : str
-            Keyword to check.
-
-        Returns
-        -------
-        bool
-            Whether or not the keyword is mapped to a valid command.
-        """
-        return keyword in self.keywords
-    '''
-
-    '''
-    def get_command(self, keyword: str):
-        """
-        Get the command that mapped to a keyword.
-
-        Parameters
-        ----------
-        keyword : str
-            Keyword to check.
-        """
-        for command in self.commands:
-            if keyword in command.KEYWORDS:
-                return command
-        return None
-    '''
 
     def dispatch_line(self, line: str) -> None:
         """

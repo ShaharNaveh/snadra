@@ -1,9 +1,14 @@
+# Build
+pip
+setuptools
+wheel
+
+# Lint
 black
 flake8
 isort
 mypy
-pip
+
+# Test
 pytest >= 6.0 # Using pyproject.toml for configuration
 pytest-cov
-setuptools
-wheel

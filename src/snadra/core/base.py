@@ -219,7 +219,9 @@ class Commands:
         commands_dict: Dict[str, "CommandDefinition"] = {}
         commands_dir = [snutils.get_commands_dir()]
 
-        for module in Commands.find_modules(commands_dir, to_ignore={"_base"}):  # type: ignore # noqa: E501
+        for module in Commands.find_modules(commands_dir, to_ignore={"_base"}):
+            # TODO: Remove the () from the Command,
+            # we should not run this until we have too
             command = module.load_module(module.name).Command()  # type: ignore
             for keyword in command.KEYWORDS:
                 commands_dict[keyword] = command

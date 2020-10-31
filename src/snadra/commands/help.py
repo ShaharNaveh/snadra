@@ -5,16 +5,13 @@ from typing import TYPE_CHECKING, Optional
 
 import snadra._utils as snutils
 
-# import snadra
-from snadra.core.base import CommandDefinition, Commands, Complete, Parameter
-
-# Complete, Parameter
+# from snadra.core.base import Commands
+from snadra.core.base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse
 
 
-# _c = Commands().keywords
 class Command(CommandDefinition):
     """
     The command `help`, for displaying help information about other commands
@@ -22,6 +19,7 @@ class Command(CommandDefinition):
 
     KEYWORDS = {"help"}
     HELP_TEXT = "List all known commands and print their help message"
+    # TODO: Fix this, so the choises will be genereted, and not just debug from 2AM.
     ARGS = {
         "topic": Parameter(
             Complete.CHOICES, choices={"help", "quit", "exit"}, nargs="?"

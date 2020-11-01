@@ -110,9 +110,9 @@ jobs:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
-      - name: Install snadra
+      - name: Install tox
         run: |
-          python -m pip install --upgrade --editable .
+          python -m pip install --upgrade tox
 
       - name: Doctest
         run: |
@@ -165,9 +165,9 @@ jobs:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
-      - name: Install snadra
+      - name: Install tox
         run: |
-          python -m pip install --upgrade --editable .
+          python -m pip install --upgrade tox
 
       - name: Build documentation
         run: |

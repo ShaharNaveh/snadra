@@ -1,0 +1,2 @@
+pytest >= 6.0 # Using pyproject.toml for configuration
+pytest-cov

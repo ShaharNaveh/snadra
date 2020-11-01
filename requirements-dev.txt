@@ -1,4 +1,4 @@
 -r requirements/docs.txt
--r requirements/lints.txt
+-r requirements/style.txt
 -r requirements/tests.txt
 tox

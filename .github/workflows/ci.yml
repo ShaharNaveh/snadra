@@ -129,7 +129,6 @@ jobs:
     name: Test and build the documentation
     needs: [style, test]
     runs-on: ${{ matrix.os }}
-    if: false # Disabled for now
     strategy:
       matrix:
         python-version:

@@ -3,10 +3,10 @@ foo bar baz
 """
 from typing import TYPE_CHECKING, Optional
 
-# import snadra
-from snadra.commands._base import CommandDefinition
+import snadra._utils as snutils
 
-# Complete, Parameter
+# from snadra.core.base import Commands
+from snadra.core.base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse
@@ -18,11 +18,16 @@ class Command(CommandDefinition):
     """
 
     KEYWORDS = {"help"}
-    HELP_TEXT = "list all known commands and print their help message"
-    # ARGS = {"topic": Parameter(Complete.CHOICES, choices="A")}
+    HELP_TEXT = "List all known commands and print their help message"
+    # TODO: Fix this, so the choises will be genereted, and not just debug from 2AM.
+    ARGS = {
+        "topic": Parameter(
+            Complete.CHOICES, choices={"help", "quit", "exit"}, nargs="?"
+        )
+    }
 
     def run(self, args: Optional["argparse.Namespace"] = None):
         """
         foo bar baz
         """
-        pass
+        snutils.console.log(args, log_locals=True)

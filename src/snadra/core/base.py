@@ -1,12 +1,15 @@
-"""
-foo bar baz
-"""
 import argparse
 import enum
 import functools
-from typing import Any, Dict, Optional, Set, Tuple
+import pkgutil
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set, Tuple
 
 import pygments.token as ptoken
+
+import snadra._utils as snutils
+
+if TYPE_CHECKING:
+    from importlib.machinery import SourceFileLoader
 
 
 class Complete(enum.Enum):
@@ -52,11 +55,13 @@ class Parameter:
         self.kwargs = kwargs
 
 
+'''
 def parameter(complete, token=ptoken.Name.Label, *args, **kwargs):
     """
     foo bar baz
     """
     return (complete, token, args, kwargs)
+'''
 
 
 class CommandDefinition:
@@ -146,8 +151,6 @@ class CommandDefinition:
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
         for this command. You should not need to overload this.
 
-        :param args: the ARGS dictionary
-
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -199,3 +202,110 @@ class CommandDefinition:
             group.add_argument(*names, *param.args, **param.kwargs)
 
         parser.set_defaults(**self.DEFAULTS)
+
+
+class Commands:
+    """
+    Holds all the relevant commands attributes.
+    """
+
+    def __init__(self) -> None:
+        self._commands_dict = self._refresh_command_dict()
+
+    def _refresh_command_dict(self) -> Dict[str, "CommandDefinition"]:
+        """
+        foo bar baz
+        """
+        commands_dict: Dict[str, "CommandDefinition"] = {}
+        commands_dir = [snutils.get_commands_dir()]
+
+        for module in Commands.find_modules(commands_dir, to_ignore={"_base"}):
+            # TODO: Remove the () from the Command,
+            # we should not run this until we have too
+            command = module.load_module(module.name).Command()  # type: ignore
+            for keyword in command.KEYWORDS:
+                commands_dict[keyword] = command
+        return commands_dict
+
+    def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
+        """
+        Get the command that mapped to a keyword.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        CommandDefinition, or None
+            The command that is mapped to `keyword`, if `keyword` is not mapped to any
+            command, `None` is returned.
+        """
+        return self._commands_dict.get(keyword)
+
+    def is_valid_keyword(self, keyword: str) -> bool:
+        """
+        Check if a given keyword is mapped to a valid command.
+
+        Parameters
+        ----------
+        keyword : str
+            Keyword to check.
+
+        Returns
+        -------
+        bool
+            Whether or not the keyword is mapped to a valid command.
+        """
+        return keyword in self._commands_dict
+
+    @property
+    def available_commands(self) -> Set["CommandDefinition"]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[CommandDefinition]
+            All the available commands.
+        """
+        return set(self._commands_dict.values())
+
+    @property
+    def keywords(self) -> Set[str]:
+        """
+        Get all the available keywords.
+
+        Returns
+        -------
+        Set[str]
+            All the available keywords.
+        """
+        return set(self._commands_dict.keys())
+
+    @staticmethod
+    def find_modules(
+        path: List[str], *, to_ignore: Optional[Set[str]] = None
+    ) -> Iterable["SourceFileLoader"]:
+        """
+        Find modules in a given path.
+
+        Parameters
+        ----------
+        path : List[str]
+            Path where to find the modules.
+        to_ignore : Set[str], optional
+            Set of module names to ignore.
+
+        Yields
+        ------
+        SourceFileLoader
+        """
+        if to_ignore is None:
+            to_ignore = set()
+
+        for loader, module_name, _ in pkgutil.walk_packages(path):
+            if module_name in to_ignore:
+                continue
+            yield loader.find_module(module_name)

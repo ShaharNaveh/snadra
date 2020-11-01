@@ -1,14 +1,4 @@
-# Build
-pip
-setuptools
-wheel
-
-# Lint
-black
-flake8
-isort
-mypy
-
-# Test
-pytest >= 6.0 # Using pyproject.toml for configuration
-pytest-cov
+-r requirements/docs.txt
+-r requirements/style.txt
+-r requirements/tests.txt
+tox

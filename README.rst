@@ -35,6 +35,24 @@ You can observe that the project is now installed with ``pip list``.
     wcwidth           0.2.5
 
 
+Running the tests
+=================
+In order to run the tests we first need to install some dependencies.
+
+.. code-block:: none
+
+    $ pip install --upgrade -r requirements-dev.txt
+
+
+And then, run the tests with:
+
+.. code-block:: none
+
+    $ tox
+
+If you get a message that says ``congratulations :)``
+that means that evetything went well.
+
 TODO
 ====
 1. Add the "help" command.

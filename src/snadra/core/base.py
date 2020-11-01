@@ -2,7 +2,7 @@ import argparse
 import enum
 import functools
 import pkgutil
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set
 
 import pygments.token as ptoken
 
@@ -34,7 +34,7 @@ class Group:
     add_argument_group and add_mutually_exclusive_group
     """
 
-    def __init__(self, mutex: bool = False, **kwargs):
+    def __init__(self, mutex: bool = False, **kwargs) -> None:
         self.mutex = mutex
         self.kwargs = kwargs
 
@@ -55,15 +55,6 @@ class Parameter:
         self.kwargs = kwargs
 
 
-'''
-def parameter(complete, token=ptoken.Name.Label, *args, **kwargs):
-    """
-    foo bar baz
-    """
-    return (complete, token, args, kwargs)
-'''
-
-
 class CommandDefinition:
     """
     THe generic structure for commands.
@@ -72,16 +63,13 @@ class CommandDefinition:
     ----------
     KEYWORDS : Set[str]
         Set of the keywords for the new command.
-
     HELP_TEXT : str
         Help text for the new command.
-
     ARGS : Dict[str, ``Parameter``]
         Dictionary of parameter definitions created with the ``Parameter`` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
-
     GROUPS : Dict[str, ``Group``]
         Dictionary mapping group definitions to group names.
         The parameters to Group are passed directly to either
@@ -91,11 +79,11 @@ class CommandDefinition:
 
     KEYWORDS: Set[str] = {"unimplemented"}
     HELP_TEXT: str = ""
-    ARGS: Dict[str, Optional[Parameter]] = {}
+    ARGS: Optional[Dict[str, Parameter]] = {}
     GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize new command instance.
 
@@ -111,11 +99,23 @@ class CommandDefinition:
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
-            self.parser = None
+            self.parser = None  # type: ignore
 
-    def __key(self) -> Tuple[str, str]:
-        keywords = "".join(sorted(self.KEYWORDS))
-        return (keywords, self.HELP_TEXT)
+    def __key(self) -> str:
+        """
+        The unique identifier of the command.
+
+        Returns
+        -------
+        str
+            The unique identifier of the command.
+
+        Notes
+        -----
+        Since we have a test case that validate that there are no
+        duplicate keywords, this *should* be safe, maybe, hopefully.
+        """
+        return "".join(sorted(self.KEYWORDS))
 
     def __hash__(self) -> int:
         return hash(self.__key())
@@ -125,7 +125,7 @@ class CommandDefinition:
             return self.__key() == other.__key()
         return NotImplemented
 
-    def run(self, args):
+    def run(self, args: argparse.Namespace):
         """
         This is what gets run for each command.
 

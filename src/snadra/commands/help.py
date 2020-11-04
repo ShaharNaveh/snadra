@@ -22,7 +22,9 @@ class Command(CommandDefinition):
     KEYWORDS = {"help"}
     HELP_TEXT = "List all known commands and print their help message"
     # TODO: Fix this, so the choises will be genereted, and not just debug from 2AM.
-    ARGS = {"topic": Parameter(Complete.CHOICES, choices={"FOO", "BAR", "BAZ"}, nargs="?")}
+    ARGS = {
+        "topic": Parameter(Complete.CHOICES, choices={"FOO", "BAR", "BAZ"}, nargs="?")
+    }
 
     def run(self, args: Optional["argparse.Namespace"] = None):
         """

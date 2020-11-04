@@ -12,7 +12,7 @@ from snadra.core.base import Commands
 
 class TestCommands:
     @pytest.mark.parametrize(
-        "to_ignore, expected",
+        "ignore, expected",
         [
             (None, ["foo", "bar", "baz"]),
             ({}, ["foo", "bar", "baz"]),
@@ -21,7 +21,7 @@ class TestCommands:
             ({"foo", "bar", "baz"}, []),
         ],
     )
-    def test_find_modules(self, tmpdir, to_ignore, expected):
+    def test__find_modules(self, tmpdir, ignore, expected):
         commands_dir = tmpdir.mkdir("commands")
         files = {"foo", "bar", "baz", "__init__"}
 
@@ -31,7 +31,7 @@ class TestCommands:
         path = [str(commands_dir)]
 
         result = [
-            module.name for module in Commands.find_modules(path, to_ignore=to_ignore)
+            module.name for module in Commands._find_modules(path, ignore=ignore)
         ]
 
         assert sorted(result) == sorted(expected)

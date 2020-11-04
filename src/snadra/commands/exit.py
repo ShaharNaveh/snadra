@@ -28,7 +28,7 @@ class Command(CommandDefinition):
         """
         Exit `snadra`.
         """
-        if args is None or not args.yes:
+        if not args.yes:
             snutils.console.log("[red]Error[/red]: Exit not confirmed (use '--yes')")
             return
 

@@ -77,7 +77,7 @@ class CommandDefinition:
 
     KEYWORDS: Set[str] = {"unimplemented"}
     HELP_TEXT: str = ""
-    ARGS: Optional[Dict[str, Parameter]] = {}
+    ARGS: Dict[str, Parameter] = {}
     GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
 
@@ -97,7 +97,7 @@ class CommandDefinition:
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
-            self.parser = None  # type: ignore
+            self.parser = None
 
     def __key(self) -> str:
         """

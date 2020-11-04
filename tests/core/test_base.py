@@ -30,9 +30,7 @@ class TestCommands:
 
         path = [str(commands_dir)]
 
-        result = [
-            module.name for module in Commands._find_modules(path, ignore=ignore)
-        ]
+        result = [module.name for module in Commands._find_modules(path, ignore=ignore)]
 
         assert sorted(result) == sorted(expected)
 

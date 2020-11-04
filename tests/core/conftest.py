@@ -1,9 +1,8 @@
 import pytest
 
+import snadra._utils as snutils
 from snadra.core.base import Commands
 from snadra.core.parsers import CommandParser
-import snadra._utils as snutils
-
 
 
 @pytest.fixture

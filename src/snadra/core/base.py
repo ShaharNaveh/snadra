@@ -6,8 +6,6 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set, Unio
 
 import pygments.token as ptoken
 
-import snadra._utils as snutils
-
 if TYPE_CHECKING:
     from importlib.machinery import SourceFileLoader
 

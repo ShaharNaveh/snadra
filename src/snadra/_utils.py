@@ -5,7 +5,7 @@ from rich.console import Console
 console = Console()
 
 
-def get_commands_dir() -> str:
+def get_core_commands_dir() -> str:
     """
     Get the path to the commands dir.
     """

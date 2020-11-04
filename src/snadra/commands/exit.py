@@ -1,7 +1,7 @@
 """
 The command to exit snadra.
 """
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import snadra._utils as snutils
 from snadra.core.base import CommandDefinition, Complete, Parameter
@@ -24,7 +24,7 @@ class Command(CommandDefinition):
         )
     }
 
-    def run(self, args: Optional["argparse.Namespace"] = None):
+    def run(self, args: "argparse.Namespace"):
         """
         Exit `snadra`.
         """

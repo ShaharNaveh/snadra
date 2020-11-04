@@ -208,7 +208,10 @@ class Commands:
     """
 
     def __init__(
-        self, *, command_dirs: Union[str, List[str]], ignore: Optional[Set[str]] = None
+        self,
+        *,
+        command_dirs: Union[str, List[str]],
+        ignore: Optional[Union[str, Iterable[str]]] = None,
     ) -> None:
         """
         Get all the commands from the specified directories.
@@ -228,7 +231,10 @@ class Commands:
         )
 
     def _refresh_command_dict(
-        self, *, command_dirs: List[str], ignore: Optional[Set[str]] = None
+        self,
+        *,
+        command_dirs: List[str],
+        ignore: Optional[Union[str, Iterable[str]]] = None,
     ) -> Dict[str, "CommandDefinition"]:
         """
         Map every keyword to the desired command.
@@ -237,8 +243,13 @@ class Commands:
         ----------
         command_dirs : List[str]
             List containing string representation of paths to the command directories.
-        ignore : Set[str], optional
+        ignore : Union[str, Iterable[str]], optional
             The module names to ignore.
+
+        Returns
+        -------
+        Dict[str, CommandDefinition]
+            Dictionary with the keywords mapped to thier command.
         """
         commands_dict = {}
         for module in Commands._find_modules(path_list=command_dirs, ignore=ignore):
@@ -308,7 +319,7 @@ class Commands:
 
     @staticmethod
     def _find_modules(
-        path_list: List[str], *, ignore: Optional[Set[str]] = None
+        path_list: List[str], *, ignore: Optional[Union[str, Iterable[str]]] = None
     ) -> Iterable["SourceFileLoader"]:
         """
         Find modules in a given path.
@@ -317,7 +328,7 @@ class Commands:
         ----------
         path : List[str]
             Path where to find the modules.
-        ignore : Set[str], optional
+        ignore : Union[str, Iterable[str]], optional
             Set of module names to skip.
 
         Yields

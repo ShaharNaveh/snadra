@@ -107,6 +107,14 @@ class CommandParser:
         ------
         ValueError
             If could not parse the line correctly.
+
+        Examples
+        --------
+        >>> line = "command --target 127.0.0.1 --port 80"
+        >>> CommandParser._parse_line(line)
+        (\
+['command', '--target', '127.0.0.1', '--port', '80'], \
+'command --target 127.0.0.1 --port 80')
         """
         line = line.strip()
         if line == "":

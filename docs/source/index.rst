@@ -1,12 +1,12 @@
 Welcome to snadra's documentation!
 ==================================
 
-
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-   snadra
+   API reference <reference/index>
+   Development <dev/index>
+   User guide <user/index>
 
 
 

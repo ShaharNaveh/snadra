@@ -1,17 +1,8 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+import datetime
 import os
 import sys
+
+import snadra
 
 sys.path.insert(0, os.path.abspath("../../src"))
 
@@ -19,9 +10,13 @@ sys.path.insert(0, os.path.abspath("../../src"))
 # -- Project information -----------------------------------------------------
 
 project = "snadra"
-copyright = "2020, ShaharNaveh"
+copyright = f"2020-{datetime.datetime.now().year}, ShaharNaveh"
 author = "ShaharNaveh"
+version = snadra.__version__
+release = version
 
+#html_use_modindex = True
+#htmlhelp_basename = "snadra"
 
 # -- General configuration ---------------------------------------------------
 
@@ -30,20 +25,22 @@ author = "ShaharNaveh"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
 ]
 napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
 
-#autodoc_default_options = {
+# autodoc_default_options = {
 #    "members": True,
 #    "undoc-members": True,
 #    "private-members": True,
 #    "inherited-members": True,
 #    "show-inheritance": True,
-#}
+# }
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

@@ -33,6 +33,11 @@ sections = [
 src_paths = ["src", "tests"]
 
 [tool.pytest.ini_options]
+doctest_optionflags = [
+	"NORMALIZE_WHITESPACE",
+	"IGNORE_EXCEPTION_DETAIL",
+	"ELLIPSIS",
+]
 filterwarnings = [
 	"error",
 ]

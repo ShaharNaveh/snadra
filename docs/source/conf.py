@@ -15,8 +15,8 @@ author = "ShaharNaveh"
 version = snadra.__version__
 release = version
 
-#html_use_modindex = True
-#htmlhelp_basename = "snadra"
+# html_use_modindex = True
+# htmlhelp_basename = "snadra"
 
 # -- General configuration ---------------------------------------------------
 

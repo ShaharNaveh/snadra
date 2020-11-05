@@ -112,6 +112,7 @@ jobs:
 
       - name: Doctest
         run: |
+          python -m pip install --upgrade pytest
           ci/code_check.sh doctest
         if: always()
 

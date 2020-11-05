@@ -42,6 +42,10 @@ then
 	echo "Black version"
 	black --version
 
+	MSG='Checking black formatting on docs/' ; echo $MSG
+	black --check docs/
+	RET_SUM=$(($RET_SUM + $?))
+
 	MSG='Checking black formatting on src/' ; echo $MSG
 	black --check src/
 	RET_SUM=$(($RET_SUM + $?))
@@ -49,12 +53,17 @@ then
 	MSG='Checking black formatting on tests/' ; echo $MSG
 	black --check tests/
 	RET_SUM=$(($RET_SUM + $?))
+
 	echo ""
 	MSG='DONE' ; echo $MSG
 	echo ""
 
 	echo "flake8 --version"
 	flake8 --version
+
+	MSG='Check linting on docs/' ; echo $MSG
+	flake8 --format="$FLAKE8_FORMAT" docs/
+	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Check linting on src/' ; echo $MSG
 	flake8 --format="$FLAKE8_FORMAT" src/
@@ -63,6 +72,7 @@ then
 	MSG='Check linting on tests/' ; echo $MSG
 	flake8 --format="$FLAKE8_FORMAT" tests/
 	RET_SUM=$(($RET_SUM + $?))
+
 	echo ""
 	MSG='DONE' ; echo $MSG
 	echo ""
@@ -70,6 +80,17 @@ then
 	# Isort
 	echo "Isort version"
 	isort --version-number
+
+	MSG='Check import formatting on docs/' ; echo $MSG
+	ISORT_CMD="isort --quiet --check-only docs/"
+	if [[ "$GITHUB_ACTIONS" == "true" ]]
+	then
+		eval $ISORT_CMD | awk '{print "##[error]" $0}'
+		RET_SUM=$(($RET_SUM + ${PIPESTATUS[0]}))
+	else
+		eval $ISORT_CMD
+		RET_SUM=$(($RET_SUM + $?))
+	fi
 
 	MSG='Check import formatting on src/' ; echo $MSG
 	ISORT_CMD="isort --quiet --check-only src/"
@@ -79,8 +100,8 @@ then
 		RET_SUM=$(($RET_SUM + ${PIPESTATUS[0]}))
     else
 		eval $ISORT_CMD
+		RET_SUM=$(($RET_SUM + $?))
 	fi
-	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Check import formatting on tests/' ; echo $MSG
 	ISORT_CMD="isort --quiet --check-only tests/"
@@ -90,8 +111,8 @@ then
 		RET_SUM=$(($RET_SUM + ${PIPESTATUS[0]}))
 	else
 		eval $ISORT_CMD
+		RET_SUM=$(($RET_SUM + $?))
 	fi
-	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""
 	MSG='DONE' ; echo $MSG

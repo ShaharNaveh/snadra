@@ -13,7 +13,7 @@ defaults:
 jobs:
   # Style job
   style:
-    name: Check code quality
+    name: Style
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -113,7 +113,7 @@ jobs:
       - name: Doctest
         run: |
           ci/code_check.sh doctest
-        if: false # Disabled for now
+        if: always()
 
       - name: Running tests
         run: |
@@ -122,7 +122,7 @@ jobs:
 
   # documentation job
   documentation:
-    name: Test and build the documentation
+    name: Build documentation
     needs: [style, test]
     runs-on: ${{ matrix.os }}
     strategy:

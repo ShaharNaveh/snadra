@@ -24,6 +24,9 @@ class Command(CommandDefinition):
 
     def run(self, args: "argparse.Namespace"):
         if args.topic:
-            pass
+            if args.topic in self.KEYWORDS:
+                snutils.console.log(self.HELP_TEXT)
+            elif :
+
         elif args:
             pass

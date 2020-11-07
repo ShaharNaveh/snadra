@@ -34,18 +34,37 @@ intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 templates_path = ["_templates"]
 
 
-
 html_theme = "sphinx_rtd_theme"
+html_sidebars = {
+    "**": [
+        "about.html",
+        "searchbox.html",
+        "localtoc.html",
+        "relations.html",
+    ]
+}
+
+"""
+html_theme_options = {
+    "logo": "logo.png",
+    "show_powered_by": False,
+    "fixed_sidebar": True,
+    "sidebar_collapse": True,
+    #'github_button': False,
+}
+"""
+
 html_static_path = ["_static"]
 
 
-autoclass_content = "both"
 html_show_sourcelink = False
 
-#sphinx.ext.autosummary
+# sphinx.ext.autosummary
 autosummary_generate = True
 
 # sphinx.ext.autodoc
+autoclass_content = "both"
+autodoc_member_order = "groupwise"
 autodoc_inherit_docstrings = True
 
 # sphinx_autodoc_typehints

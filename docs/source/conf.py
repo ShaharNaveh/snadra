@@ -4,7 +4,8 @@ import sys
 
 import snadra
 
-sys.path.insert(0, os.path.abspath("../../src"))
+snadra_root = os.path.dirname(snadra.__file__)
+sys.path.insert(0, snadra_root)
 
 
 # -- Project information -----------------------------------------------------

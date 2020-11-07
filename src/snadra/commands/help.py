@@ -36,8 +36,9 @@ class Command(CommandDefinition):
             if args.topic in self.KEYWORDS:
                 snutils.console.print(self.LONG_HELP)
             else:
+                # Here we are counting on "argparse" choices for validation.
                 target_command = self._commands.get_command(args.topic)
-                snutils.console.print(target_command.LONG_HELP)
+                snutils.console.print(target_command.LONG_HELP)  # type: ignore
 
         elif args:
             help_table = RichTable(title="Help menu", box=rich_box.SIMPLE)
@@ -46,11 +47,10 @@ class Command(CommandDefinition):
 
             for keyword in self.available_keywords:
                 if keyword in self.KEYWORDS:
-                    command = self
+                    command_description = self.DESCRIPTION
                 else:
-                    command = self._commands.get_command(keyword)
+                    command_description = self._commands.get_command(keyword).DESCRIPTION  # type: ignore # noqa: E501
 
-                command_description = command.DESCRIPTION
                 help_table.add_row(keyword, command_description)
 
             snutils.console.print(help_table)

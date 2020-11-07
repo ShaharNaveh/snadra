@@ -16,9 +16,9 @@ class Complete(enum.Enum):
 
     Attributes
     ----------
-    CHOICES : enum.auto
+    CHOICES : :class:`enum.auto`
         Complete argument from the list of choices specified in ``parameter``.
-    NONE : enum.auto
+    NONE : :class:`enum.auto`
         Do not provide argument completions.
     """
 
@@ -61,16 +61,16 @@ class CommandDefinition:
     ----------
     KEYWORDS : Set[str]
         Set of the keywords for the new command.
-    DESCRIPTION : str
+    DESCRIPTION : `str`
         Help text for the new command.
-    LONG_HELP : str
+    LONG_HELP : `str`
         Long help for the command.
-    ARGS : Dict[str, ``Parameter``]
-        Dictionary of parameter definitions created with the ``Parameter`` class.
+    ARGS : Dict[str, :class:`Parameter`]
+        Dictionary of parameter definitions created with the :class:`Parameter` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
-    GROUPS : Dict[str, ``Group``]
+    GROUPS : Dict[str, :class:`Group`]
         Dictionary mapping group definitions to group names.
         The parameters to Group are passed directly to either
         add_argument_group or add_mutually_exclusive_group with the exception of the
@@ -85,11 +85,6 @@ class CommandDefinition:
     DEFAULTS: Dict = {}
 
     def __init__(self) -> None:
-        """
-        Initialize new command instance.
-
-        Parses the `ARGS` dictionary into an argparse object.
-        """
         # Create the parser object
         if self.ARGS is not None:
             for keyword in self.KEYWORDS:
@@ -132,13 +127,13 @@ class CommandDefinition:
 
         Parameters
         ----------
-        args : argparse.Namespace
-            The `argparse.Namespace` containing the parsed arguments.
+        args : :class:`argparse.Namespace`
+            The :class:`argparse.Namespace` containing the parsed arguments.
 
         Raises
         ------
         NotImplementedError
-            If there was not `run` method for the new command's class.
+            If there was no ``run`` method for the new command's class.
         """
         raise NotImplementedError
 
@@ -154,12 +149,12 @@ class CommandDefinition:
 
         Parameters
         ----------
-        parser : argparse.ArgumentParser
+        parser : :class:`argparse.ArgumentParser`
             Parser object to add arguments to.
-        args : Dict[str, Parameter]
-            ``ARGS`` dictionary.
-        group_defs : Dict[str, ``Group``],
-            ``Group`` dictionary.
+        args : Dict[`str`, class:`Parameter`]
+            `ARGS` dictionary.
+        group_defs : Dict[str, :class:`Group`],
+            :class:`Group` dictionary.
         """
         groups: Dict = {}
         for name, definition in group_defs.items():
@@ -208,6 +203,13 @@ class CommandDefinition:
 class Commands:
     """
     Holds all the relevant commands attributes.
+
+    Parameters
+    ----------
+    command_dirs : Union[str, List[str]]
+        Sequence containing strings of paths to the command directories.
+    ignore : Union[str, Iterable[str]], optional
+        The module names to ignore.
     """
 
     def __init__(
@@ -216,16 +218,6 @@ class Commands:
         command_dirs: Union[str, List[str]],
         ignore: Optional[Union[str, Iterable[str]]] = None,
     ) -> None:
-        """
-        Get all the commands from the specified directories.
-
-        Parameters
-        ----------
-        command_dirs : Union[str, List[str]]
-            List containing string representation of paths to the command directories.
-        ignore : Set[str], optional
-            The module names to ignore.
-        """
         if isinstance(command_dirs, str):
             command_dirs = [command_dirs]
 
@@ -251,7 +243,7 @@ class Commands:
 
         Returns
         -------
-        Dict[str, CommandDefinition]
+        Dict[`str`, :class:`CommandDefinition`]
             Dictionary with the keywords mapped to thier command.
         """
         commands_dict = {}
@@ -269,13 +261,13 @@ class Commands:
 
         Parameters
         ----------
-        keyword : str
+        keyword : `str`
             Keyword to check.
 
         Returns
         -------
-        CommandDefinition, or None
-            The command that is mapped to `keyword`, if `keyword` is not mapped to any
+        Optional[:class:`CommandDefinition`]
+            The command that is mapped to ``keyword``, if ``keyword`` is not mapped to any
             command, `None` is returned.
         """
         return self._commands_dict.get(keyword)
@@ -286,12 +278,12 @@ class Commands:
 
         Parameters
         ----------
-        keyword : str
+        keyword : `str`
             Keyword to check.
 
         Returns
         -------
-        bool
+        `bool`
             Whether or not the keyword is mapped to a valid command.
         """
         return keyword in self._commands_dict
@@ -303,7 +295,7 @@ class Commands:
 
         Returns
         -------
-        Set[CommandDefinition]
+        Set[:class`CommandDefinition`]
             All the available commands.
         """
         return set(self._commands_dict.values())
@@ -315,7 +307,7 @@ class Commands:
 
         Returns
         -------
-        Set[str]
+        Set[`str`]
             All the available keywords.
         """
         return set(self._commands_dict.keys())
@@ -336,7 +328,7 @@ class Commands:
 
         Yields
         ------
-        SourceFileLoader
+        :class:`SourceFileLoader`
         """
         if ignore is None:
             ignore = set()

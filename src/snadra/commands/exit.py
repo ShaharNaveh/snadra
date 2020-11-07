@@ -28,6 +28,11 @@ class Command(CommandDefinition):
     def run(self, args: "argparse.Namespace"):
         """
         Exit `snadra`.
+
+        Parameters
+        ----------
+        args : :class:`argparse.Namespace`
+            The arguments for the command.
         """
         if not args.yes:
             snutils.console.log("[red]Error[/red]: Exit not confirmed (use '--yes')")

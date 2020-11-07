@@ -26,9 +26,10 @@ class Command(CommandDefinition):
     KEYWORDS = {"help"}
     DESCRIPTION = "List all known commands and print their help message"
     LONG_HELP = "THE LONG HELP MESSAGE OF 'help'"
-    ARGS = {"topic": Parameter(Complete.CHOICES, choices=available_keywords, nargs="?")}
 
-    # _commands_dict = _commands._commands_dict
+    # TODO: Get rid of this 'choices' and make better handling and
+    # display better information about the commands and how to use the help command.
+    ARGS = {"topic": Parameter(Complete.CHOICES, choices=available_keywords, nargs="?")}
 
     def run(self, args: "argparse.Namespace"):
         if args.topic:
@@ -39,4 +40,17 @@ class Command(CommandDefinition):
                 snutils.console.print(target_command.LONG_HELP)
 
         elif args:
-            snutils.console.print("Printing the entire commands table")
+            help_table = RichTable(title="Help menu", box=rich_box.SIMPLE)
+            help_table.add_column("Command")
+            help_table.add_column("Description")
+
+            for keyword in self.available_keywords:
+                if keyword in self.KEYWORDS:
+                    command = self
+                else:
+                    command = self._commands.get_command(keyword)
+
+                command_description = command.DESCRIPTION
+                help_table.add_row(keyword, command_description)
+
+            snutils.console.print(help_table)

@@ -61,8 +61,10 @@ class CommandDefinition:
     ----------
     KEYWORDS : Set[str]
         Set of the keywords for the new command.
-    HELP_TEXT : str
+    DESCRIPTION : str
         Help text for the new command.
+    LONG_HELP : str
+        Long help for the command.
     ARGS : Dict[str, ``Parameter``]
         Dictionary of parameter definitions created with the ``Parameter`` class.
         If this is None, your command will receive the
@@ -76,7 +78,8 @@ class CommandDefinition:
     """
 
     KEYWORDS: Set[str] = {"unimplemented"}
-    HELP_TEXT: str = ""
+    DESCRIPTION: str = ""
+    LONG_HELP: str = ""
     ARGS: Dict[str, Parameter] = {}
     GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
@@ -92,7 +95,7 @@ class CommandDefinition:
             for keyword in self.KEYWORDS:
                 self.parser = argparse.ArgumentParser(
                     prog=keyword,
-                    description=self.HELP_TEXT,
+                    description=self.DESCRIPTION,
                     formatter_class=argparse.RawDescriptionHelpFormatter,
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)

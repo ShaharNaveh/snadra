@@ -16,7 +16,8 @@ class Command(CommandDefinition):
     """
 
     KEYWORDS = {"exit", "quit"}
-    HELP_TEXT = "Exit the console"
+    DESCRIPTION = "Exit the console"
+    LONG_HELP = "LONG HELP FOR EXIT COMMAND"
 
     ARGS = {
         "-y,--yes": Parameter(

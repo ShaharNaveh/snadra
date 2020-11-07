@@ -8,17 +8,18 @@ import snadra.commands.exit as module
 @pytest.fixture
 def command():
     """
-    Return the tested command
+    Return the tested command.
     """
     return module.Command()
 
 
 class TestExitCommand:
     def test_confirm(self, capfd, command):
+        args = argparse.Namespace(yes=False)
         expected_err = ""
         expected_out = "Exit not confirmed"
 
-        command.run()
+        command.run(args)
 
         captured = capfd.readouterr()
 
@@ -26,7 +27,8 @@ class TestExitCommand:
         assert expected_err == captured.err
 
     def test_run(self, command):
-        assert command.run() is None
+        args = argparse.Namespace(yes=False)
+        assert command.run(args) is None
 
     def test_run_confirm(self, command):
         args = argparse.Namespace(yes=True)

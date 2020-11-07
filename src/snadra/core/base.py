@@ -2,11 +2,9 @@ import argparse
 import enum
 import functools
 import pkgutil
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set, Union
 
 import pygments.token as ptoken
-
-import snadra._utils as snutils
 
 if TYPE_CHECKING:
     from importlib.machinery import SourceFileLoader
@@ -63,8 +61,10 @@ class CommandDefinition:
     ----------
     KEYWORDS : Set[str]
         Set of the keywords for the new command.
-    HELP_TEXT : str
+    DESCRIPTION : str
         Help text for the new command.
+    LONG_HELP : str
+        Long help for the command.
     ARGS : Dict[str, ``Parameter``]
         Dictionary of parameter definitions created with the ``Parameter`` class.
         If this is None, your command will receive the
@@ -78,8 +78,9 @@ class CommandDefinition:
     """
 
     KEYWORDS: Set[str] = {"unimplemented"}
-    HELP_TEXT: str = ""
-    ARGS: Optional[Dict[str, Parameter]] = {}
+    DESCRIPTION: str = ""
+    LONG_HELP: str = ""
+    ARGS: Dict[str, Parameter] = {}
     GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
 
@@ -94,12 +95,12 @@ class CommandDefinition:
             for keyword in self.KEYWORDS:
                 self.parser = argparse.ArgumentParser(
                     prog=keyword,
-                    description=self.HELP_TEXT,
+                    description=self.DESCRIPTION,
                     formatter_class=argparse.RawDescriptionHelpFormatter,
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
-            self.parser = None  # type: ignore
+            self.parser = None
 
     def __key(self) -> str:
         """
@@ -155,7 +156,7 @@ class CommandDefinition:
         ----------
         parser : argparse.ArgumentParser
             Parser object to add arguments to.
-        args : Dict[str, Optional[Parameter]]
+        args : Dict[str, Parameter]
             ``ARGS`` dictionary.
         group_defs : Dict[str, ``Group``],
             ``Group`` dictionary.
@@ -209,19 +210,54 @@ class Commands:
     Holds all the relevant commands attributes.
     """
 
-    def __init__(self) -> None:
-        self._commands_dict = self._refresh_command_dict()
-
-    def _refresh_command_dict(self) -> Dict[str, "CommandDefinition"]:
+    def __init__(
+        self,
+        *,
+        command_dirs: Union[str, List[str]],
+        ignore: Optional[Union[str, Iterable[str]]] = None,
+    ) -> None:
         """
-        foo bar baz
-        """
-        commands_dict: Dict[str, "CommandDefinition"] = {}
-        commands_dir = [snutils.get_commands_dir()]
+        Get all the commands from the specified directories.
 
-        for module in Commands.find_modules(commands_dir, to_ignore={"_base"}):
-            # TODO: Remove the () from the Command,
-            # we should not run this until we have too
+        Parameters
+        ----------
+        command_dirs : Union[str, List[str]]
+            List containing string representation of paths to the command directories.
+        ignore : Set[str], optional
+            The module names to ignore.
+        """
+        if isinstance(command_dirs, str):
+            command_dirs = [command_dirs]
+
+        self._commands_dict = self._refresh_command_dict(
+            command_dirs=command_dirs, ignore=ignore
+        )
+
+    def _refresh_command_dict(
+        self,
+        *,
+        command_dirs: List[str],
+        ignore: Optional[Union[str, Iterable[str]]] = None,
+    ) -> Dict[str, "CommandDefinition"]:
+        """
+        Map every keyword to the desired command.
+
+        Parameters
+        ----------
+        command_dirs : List[str]
+            List containing string representation of paths to the command directories.
+        ignore : Union[str, Iterable[str]], optional
+            The module names to ignore.
+
+        Returns
+        -------
+        Dict[str, CommandDefinition]
+            Dictionary with the keywords mapped to thier command.
+        """
+        commands_dict = {}
+        for module in Commands._find_modules(path_list=command_dirs, ignore=ignore):
+            # TODO: Should we remove the () from the Command,
+            # should not run this until we have too?
             command = module.load_module(module.name).Command()  # type: ignore
             for keyword in command.KEYWORDS:
                 commands_dict[keyword] = command
@@ -285,8 +321,8 @@ class Commands:
         return set(self._commands_dict.keys())
 
     @staticmethod
-    def find_modules(
-        path: List[str], *, to_ignore: Optional[Set[str]] = None
+    def _find_modules(
+        path_list: List[str], *, ignore: Optional[Union[str, Iterable[str]]] = None
     ) -> Iterable["SourceFileLoader"]:
         """
         Find modules in a given path.
@@ -295,17 +331,17 @@ class Commands:
         ----------
         path : List[str]
             Path where to find the modules.
-        to_ignore : Set[str], optional
-            Set of module names to ignore.
+        ignore : Union[str, Iterable[str]], optional
+            Set of module names to skip.
 
         Yields
         ------
         SourceFileLoader
         """
-        if to_ignore is None:
-            to_ignore = set()
+        if ignore is None:
+            ignore = set()
 
-        for loader, module_name, _ in pkgutil.walk_packages(path):
-            if module_name in to_ignore:
+        for loader, module_name, _ in pkgutil.walk_packages(path_list):
+            if module_name in ignore:
                 continue
             yield loader.find_module(module_name)

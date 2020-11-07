@@ -1,7 +1,7 @@
 """
 The command to exit snadra.
 """
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import snadra._utils as snutils
 from snadra.core.base import CommandDefinition, Complete, Parameter
@@ -16,7 +16,8 @@ class Command(CommandDefinition):
     """
 
     KEYWORDS = {"exit", "quit"}
-    HELP_TEXT = "Exit the console"
+    DESCRIPTION = "Exit the console"
+    LONG_HELP = "LONG HELP FOR EXIT COMMAND"
 
     ARGS = {
         "-y,--yes": Parameter(
@@ -24,11 +25,11 @@ class Command(CommandDefinition):
         )
     }
 
-    def run(self, args: Optional["argparse.Namespace"] = None):
+    def run(self, args: "argparse.Namespace"):
         """
         Exit `snadra`.
         """
-        if args is None or not args.yes:
+        if not args.yes:
             snutils.console.log("[red]Error[/red]: Exit not confirmed (use '--yes')")
             return
 

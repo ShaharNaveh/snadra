@@ -27,7 +27,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
-    #"sphinx.ext.viewcode",
+    # "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "sphinx_rtd_theme",
 ]
@@ -59,14 +59,11 @@ html_theme_options = {
 
 html_static_path = ["_static"]
 
-
 html_show_sourcelink = False
 
 # autoapi.extension
 autoapi_type = "python"
 autoapi_dirs = [SRC_PATH]
-#autoapi_dirs = [snadra_root]
-# autoapi_root = os.path.relpath("reference/")
 autoapi_member_order = "groupwise"
 autoapi_keep_files = True
 autoapi_template_dir = "_templates/_autoapi_templates"

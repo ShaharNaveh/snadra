@@ -52,6 +52,10 @@ jobs:
         run: |
           python -m pip install --upgrade -r requirements/style.txt
 
+      - name: Pip list
+        run: |
+          python -m pip list -vvv
+
       - name: Linting
         run: |
           ci/code_check.sh lint
@@ -153,7 +157,7 @@ jobs:
 
       - name: Install tox
         run: |
-          python -m pip install --upgrade tox
+          python -m pip install --force-reinstall --upgrade tox
 
       - name: Build documentation
         run: |

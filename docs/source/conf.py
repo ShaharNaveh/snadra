@@ -69,7 +69,7 @@ autoapi_dirs = [SRC_PATH]
 # autoapi_root = os.path.relpath("reference/")
 autoapi_member_order = "groupwise"
 autoapi_keep_files = True
-#autoapi_template_dir = "_templates/_autoapi_templates/"
+autoapi_template_dir = "_templates/_autoapi_templates"
 
 # sphinx.ext.autosummary
 autosummary_generate = True

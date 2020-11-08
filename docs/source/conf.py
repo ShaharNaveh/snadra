@@ -9,6 +9,8 @@ import snadra
 snadra_root = os.path.dirname(snadra.__file__)
 sys.path.insert(0, snadra_root)
 
+SRC_PATH = os.path.dirname(snadra_root)
+
 
 project = "snadra"
 author = "ShaharNaveh"
@@ -19,6 +21,7 @@ release = version
 exclude_patterns = []
 
 extensions = [
+    "autoapi.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
@@ -56,13 +59,20 @@ html_theme_options = {
 
 html_static_path = ["_static"]
 
-
 html_show_sourcelink = False
+
+# autoapi.extension
+autoapi_type = "python"
+autoapi_dirs = [SRC_PATH]
+autoapi_member_order = "groupwise"
+autoapi_keep_files = True
+autoapi_template_dir = "_templates/_autoapi_templates"
 
 # sphinx.ext.autosummary
 autosummary_generate = True
 
 # sphinx.ext.autodoc
+autodoc_typehints = "description"
 autoclass_content = "both"
 autodoc_member_order = "groupwise"
 autodoc_inherit_docstrings = True

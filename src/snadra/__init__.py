@@ -1,7 +1,4 @@
 """
-Snadra
-------
-
 A metasploit clone written in python.
 """
 

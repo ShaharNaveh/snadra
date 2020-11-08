@@ -3,8 +3,8 @@ The command to exit snadra.
 """
 from typing import TYPE_CHECKING
 
+from snadra._core.base import CommandDefinition, Complete, Parameter
 import snadra._utils as snutils
-from snadra.core.base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse

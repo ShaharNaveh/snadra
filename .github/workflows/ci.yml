@@ -50,7 +50,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade -r requirements/style.txt
+          python -m pip install --upgrade --upgrade-strategy 'eager' -r requirements/style.txt
 
       - name: Pip list
         run: |
@@ -160,10 +160,20 @@ jobs:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
-      - name: Install tox
+      - name: Install dependencies
         run: |
-          python -m pip install --force-reinstall --upgrade tox
+          python -m pip install --upgrade --upgrade-strategy 'eager' -r requirements/docs.txt
+
+      - name: Pip list
+        run: |
+          python -m pip list
 
       - name: Build documentation
         run: |
-          tox -e ${{ matrix.tox }}
+          cd docs/
+          make clean
+          sphinx-build -v -a -b html source/ build/html
+
+      - name: Upload documentation
+        run: |
+          echo "Just a placeholder for now:)"

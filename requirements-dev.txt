@@ -1,4 +1,4 @@
 -r requirements/docs.txt
 -r requirements/style.txt
 -r requirements/tests.txt
-tox>3.18 # using `allowlist_externals` configuration option
+tox

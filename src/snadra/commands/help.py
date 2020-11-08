@@ -32,6 +32,14 @@ class Command(CommandDefinition):
     ARGS = {"topic": Parameter(Complete.CHOICES, choices=available_keywords, nargs="?")}
 
     def run(self, args: "argparse.Namespace"):
+        """
+        Show the help.
+
+        Parameters
+        ----------
+        args : :class:`argparse.Namespace`
+            The arguments for the command.
+        """
         if args.topic:
             if args.topic in self.KEYWORDS:
                 snutils.console.print(self.LONG_HELP)

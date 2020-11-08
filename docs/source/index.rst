@@ -4,7 +4,7 @@ Welcome to snadra's documentation!
 .. toctree::
    :maxdepth: 1
 
-   API reference <reference/index>
+   API reference <autoapi/index>
    Development <dev/index>
    User guide <user/index>
 

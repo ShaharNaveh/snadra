@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Documentation
-docs/source/reference/
+docs/source/autoapi/

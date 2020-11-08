@@ -54,7 +54,7 @@ jobs:
 
       - name: Pip list
         run: |
-          python -m pip list -vvv
+          python -m pip list
 
       - name: Linting
         run: |

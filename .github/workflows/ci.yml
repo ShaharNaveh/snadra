@@ -138,6 +138,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install/Upgrade apt packages
+        run: |
+          sudo apt update
+          sudo apt install --only-upgrade -y make
+
       - name: Update pip
         run: |
           python -m pip install --upgrade wheel

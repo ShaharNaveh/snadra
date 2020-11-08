@@ -23,7 +23,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
     "sphinx.ext.intersphinx",
-    "numpydoc",
+    "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "sphinx_rtd_theme",

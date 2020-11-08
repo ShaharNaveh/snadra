@@ -61,9 +61,9 @@ class CommandDefinition:
     ----------
     KEYWORDS : Set[str]
         Set of the keywords for the new command.
-    DESCRIPTION : `str`
+    DESCRIPTION : str
         Help text for the new command.
-    LONG_HELP : `str`
+    LONG_HELP : str
         Long help for the command.
     ARGS : Dict[str, :class:`Parameter`]
         Dictionary of parameter definitions created with the :class:`Parameter` class.
@@ -151,7 +151,7 @@ class CommandDefinition:
         ----------
         parser : :class:`argparse.ArgumentParser`
             Parser object to add arguments to.
-        args : Dict[`str`, class:`Parameter`]
+        args : Dict[str, :class:`Parameter`]
             `ARGS` dictionary.
         group_defs : Dict[str, :class:`Group`],
             :class:`Group` dictionary.
@@ -243,7 +243,7 @@ class Commands:
 
         Returns
         -------
-        Dict[`str`, :class:`CommandDefinition`]
+        Dict[str, :class:`CommandDefinition`]
             Dictionary with the keywords mapped to thier command.
         """
         commands_dict = {}
@@ -261,14 +261,14 @@ class Commands:
 
         Parameters
         ----------
-        keyword : `str`
+        keyword : str
             Keyword to check.
 
         Returns
         -------
         Optional[:class:`CommandDefinition`]
-            The command that is mapped to ``keyword``, if ``keyword`` is not mapped to any
-            command, `None` is returned.
+            The command that is mapped to ``keyword``,
+            if ``keyword`` is not mapped to any command, `None` is returned.
         """
         return self._commands_dict.get(keyword)
 
@@ -278,12 +278,12 @@ class Commands:
 
         Parameters
         ----------
-        keyword : `str`
+        keyword : str
             Keyword to check.
 
         Returns
         -------
-        `bool`
+        bool
             Whether or not the keyword is mapped to a valid command.
         """
         return keyword in self._commands_dict
@@ -295,7 +295,7 @@ class Commands:
 
         Returns
         -------
-        Set[:class`CommandDefinition`]
+        Set[:class:`CommandDefinition`]
             All the available commands.
         """
         return set(self._commands_dict.values())
@@ -307,7 +307,7 @@ class Commands:
 
         Returns
         -------
-        Set[`str`]
+        Set[str]
             All the available keywords.
         """
         return set(self._commands_dict.keys())

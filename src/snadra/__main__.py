@@ -1,7 +1,7 @@
 """
 foo bar baz
 """
-from snadra.core.parsers import CommandParser
+from snadra._core.parsers import CommandParser
 
 if __name__ == "__main__":
     snadra_console = CommandParser()

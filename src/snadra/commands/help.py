@@ -4,7 +4,7 @@ from rich import box as rich_box
 from rich.table import Table as RichTable
 
 import snadra._utils as snutils
-from snadra.core.base import CommandDefinition, Commands, Complete, Parameter
+from snadra._core.base import CommandDefinition, Commands, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse

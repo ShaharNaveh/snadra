@@ -4,7 +4,7 @@ The command to exit snadra.
 from typing import TYPE_CHECKING
 
 import snadra._utils as snutils
-from snadra.core.base import CommandDefinition, Complete, Parameter
+from snadra._core.base import CommandDefinition, Complete, Parameter
 
 if TYPE_CHECKING:
     import argparse

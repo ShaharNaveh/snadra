@@ -34,15 +34,6 @@ class TestCommands:
 
         assert sorted(result) == sorted(expected)
 
-    def test_available_commands(self, commands):
-        """
-        Test if all the expected commands, are in `Commands.available_commands`.
-        """
-        expected = {ExitCommand(), HelpCommand()}
-        result = commands.available_commands
-
-        assert result == expected
-
     def test_keywords(self, commands):
         """
         Test if all the expected keywords of the commands, are in `Commands.keywords`.
@@ -75,7 +66,12 @@ class TestCommands:
         Check if two commands or more are sharing the same keyword.
         """
         result: List[str] = []
-        for command in commands.available_commands:
+        seen_commands = set()
+        for command_keyword in commands.keywords:
+            command = commands.get_command(command_keyword)
+            if command in seen_commands:
+                continue
+            seen_commands.add(command)
             for keyword in command.KEYWORDS:
                 result.append(keyword)
 

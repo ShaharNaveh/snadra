@@ -31,7 +31,7 @@ class Command(CommandDefinition):
     # display better information about the commands and how to use the help command.
     ARGS = {"topic": Parameter(Complete.CHOICES, choices=available_keywords, nargs="?")}
 
-    def run(self, args: "argparse.Namespace"):
+    def run(self, args: "argparse.Namespace") -> None:
         """
         Show the help.
 

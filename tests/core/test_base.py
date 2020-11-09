@@ -3,6 +3,8 @@ Testing general things about the commands
 """
 from typing import List
 
+from hypothesis import assume, given
+import hypothesis.strategies as st
 import pytest
 
 from snadra._core.commands import Commands
@@ -90,17 +92,8 @@ class TestCommands:
         result = commands.get_command(keyword)
         assert result == expected
 
-    @pytest.mark.parametrize(
-        "keyword",
-        [
-            "not_a_valid_command",
-            " exit",
-            "help ",
-            "\n",
-            " ",
-            "",
-        ],
-    )
+    @given(keyword=st.text())
     def test_get_command_invalid(self, commands, keyword):
+        assume(keyword not in commands.keywords)
         result = commands.get_command(keyword)
         assert result is None

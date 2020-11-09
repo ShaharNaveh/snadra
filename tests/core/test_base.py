@@ -49,7 +49,6 @@ class TestCommands:
     def test_is_valid_keyword_valid(self, commands, keyword):
         assert commands.is_valid_keyword(keyword)
 
-
     @given(keyword=st.text())
     def test_is_valid_keyword_invalid(self, commands, keyword):
         assume(keyword not in commands.keywords)

@@ -96,18 +96,6 @@ class Commands:
         return keyword in self._commands_dict
 
     @property
-    def available_commands(self) -> Set["CommandDefinition"]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[:class:`CommandDefinition`]
-            All the available commands.
-        """
-        return set(self._commands_dict.values())
-
-    @property
     def keywords(self) -> Set[str]:
         """
         Get all the available keywords.

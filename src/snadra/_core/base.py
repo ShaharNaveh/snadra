@@ -95,7 +95,7 @@ class CommandDefinition:
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
-            self.parser = None
+            self.parser = None # type: ignore
 
     def __key(self) -> str:
         """
@@ -142,7 +142,7 @@ class CommandDefinition:
         parser: argparse.ArgumentParser,
         args: Dict[str, Parameter],
         group_defs: Dict[str, Group],
-    ):
+    ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
         for this command. You should not need to overload this.
@@ -179,7 +179,7 @@ class CommandDefinition:
                 method = param.kwargs["choices"]
 
                 class wrapper:
-                    def __init__(wself, method):
+                    def __init__(wself, method) -> None:
                         wself.method = method
 
                     def __iter__(wself):

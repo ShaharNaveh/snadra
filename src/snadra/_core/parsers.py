@@ -20,7 +20,7 @@ class CommandParser:
         core_commands_dir = snutils.get_core_commands_dir()
         self.commands = Commands(command_dirs=core_commands_dir)
 
-    def setup_prompt(self):  # pragma: no cover
+    def setup_prompt(self) -> None:  # pragma: no cover
         """
         See Notes section.
 

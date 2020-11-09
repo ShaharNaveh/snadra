@@ -5,7 +5,7 @@ from snadra._core.parsers import CommandParser
 import snadra._utils as snutils
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def commands() -> "Commands":
     """
     Returns
@@ -17,7 +17,7 @@ def commands() -> "Commands":
     return Commands(command_dirs=core_commands_dir)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def command_parser() -> "CommandParser":
     """
     Returns

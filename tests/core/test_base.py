@@ -6,8 +6,8 @@ from typing import List
 import pytest
 
 from snadra._core.base import Commands
-from snadra.commands.exit import Command as ExitCommand
-from snadra.commands.help import Command as HelpCommand
+from snadra._core.commands.exit import Command as ExitCommand
+from snadra._core.commands.help import Command as HelpCommand
 
 
 class TestCommands:

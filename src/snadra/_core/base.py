@@ -95,7 +95,7 @@ class CommandDefinition:
                 )
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
-            self.parser = None # type: ignore
+            self.parser = None  # type: ignore
 
     def __key(self) -> str:
         """

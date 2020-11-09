@@ -1,6 +1,6 @@
 import pytest
 
-from snadra._core.base import Commands
+from snadra._core.commands import Commands
 from snadra._core.parsers import CommandParser
 import snadra._utils as snutils
 

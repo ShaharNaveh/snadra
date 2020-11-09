@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from snadra._core.base import CommandDefinition, Commands, Complete, Parameter
+from snadra._core.base import CommandDefinition, Complete, Parameter
+from snadra._core.commands import Commands
 import snadra._utils as snutils
 
 if TYPE_CHECKING:

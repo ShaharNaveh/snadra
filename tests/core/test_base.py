@@ -5,7 +5,7 @@ from typing import List
 
 import pytest
 
-from snadra._core.base import Commands
+from snadra._core.commands import Commands
 from snadra._core.commands.exit import Command as ExitCommand
 from snadra._core.commands.help import Command as HelpCommand
 

@@ -49,18 +49,9 @@ class TestCommands:
     def test_is_valid_keyword_valid(self, commands, keyword):
         assert commands.is_valid_keyword(keyword)
 
-    @pytest.mark.parametrize(
-        "keyword",
-        [
-            "not_a_valid_command",
-            " exit",
-            "help ",
-            "\n",
-            " ",
-            "",
-        ],
-    )
+    @given(keyword=st.text())
     def test_is_valid_keyword_invalid(self, commands, keyword):
+        assume(keyword not in commands.keywords)
         assert not commands.is_valid_keyword(keyword)
 
     def test_no_duplicate_keywords(self, commands):

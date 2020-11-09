@@ -2,7 +2,7 @@ import argparse
 
 import pytest
 
-import snadra.commands.exit as module
+import snadra._core.commands.exit as module
 
 
 @pytest.fixture

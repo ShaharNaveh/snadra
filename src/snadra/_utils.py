@@ -12,4 +12,4 @@ def get_core_commands_dir() -> str:
     import snadra
 
     snadra_dir = os.path.dirname(snadra.__file__)
-    return os.path.join(snadra_dir, "commands")
+    return os.path.join(snadra_dir, "_core", "commands")

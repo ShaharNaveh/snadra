@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 from rich.console import Console
 
@@ -11,5 +12,5 @@ def get_core_commands_dir() -> str:
     """
     import snadra
 
-    snadra_dir = os.path.dirname(snadra.__file__)
+    snadra_dir = pathlib.Path(snadra.__file__)
     return os.path.join(snadra_dir, "_core", "commands")

@@ -2,8 +2,6 @@ import datetime
 import os
 import sys
 
-import sphinx_rtd_theme  # noqa: F401
-
 import snadra
 
 snadra_root = os.path.dirname(snadra.__file__)
@@ -29,7 +27,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
-    "sphinx_rtd_theme",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
@@ -37,7 +34,8 @@ intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 templates_path = ["_templates"]
 
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "alabaster"
+
 html_sidebars = {
     "**": [
         "about.html",
@@ -47,24 +45,16 @@ html_sidebars = {
     ]
 }
 
-_html_theme_options_toc = {
-    "collapse_navigation": True,
-    "sticky_navigation": True,
-    "navigation_depth": 4,
-    "includehidden": True,
-    "titles_only": False,
-}
 
-_html_theme_options_misc = {
-    "display_version": True,
-    "prev_next_buttons_location": "bottom",
-    "style_nav_header_background": "#2980B9",
-    # "vcs_pageview_mode": "" # Can be {blob, view}
+html_theme_options = {
+    "fixed_sidebar": False,
+    "show_powered_by": False,
+    "github_user": "ShaharNaveh",
+    "github_repo": "snadra",
+    "github_banner": False,
+    "show_related": False,
+    "sidebar_collapse": True,
 }
-
-html_theme_options = {}
-html_theme_options.update(_html_theme_options_toc)
-html_theme_options.update(_html_theme_options_misc)
 
 html_static_path = ["_static"]
 

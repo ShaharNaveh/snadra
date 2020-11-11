@@ -1,8 +1,19 @@
 import importlib
 from importlib.machinery import SOURCE_SUFFIXES
+import importlib.util
 import pathlib
 import sys
-from typing import TYPE_CHECKING, Dict, Iterable, Optional, Sequence, Set, Tuple
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    FrozenSet,
+    Iterable,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import snadra._utils as snutils
 
@@ -24,11 +35,15 @@ class Commands:
     __slots__ = {"_commands_dict", "_path", "_skip"}
 
     def __init__(
-        self, path: Optional["StrPath"] = None, *, skip: Optional[Sequence[str]] = None
+        self,
+        path: Optional["StrPath"] = None,
+        *,
+        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]] = None,
     ) -> None:
-
         if path is None:
             self._path = pathlib.Path(__file__).parent.resolve()
+        else:
+            self._path = pathlib.Path(path)
 
         if skip:
             self._skip = skip
@@ -39,7 +54,7 @@ class Commands:
             file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
         )
         self._commands_dict: Dict[str, "CommandDefinition"] = {
-            keyword: module.Command
+            keyword: module.Command  # type: ignore
             for keyword, module in Commands._module_aliases(
                 fetched_modules=fetched_modules
             )
@@ -67,7 +82,7 @@ class Commands:
         Skipping already loaded modules.
         """
         for path in file_paths:
-            module_name = path.stem
+            module_name = path.stem  # type: ignore
             if module_name in sys.modules:
                 # TODO: Do we ever reach here?
                 snutils.console.log(f"Skiping already loaded module {module_name}")
@@ -75,7 +90,7 @@ class Commands:
 
             module_spec = importlib.util.spec_from_file_location(module_name, path)
             module = importlib.util.module_from_spec(module_spec)
-            module_spec.loader.exec_module(module)
+            module_spec.loader.exec_module(module)  # type: ignore
             yield module
 
     @staticmethod
@@ -86,22 +101,24 @@ class Commands:
         foo bar baz.
         """
         for module in fetched_modules:
-            command = module.Command
+            command = module.Command  # type: ignore
             for keyword in command.KEYWORDS:
                 yield keyword, module
 
     @staticmethod
     def iter_dir(
-        path: "os.PathLike", *, skip: Sequence[str]
+        path: "os.PathLike",
+        *,
+        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]],
     ) -> Iterable["os.PathLike"]:
         """
         foo bar baz.
         """
         # TODO(maybe): Add recursive for dirs?
-        for child in path.iterdir():
+        for child in path.iterdir():  # type: ignore
             if child.is_dir():
                 continue
-            if child.stem in skip:
+            if child.stem in skip:  # type: ignore
                 continue
             if child.suffix not in SOURCE_SUFFIXES:
                 continue

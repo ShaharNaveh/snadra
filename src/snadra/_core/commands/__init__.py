@@ -27,10 +27,21 @@ if TYPE_CHECKING:
 
 class Commands:
     """
-    foo bar baz.
-    """
+    Holds all the relevant commands attributes.
 
-    # TODO: Add documentation.
+    Parameters
+    ----------
+    path : StrPath, optional.
+        Path to the directory with the commands to load.
+        If not specified, the snadra's core commands directory is being loaded.
+        Sequence containing strings of paths to the command directories.
+    skip : Union[Sequence[str], Set[str], FrozenSet[str]]], optional.
+        Module names to skip.
+
+    Notes
+    -----
+    The module names inside `skip`, should not be with a file suffix.
+    """
 
     __slots__ = {"_commands_dict", "_path", "_skip"}
 

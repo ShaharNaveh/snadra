@@ -25,11 +25,14 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",  # Needs to be loaded after napoleon
     "sphinx.ext.viewcode",
-    "sphinx_autodoc_typehints",
 ]
 
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "pygments": ("https://pygments.org", None, "_static/objects_invs/pygments-inv.txt"),
+    "python": ("https://docs.python.org/3", None ,"_static/objects_invs/python.txt"),
+}
 
 templates_path = ["_templates"]
 
@@ -69,6 +72,7 @@ autoapi_template_dir = "_templates/_autoapi_templates"
 
 # sphinx.ext.autosummary
 autosummary_generate = True
+autosummary_imported_members = False
 
 # sphinx.ext.autodoc
 autodoc_typehints = "description"

@@ -12,9 +12,9 @@ class Complete(enum.Enum):
 
     Attributes
     ----------
-    CHOICES : :class:`enum.auto`
-        Complete argument from the list of choices specified in ``parameter``.
-    NONE : :class:`enum.auto`
+    CHOICES : enum.auto
+        Complete argument from the list of choices specified in `parameter`.
+    NONE : enum.auto
         Do not provide argument completions.
     """
 
@@ -25,7 +25,17 @@ class Complete(enum.Enum):
 class Group:
     """
     This just wraps the parameters to the
-    add_argument_group and add_mutually_exclusive_group
+    `argparse.ArgumentParser.add_argument_group` and
+    `argparse.ArgumentParser.add_mutually_exclusive_group`
+
+    Parameters
+    ----------
+    mutex : bool
+
+    See Also
+    --------
+    argparse.ArgumentParser.add_argument_group
+    argparse.ArgumentParser.add_mutually_exclusive_group
     """
 
     def __init__(self, mutex: bool = False, **kwargs) -> None:
@@ -34,6 +44,13 @@ class Group:
 
 
 class Parameter:
+    """
+    Attributes
+    ----------
+    complete : Complete
+    token : :ref:`pygments:token.Name.Label`
+    """
+
     def __init__(
         self,
         complete: Complete,

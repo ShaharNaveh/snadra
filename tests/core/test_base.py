@@ -7,10 +7,6 @@ from hypothesis import assume, given
 import hypothesis.strategies as st
 import pytest
 
-from snadra._core.commands import Commands
-from snadra._core.commands.exit import Command as ExitCommand
-from snadra._core.commands.help import Command as HelpCommand
-
 
 class TestCommands:
     def test_keywords(self, commands):

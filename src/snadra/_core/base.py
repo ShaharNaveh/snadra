@@ -1,7 +1,7 @@
 import argparse
 import enum
 import functools
-from typing import Any, Dict, Optional, Set
+from typing import Dict, Optional, Set
 
 import pygments.token as ptoken
 
@@ -92,30 +92,6 @@ class CommandDefinition:
                 self.build_parser(self.parser, self.ARGS, self.GROUPS)
         else:
             self.parser = None  # type: ignore
-
-    def __key(self) -> str:
-        """
-        The unique identifier of the command.
-
-        Returns
-        -------
-        str
-            The unique identifier of the command.
-
-        Notes
-        -----
-        Since we have a test case that validate that there are no
-        duplicate keywords, this *should* be safe, maybe, hopefully.
-        """
-        return "".join(sorted(self.KEYWORDS))
-
-    def __hash__(self) -> int:
-        return hash(self.__key())
-
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, CommandDefinition):
-            return self.__key() == other.__key()
-        return NotImplemented
 
     def run(self, args: argparse.Namespace):
         """

@@ -53,7 +53,7 @@ class CommandParser:
                 continue
             except Exception:
                 # Unexpected errors, we catch them so the application won't crash.
-                snutils.console.print_exception(width=None)
+                snutils.console.print_exception(width=None, show_locals=True)
                 continue
 
     def dispatch_line(self, line: str) -> None:
@@ -71,7 +71,8 @@ class CommandParser:
             return
 
         if self.commands.is_valid_keyword(argv[0]):
-            command = self.commands.get_command(argv[0])
+            # NOTE: Here is where we initialize the command
+            command = self.commands.get_command(argv[0])()
         else:
             snutils.console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return

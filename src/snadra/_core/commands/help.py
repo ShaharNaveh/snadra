@@ -16,21 +16,21 @@ class Command(CommandDefinition):
     The command `help`, for displaying help information about other commands.
     """
 
-    _commands = Commands(
-        command_dirs=snutils.get_core_commands_dir(),
-        ignore="help",  # ignoring help so we don't create a circular dependency
-    )
-    _core_commands_keywords = _commands.keywords
-    _core_commands_keywords.add("help")
-    available_keywords = sorted(_core_commands_keywords)
+    # TODO: Add tests
 
     KEYWORDS = {"help"}
     DESCRIPTION = "List all known commands and print their help message"
     LONG_HELP = "THE LONG HELP MESSAGE OF 'help'"
 
+    _commands = Commands(skip={"__init__", "help"})
+    _keywords = _commands.keywords
+    _available_keywords = sorted(_keywords.union(KEYWORDS))
+
     # TODO: Get rid of this 'choices' and make better handling and
     # display better information about the commands and how to use the help command.
-    ARGS = {"topic": Parameter(Complete.CHOICES, choices=available_keywords, nargs="?")}
+    ARGS = {
+        "topic": Parameter(Complete.CHOICES, choices=_available_keywords, nargs="?")
+    }
 
     def run(self, args: "argparse.Namespace") -> None:
         """
@@ -54,7 +54,7 @@ class Command(CommandDefinition):
             help_table.add_column("Command")
             help_table.add_column("Description")
 
-            for keyword in self.available_keywords:
+            for keyword in self._available_keywords:
                 if keyword in self.KEYWORDS:
                     command_description = self.DESCRIPTION
                 else:

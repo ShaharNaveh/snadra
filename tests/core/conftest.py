@@ -2,7 +2,6 @@ import pytest
 
 from snadra._core.commands import Commands
 from snadra._core.parsers import CommandParser
-import snadra._utils as snutils
 
 
 @pytest.fixture(scope="module")
@@ -13,8 +12,7 @@ def commands() -> "Commands":
     Commands
         A ``Commands`` instance.
     """
-    core_commands_dir = snutils.get_core_commands_dir()
-    return Commands(command_dirs=core_commands_dir)
+    return Commands()
 
 
 @pytest.fixture(scope="module")

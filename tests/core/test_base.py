@@ -7,35 +7,8 @@ from hypothesis import assume, given
 import hypothesis.strategies as st
 import pytest
 
-from snadra._core.commands import Commands
-from snadra._core.commands.exit import Command as ExitCommand
-from snadra._core.commands.help import Command as HelpCommand
-
 
 class TestCommands:
-    @pytest.mark.parametrize(
-        "ignore, expected",
-        [
-            (None, ["foo", "bar", "baz"]),
-            ({}, ["foo", "bar", "baz"]),
-            ({"foo"}, ["bar", "baz"]),
-            ({"foo", "bar"}, ["baz"]),
-            ({"foo", "bar", "baz"}, []),
-        ],
-    )
-    def test__find_modules(self, tmpdir, ignore, expected):
-        commands_dir = tmpdir.mkdir("commands")
-        files = {"foo", "bar", "baz", "__init__"}
-
-        for file_name in files:
-            commands_dir.join(f"{file_name}.py").write("")
-
-        path = [str(commands_dir)]
-
-        result = [module.name for module in Commands._find_modules(path, ignore=ignore)]
-
-        assert sorted(result) == sorted(expected)
-
     def test_keywords(self, commands):
         """
         Test if all the expected keywords of the commands, are in `Commands.keywords`.
@@ -70,18 +43,6 @@ class TestCommands:
 
         expected = list(set(result))
         assert sorted(result) == sorted(expected)
-
-    @pytest.mark.parametrize(
-        "keyword, expected",
-        [
-            ("help", HelpCommand()),
-            ("quit", ExitCommand()),
-            ("exit", ExitCommand()),
-        ],
-    )
-    def test_get_command_valid(self, commands, keyword, expected):
-        result = commands.get_command(keyword)
-        assert result == expected
 
     @given(keyword=st.text())
     def test_get_command_invalid(self, commands, keyword):

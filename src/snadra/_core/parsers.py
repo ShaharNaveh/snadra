@@ -17,8 +17,7 @@ class CommandParser:
     """
 
     def __init__(self) -> None:
-        core_commands_dir = snutils.get_core_commands_dir()
-        self.commands = Commands(command_dirs=core_commands_dir)
+        self.commands = Commands()
 
     def setup_prompt(self) -> None:  # pragma: no cover
         """
@@ -54,7 +53,7 @@ class CommandParser:
                 continue
             except Exception:
                 # Unexpected errors, we catch them so the application won't crash.
-                snutils.console.print_exception(width=None)
+                snutils.console.print_exception(width=None, show_locals=True)
                 continue
 
     def dispatch_line(self, line: str) -> None:
@@ -72,7 +71,8 @@ class CommandParser:
             return
 
         if self.commands.is_valid_keyword(argv[0]):
-            command = self.commands.get_command(argv[0])
+            # NOTE: Here is where we initialize the command
+            command = self.commands.get_command(argv[0])()  # type: ignore
         else:
             snutils.console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return
@@ -81,11 +81,11 @@ class CommandParser:
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
-            if command.parser:  # type: ignore
-                args = command.parser.parse_args(args)  # type: ignore
+            if command.parser:
+                args = command.parser.parse_args(args)
             else:
                 args = pline
-            command.run(args)  # type: ignore
+            command.run(args)
         except SystemExit:
             snutils.console.log("Incorrect arguments")
             return

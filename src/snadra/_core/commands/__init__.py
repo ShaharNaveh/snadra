@@ -1,10 +1,28 @@
-import pkgutil
-from typing import TYPE_CHECKING, Dict, Iterable, List, Optional, Set, Union
+import importlib
+from importlib.machinery import SOURCE_SUFFIXES
+import importlib.util
+import pathlib
+import sys
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    FrozenSet,
+    Iterable,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
-from snadra._core.base import CommandDefinition
+import snadra._utils as snutils
 
 if TYPE_CHECKING:
-    from importlib.machinery import SourceFileLoader
+    import os
+    import types
+
+    from snadra._core.base import CommandDefinition
+    from snadra._typing import StrPath
 
 
 class Commands:
@@ -13,54 +31,121 @@ class Commands:
 
     Parameters
     ----------
-    command_dirs : Union[str, List[str]]
+    path : StrPath, optional.
+        Path to the directory with the commands to load.
+        If not specified, the snadra's core commands directory is being loaded.
         Sequence containing strings of paths to the command directories.
-    ignore : Union[str, Iterable[str]], optional
-        The module names to ignore.
+    skip : Union[Sequence[str], Set[str], FrozenSet[str]]], optional.
+        Module names to skip.
+
+    Notes
+    -----
+    The module names inside `skip`, should not be with a file suffix.
     """
+
+    __slots__ = {"_commands_dict", "_path", "_skip"}
 
     def __init__(
         self,
+        path: Optional["StrPath"] = None,
         *,
-        command_dirs: Union[str, List[str]],
-        ignore: Optional[Union[str, Iterable[str]]] = None,
+        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]] = None,
     ) -> None:
-        if isinstance(command_dirs, str):
-            command_dirs = [command_dirs]
+        if path is None:
+            self._path = pathlib.Path(__file__).parent.resolve()
+        else:
+            self._path = pathlib.Path(path)
 
-        self._commands_dict = self._refresh_command_dict(
-            command_dirs=command_dirs, ignore=ignore
+        if skip:
+            self._skip = skip
+        else:
+            self._skip = frozenset({"__init__"})
+
+        fetched_modules = Commands._fetch_modules(
+            file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
         )
+        self._commands_dict: Dict[str, "CommandDefinition"] = {
+            keyword: module.Command  # type: ignore
+            for keyword, module in Commands._module_aliases(
+                fetched_modules=fetched_modules
+            )
+        }
 
-    def _refresh_command_dict(
-        self,
-        *,
-        command_dirs: List[str],
-        ignore: Optional[Union[str, Iterable[str]]] = None,
-    ) -> Dict[str, "CommandDefinition"]:
+    @staticmethod
+    def _fetch_modules(
+        file_paths: Iterable["os.PathLike"],
+    ) -> Iterable["types.ModuleType"]:
         """
-        Map every keyword to the desired command.
+        Get all modules from an iterable of file paths.
 
-        Parameters
-        ----------
-        command_dirs : List[str]
-            List containing string representation of paths to the command directories.
-        ignore : Union[str, Iterable[str]], optional
-            The module names to ignore.
+        Paramerters
+        -----------
+        file_paths : Iterable[:class:`os.PathLike`]
+            Iterable of file paths of python modules, that will be loaded.
+
+        Yields
+        ------
+        :class:`types.ModuleType`
+            Module that contains a `Command` class.
+
+        Notes
+        -----
+        Skipping already loaded modules.
+        """
+        for path in file_paths:
+            module_name = path.stem  # type: ignore
+            if module_name in sys.modules:
+                # TODO: Do we ever reach here?
+                snutils.console.log(f"Skiping already loaded module {module_name}")
+                continue
+
+            module_spec = importlib.util.spec_from_file_location(module_name, path)
+            module = importlib.util.module_from_spec(module_spec)
+            module_spec.loader.exec_module(module)  # type: ignore
+            yield module
+
+    @staticmethod
+    def _module_aliases(
+        fetched_modules: Iterable["types.ModuleType"],
+    ) -> Iterable[Tuple[str, "types.ModuleType"]]:
+        """
+        foo bar baz.
+        """
+        for module in fetched_modules:
+            command = module.Command  # type: ignore
+            for keyword in command.KEYWORDS:
+                yield keyword, module
+
+    @staticmethod
+    def iter_dir(
+        path: "os.PathLike",
+        *,
+        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]],
+    ) -> Iterable["os.PathLike"]:
+        """
+        foo bar baz.
+        """
+        # TODO(maybe): Add recursive for dirs?
+        for child in path.iterdir():  # type: ignore
+            if child.is_dir():
+                continue
+            if child.stem in skip:  # type: ignore
+                continue
+            if child.suffix not in SOURCE_SUFFIXES:
+                continue
+            yield child
+
+    @property
+    def keywords(self) -> Set[str]:
+        """
+        Get all the available keywords.
 
         Returns
         -------
-        Dict[str, :class:`CommandDefinition`]
-            Dictionary with the keywords mapped to thier command.
+        Set[str]
+            All the available keywords.
         """
-        commands_dict = {}
-        for module in Commands._find_modules(path_list=command_dirs, ignore=ignore):
-            # TODO: Should we remove the () from the Command,
-            # should not run this until we have too?
-            command = module.load_module(module.name).Command()  # type: ignore
-            for keyword in command.KEYWORDS:
-                commands_dict[keyword] = command
-        return commands_dict
+        return set(self._commands_dict.keys())
 
     def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
         """
@@ -94,41 +179,3 @@ class Commands:
             Whether or not the keyword is mapped to a valid command.
         """
         return keyword in self._commands_dict
-
-    @property
-    def keywords(self) -> Set[str]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[str]
-            All the available keywords.
-        """
-        return set(self._commands_dict.keys())
-
-    @staticmethod
-    def _find_modules(
-        path_list: List[str], *, ignore: Optional[Union[str, Iterable[str]]] = None
-    ) -> Iterable["SourceFileLoader"]:
-        """
-        Find modules in a given path.
-
-        Parameters
-        ----------
-        path : List[str]
-            Path where to find the modules.
-        ignore : Union[str, Iterable[str]], optional
-            Set of module names to skip.
-
-        Yields
-        ------
-        :class:`SourceFileLoader`
-        """
-        if ignore is None:
-            ignore = set()
-
-        for loader, module_name, _ in pkgutil.walk_packages(path_list):
-            if module_name in ignore:
-                continue
-            yield loader.find_module(module_name)

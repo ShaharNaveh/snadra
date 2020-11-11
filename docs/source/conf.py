@@ -30,8 +30,8 @@ extensions = [
 ]
 
 intersphinx_mapping = {
-    "pygments": ("https://pygments.org", None, "_static/objects_invs/pygments-inv.txt"),
-    "python": ("https://docs.python.org/3", None ,"_static/objects_invs/python.txt"),
+    "pygments": ("https://pygments.org", None),
+    "python": ("https://docs.python.org/3", None),
 }
 
 templates_path = ["_templates"]

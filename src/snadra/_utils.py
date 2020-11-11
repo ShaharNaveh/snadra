@@ -1,16 +1,13 @@
-import os
 import pathlib
 
 from rich.console import Console
 
+SNADRA_DIR = pathlib.Path(__file__).parent.resolve()
 console = Console()
 
 
-def get_core_commands_dir() -> str:
+def relative_to_root_dir(path):
     """
-    Get the path to the commands dir.
+    foo bar baz.
     """
-    import snadra
-
-    snadra_dir = pathlib.Path(snadra.__file__)
-    return os.path.join(snadra_dir, "_core", "commands")
+    pass

@@ -1,8 +1,12 @@
 import importlib
 from importlib.machinery import SOURCE_SUFFIXES
+import os
 import pathlib
 import sys
 from typing import TYPE_CHECKING, Dict, Iterable, Optional, Sequence, Set, Tuple
+
+import snadra._utils as snutils
+from snadra._utils import SNADRA_DIR
 
 if TYPE_CHECKING:
     import os
@@ -16,14 +20,17 @@ class Commands:
     """
     foo bar baz.
     """
+
     # TODO: Add documentation.
 
     __slots__ = {"_commands_dict", "_path", "_skip"}
 
     def __init__(
-        self, path: "StrPath" = ".", *, skip: Optional[Sequence[str]] = None
+        self, path: Optional["StrPath"] = None, *, skip: Optional[Sequence[str]] = None
     ) -> None:
-        self._path = pathlib.Path(path)
+
+        if path is None:
+            self._path = pathlib.Path(__file__).parent.resolve()
 
         if skip:
             self._skip = skip
@@ -31,11 +38,13 @@ class Commands:
             self._skip = frozenset({"__init__"})
 
         fetched_modules = Commands._fetch_modules(
-                    file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
-                )
+            file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
+        )
         self._commands_dict: Dict[str, "CommandDefinition"] = {
             keyword: module.Command
-            for keyword, module in Commands._module_aliases(fetched_modules=fetched_modules)
+            for keyword, module in Commands._module_aliases(
+                fetched_modules=fetched_modules
+            )
         }
 
     @staticmethod
@@ -59,13 +68,17 @@ class Commands:
         -----
         Skipping already loaded modules.
         """
-        for child in file_paths:
-            module_name = child.stem
-
+        for path in file_paths:
+            module_name = path.stem
             if module_name in sys.modules:
+                # TODO: Do we ever reach here?
+                snutils.console.log(f"Skiping already loaded module {module_name}")
                 continue
 
-            yield importlib.import_module(module_name)
+            module_spec = importlib.util.spec_from_file_location(module_name, path)
+            module = importlib.util.module_from_spec(module_spec)
+            module_spec.loader.exec_module(module)
+            yield module
 
     @staticmethod
     def _module_aliases(
@@ -108,65 +121,6 @@ class Commands:
         """
         return set(self._commands_dict.keys())
 
-
-'''
-class OldCommands:
-    """
-    Holds all the relevant commands attributes.
-
-    Parameters
-    ----------
-    command_dirs : Union[str, List[str]]
-        Sequence containing strings of paths to the command directories.
-    ignore : Union[str, Iterable[str]], optional
-        The module names to ignore.
-    """
-
-    # TODO: Change from "command_dirs" to "commands_dir"
-    def __init__(
-        self,
-        *,
-        command_dirs: "StrPath",
-        ignore: Optional[Union[str, Iterable[str]]] = None,
-    ) -> None:
-        if isinstance(command_dirs, str):
-            command_dirs = [command_dirs]
-
-        self._commands_dict = self._refresh_command_dict(
-            command_dirs=command_dirs, ignore=ignore
-        )
-
-    def _refresh_command_dict(
-        self,
-        *,
-        command_dirs: str,
-        ignore: Optional[Union[str, Iterable[str]]] = None,
-    ) -> Dict[str, "CommandDefinition"]:
-        """
-        Map every keyword to the desired command.
-
-        Parameters
-        ----------
-        command_dirs : List[str]
-            List containing string representation of paths to the command directories.
-        ignore : Union[str, Iterable[str]], optional
-            The module names to ignore.
-
-        Returns
-        -------
-        Dict[str, :class:`CommandDefinition`]
-            Dictionary with the keywords mapped to thier command.
-        """
-        commands_dict = {}
-        for module in Commands._find_modules(path_list=command_dirs, ignore=ignore):
-            # TODO: Should we remove the () from the Command,
-            # should not run this until we have too?
-
-            command = module.load_module(module.name).Command()  # type: ignore
-            for keyword in command.KEYWORDS:
-                commands_dict[keyword] = command
-        return commands_dict
-
     def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
         """
         Get the command that mapped to a keyword.
@@ -199,19 +153,3 @@ class OldCommands:
             Whether or not the keyword is mapped to a valid command.
         """
         return keyword in self._commands_dict
-
-    @property
-    def keywords(self) -> Set[str]:
-        """
-        Get all the available keywords.
-
-        Returns
-        -------
-        Set[str]
-            All the available keywords.
-        """
-        return set(self._commands_dict.keys())
-'''
-
-if __name__ == "__main__":
-    a = Commands()

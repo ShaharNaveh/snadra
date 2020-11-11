@@ -1,12 +1,10 @@
 import importlib
 from importlib.machinery import SOURCE_SUFFIXES
-import os
 import pathlib
 import sys
 from typing import TYPE_CHECKING, Dict, Iterable, Optional, Sequence, Set, Tuple
 
 import snadra._utils as snutils
-from snadra._utils import SNADRA_DIR
 
 if TYPE_CHECKING:
     import os

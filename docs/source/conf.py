@@ -47,15 +47,24 @@ html_sidebars = {
     ]
 }
 
-"""
-html_theme_options = {
-    "logo": "logo.png",
-    "show_powered_by": False,
-    "fixed_sidebar": True,
-    "sidebar_collapse": True,
-    #'github_button': False,
+_html_theme_options_toc = {
+        "collapse_navigation": True,
+        "sticky_navigation": True,
+        "navigation_depth": 4,
+        "includehidden": True,
+        "titles_only": False,
 }
-"""
+
+_html_theme_options_misc = {
+        "display_version": True,
+        "prev_next_buttons_location": "bottom",
+        "style_nav_header_background": "#2980B9",
+        #"vcs_pageview_mode": "" # Can be {blob, view}
+        }
+
+html_theme_options = {}
+html_theme_options.update(_html_theme_options_toc)
+html_theme_options.update(_html_theme_options_misc)
 
 html_static_path = ["_static"]
 

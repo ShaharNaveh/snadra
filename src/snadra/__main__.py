@@ -1,5 +1,13 @@
 """
-foo bar baz
+Main application entry point.
+
+This gets ran when you execute:
+
+$ snadra
+
+or
+
+$ python -m snadra
 """
 from snadra._core.parsers import CommandParser
 

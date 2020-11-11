@@ -78,8 +78,8 @@ class Commands:
         """
         Get all modules from an iterable of file paths.
 
-        Paramerters
-        -----------
+        Parameters
+        ----------
         file_paths : Iterable[:class:`os.PathLike`]
             Iterable of file paths of python modules, that will be loaded.
 
@@ -109,7 +109,19 @@ class Commands:
         fetched_modules: Iterable["types.ModuleType"],
     ) -> Iterable[Tuple[str, "types.ModuleType"]]:
         """
-        foo bar baz.
+        Exctracting the alias of each Command module.
+
+        Parameters
+        ----------
+        fetched_modules : Iterable[:class:`types.ModuleType`]
+            Generator of modules containing a `Command` class.
+
+        Yields
+        ------
+        str
+            Command alias.
+        :class:`types.ModuleType`
+            Module containing a `Command` class.
         """
         for module in fetched_modules:
             command = module.Command  # type: ignore
@@ -123,7 +135,19 @@ class Commands:
         skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]],
     ) -> Iterable["os.PathLike"]:
         """
-        foo bar baz.
+        Iterating over a directory, skipping specified file names.
+
+        Parameters
+        ----------
+        path : :class:`os.PathLike`
+            Path of the direcory to iterate over.
+        skip : Union[Sequence[str], Set[str], FrozenSet[str]], optional
+            File names to skip.
+
+        Yields
+        ------
+        :class:`os.PathLike`
+            File paths that have not got skipped over.
         """
         # TODO(maybe): Add recursive for dirs?
         for child in path.iterdir():  # type: ignore

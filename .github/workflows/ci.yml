@@ -189,7 +189,7 @@ jobs:
         run: |
           cd docs/
           make clean
-          sphinx-build -v -a -b html source/ build/html
+          sphinx-build -v -a -b html source/ build/html/
 
       - name: Upload documentation
         run: |

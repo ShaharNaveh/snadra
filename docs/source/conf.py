@@ -36,6 +36,14 @@ intersphinx_mapping = {
 
 templates_path = ["_templates"]
 
+header = f"""\
+.. currentmodule:: snadra
+.. ipython:: python
+   :suppress:
+   import snadra
+"""
+
+
 
 html_theme = "alabaster"
 

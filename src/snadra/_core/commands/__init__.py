@@ -31,7 +31,7 @@ class Commands:
 
     Parameters
     ----------
-    path : StrPath, optional.
+    path : snadra._typing.StrPath, optional.
         Path to the directory with the commands to load.
         If not specified, the snadra's core commands directory is being loaded.
         Sequence containing strings of paths to the command directories.

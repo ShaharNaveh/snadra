@@ -1,6 +1,7 @@
-from rich.console import Console
-from typing import FrozenSet, TYPE_CHECKING, Dict
 import abc
+from typing import TYPE_CHECKING, Dict, FrozenSet
+
+from rich.console import Console
 
 if TYPE_CHECKING:
     from snadra._core.base import Parameter
@@ -30,6 +31,7 @@ class CommandABC(abc.ABC):
         add_argument_group or add_mutually_exclusive_group with the exception of the
         mutex arg, which determines the group type.
     """
+
     @property
     @classmethod
     @abc.abstractmethod

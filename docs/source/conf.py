@@ -36,7 +36,7 @@ intersphinx_mapping = {
 
 templates_path = ["_templates"]
 
-header = f"""\
+header = """\
 .. currentmodule:: snadra
 .. ipython:: python
    :suppress:

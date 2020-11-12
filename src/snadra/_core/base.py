@@ -21,7 +21,7 @@ class Complete(enum.Enum):
     CHOICES = enum.auto()
     NONE = enum.auto()
 
-
+'''
 class Group:
     """
     This just wraps the parameters to the
@@ -41,6 +41,7 @@ class Group:
     def __init__(self, mutex: bool = False, **kwargs) -> None:
         self.mutex = mutex
         self.kwargs = kwargs
+'''
 
 
 class Parameter:

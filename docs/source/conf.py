@@ -44,7 +44,6 @@ header = f"""\
 """
 
 
-
 html_theme = "alabaster"
 
 html_sidebars = {

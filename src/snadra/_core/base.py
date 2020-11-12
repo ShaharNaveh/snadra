@@ -1,7 +1,7 @@
 import argparse
 import enum
 import functools
-from typing import Dict, Optional, Set
+from typing import Dict, Set
 
 import pygments.token as ptoken
 
@@ -22,27 +22,6 @@ class Complete(enum.Enum):
     NONE = enum.auto()
 
 
-class Group:
-    """
-    This just wraps the parameters to the
-    `argparse.ArgumentParser.add_argument_group` and
-    `argparse.ArgumentParser.add_mutually_exclusive_group`
-
-    Parameters
-    ----------
-    mutex : bool
-
-    See Also
-    --------
-    argparse.ArgumentParser.add_argument_group
-    argparse.ArgumentParser.add_mutually_exclusive_group
-    """
-
-    def __init__(self, mutex: bool = False, **kwargs) -> None:
-        self.mutex = mutex
-        self.kwargs = kwargs
-
-
 class Parameter:
     """
     Representation of a parameter for the command parsing.
@@ -58,13 +37,11 @@ class Parameter:
         self,
         complete: Complete,
         token=ptoken.Name.Label,
-        group: Optional[str] = None,
         *args,
         **kwargs,
     ) -> None:
         self.complete = complete
         self.token = token
-        self.group = group
         self.args = args
         self.kwargs = kwargs
 
@@ -86,18 +63,12 @@ class CommandDefinition:
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
-    GROUPS : Dict[str, snadra._core.base.Group]
-        Dictionary mapping group definitions to group names.
-        The parameters to Group are passed directly to either
-        add_argument_group or add_mutually_exclusive_group with the exception of the
-        mutex arg, which determines the group type.
     """
 
     KEYWORDS: Set[str] = {"unimplemented"}
     DESCRIPTION: str = ""
     LONG_HELP: str = ""
     ARGS: Dict[str, Parameter] = {}
-    GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
 
     def __init__(self) -> None:
@@ -109,7 +80,7 @@ class CommandDefinition:
                     description=self.DESCRIPTION,
                     formatter_class=argparse.RawDescriptionHelpFormatter,
                 )
-                self.build_parser(self.parser, self.ARGS, self.GROUPS)
+                self.build_parser(self.parser, self.ARGS)
         else:
             self.parser = None  # type: ignore
 
@@ -134,7 +105,6 @@ class CommandDefinition:
         self,
         parser: argparse.ArgumentParser,
         args: Dict[str, Parameter],
-        group_defs: Dict[str, Group],
     ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -146,26 +116,10 @@ class CommandDefinition:
             Parser object to add arguments to.
         args : Dict[str, snadra._core.base.Parameter]
             `ARGS` dictionary.
-        group_defs : Dict[str, snadra._core.base.Group]
-            Group dictionary.
         """
-        groups: Dict = {}
-        for name, definition in group_defs.items():
-            if definition.mutex:
-                groups[name] = parser.add_mutually_exclusive_group(**definition.kwargs)
-            else:
-                groups[name] = parser.add_argument_group(**definition.kwargs)
-
         for arg, param in args.items():
             names = arg.split(",")
-
-            if param.group is not None and param.group not in groups:
-                raise ValueError(f"{param.group}: no such group")
-
-            if param.group is not None:
-                group = groups[param.group]
-            else:
-                group = parser
+            group = parser
 
             # Patch choice to work with a callable
             if "choices" in param.kwargs and callable(param.kwargs["choices"]):

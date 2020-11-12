@@ -100,14 +100,18 @@ class CommandParser:
 
         Returns
         -------
-        Optional[Tuple[List[str], str]]
-            Tuple with the line as a list.
-            and the parsed line.
+        List[str]
+            Line parsed as a list. (with shlex)
+        str
 
         Raises
         ------
         ValueError
             If could not parse the line correctly.
+
+        See Also
+        --------
+        shlex.split
 
         Examples
         --------

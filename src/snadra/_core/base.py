@@ -12,9 +12,9 @@ class Complete(enum.Enum):
 
     Attributes
     ----------
-    CHOICES : :class:`enum.auto`
-        Complete argument from the list of choices specified in ``parameter``.
-    NONE : :class:`enum.auto`
+    CHOICES : enum.auto
+        Complete argument from the list of choices specified in `parameter`.
+    NONE : enum.auto
         Do not provide argument completions.
     """
 
@@ -25,7 +25,17 @@ class Complete(enum.Enum):
 class Group:
     """
     This just wraps the parameters to the
-    add_argument_group and add_mutually_exclusive_group
+    `argparse.ArgumentParser.add_argument_group` and
+    `argparse.ArgumentParser.add_mutually_exclusive_group`
+
+    Parameters
+    ----------
+    mutex : bool
+
+    See Also
+    --------
+    argparse.ArgumentParser.add_argument_group
+    argparse.ArgumentParser.add_mutually_exclusive_group
     """
 
     def __init__(self, mutex: bool = False, **kwargs) -> None:
@@ -34,6 +44,16 @@ class Group:
 
 
 class Parameter:
+    """
+    Representation of a parameter for the command parsing.
+
+    Attributes
+    ----------
+    complete : snadra._core.base.Complete
+    token : pygments:token.Name.Label
+    group : str, optional
+    """
+
     def __init__(
         self,
         complete: Complete,
@@ -51,7 +71,7 @@ class Parameter:
 
 class CommandDefinition:
     """
-    THe generic structure for commands.
+    The generic structure for commands.
 
     Attributes
     ----------
@@ -61,12 +81,12 @@ class CommandDefinition:
         Help text for the new command.
     LONG_HELP : str
         Long help for the command.
-    ARGS : Dict[str, :class:`Parameter`]
+    ARGS : Dict[str, snadra._core.base.Parameter]
         Dictionary of parameter definitions created with the :class:`Parameter` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
-    GROUPS : Dict[str, :class:`Group`]
+    GROUPS : Dict[str, snadra._core.base.Group]
         Dictionary mapping group definitions to group names.
         The parameters to Group are passed directly to either
         add_argument_group or add_mutually_exclusive_group with the exception of the
@@ -99,13 +119,14 @@ class CommandDefinition:
 
         Parameters
         ----------
-        args : :class:`argparse.Namespace`
-            The :class:`argparse.Namespace` containing the parsed arguments.
+        args : argparse.Namespace
+            Namespace containing the parsed arguments.
 
         Raises
         ------
         NotImplementedError
-            If there was no ``run`` method for the new command's class.
+            If there was no :meth:`snadra._core.base.CommandDefinition.run`
+            method for the new command's class.
         """
         raise NotImplementedError
 
@@ -121,12 +142,12 @@ class CommandDefinition:
 
         Parameters
         ----------
-        parser : :class:`argparse.ArgumentParser`
+        parser : argparse.ArgumentParser
             Parser object to add arguments to.
-        args : Dict[str, :class:`Parameter`]
+        args : Dict[str, snadra._core.base.Parameter]
             `ARGS` dictionary.
-        group_defs : Dict[str, :class:`Group`],
-            :class:`Group` dictionary.
+        group_defs : Dict[str, snadra._core.base.Group]
+            Group dictionary.
         """
         groups: Dict = {}
         for name, definition in group_defs.items():

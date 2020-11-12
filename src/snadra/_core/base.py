@@ -59,13 +59,13 @@ class Parameter:
         self,
         complete: Complete,
         token=ptoken.Name.Label,
-        group: Optional[str] = None,
+        #group: Optional[str] = None,
         *args,
         **kwargs,
     ) -> None:
         self.complete = complete
         self.token = token
-        self.group = group
+        #self.group = group
         self.args = args
         self.kwargs = kwargs
 
@@ -98,7 +98,7 @@ class CommandDefinition:
     DESCRIPTION: str = ""
     LONG_HELP: str = ""
     ARGS: Dict[str, Parameter] = {}
-    GROUPS: Dict[str, Group] = {}
+    #GROUPS: Dict[str, Group] = {}
     DEFAULTS: Dict = {}
 
     def __init__(self) -> None:
@@ -110,7 +110,8 @@ class CommandDefinition:
                     description=self.DESCRIPTION,
                     formatter_class=argparse.RawDescriptionHelpFormatter,
                 )
-                self.build_parser(self.parser, self.ARGS, self.GROUPS)
+                #self.build_parser(self.parser, self.ARGS, self.GROUPS)
+                self.build_parser(self.parser, self.ARGS)
         else:
             self.parser = None  # type: ignore
 
@@ -135,7 +136,7 @@ class CommandDefinition:
         self,
         parser: argparse.ArgumentParser,
         args: Dict[str, Parameter],
-        group_defs: Dict[str, Group],
+        #group_defs: Dict[str, Group],
     ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -150,23 +151,26 @@ class CommandDefinition:
         group_defs : Dict[str, snadra._core.base.Group]
             Group dictionary.
         """
+
+        '''
         groups: Dict = {}
         for name, definition in group_defs.items():
             if definition.mutex:
                 groups[name] = parser.add_mutually_exclusive_group(**definition.kwargs)
             else:
                 groups[name] = parser.add_argument_group(**definition.kwargs)
+        '''
 
         for arg, param in args.items():
             names = arg.split(",")
 
-            if param.group is not None and param.group not in groups:
-                raise ValueError(f"{param.group}: no such group")
+            #if param.group is not None and param.group not in groups:
+                #raise ValueError(f"{param.group}: no such group")
 
-            if param.group is not None:
-                group = groups[param.group]
-            else:
-                group = parser
+            #if param.group is not None:
+                #group = groups[param.group]
+            #else:
+            group = parser
 
             # Patch choice to work with a callable
             if "choices" in param.kwargs and callable(param.kwargs["choices"]):

@@ -5,4 +5,5 @@ Development
 .. toctree::
    :maxdepth: 1
 
-   placeholder
+   install
+   testing

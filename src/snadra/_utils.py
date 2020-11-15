@@ -1,5 +1,5 @@
 import abc
-from typing import TYPE_CHECKING, Dict, FrozenSet
+from typing import TYPE_CHECKING, Dict, Set
 
 from rich.console import Console
 
@@ -11,31 +11,17 @@ console = Console()
 
 class CommandABC(abc.ABC):
     """
-    The generic structure for commands.
+    Abstract base class for command line commands.
 
-    Attributes
-    ----------
-    KEYWORDS : Set[str]
-    DESCRIPTION : str
-        Help text for the new command.
-    LONG_HELP : str
-        Long help for the command.
-    ARGS : Dict[str, snadra._core.base.Parameter]
-        Dictionary of parameter definitions created with the :class:`Parameter` class.
-        If this is None, your command will receive the
-        raw argument string and no processing will be done except
-        removing the leading command name.
-    GROUPS : Dict[str, snadra._core.base.Group]
-        Dictionary mapping group definitions to group names.
-        The parameters to Group are passed directly to either
-        add_argument_group or add_mutually_exclusive_group with the exception of the
-        mutex arg, which determines the group type.
+    See Also
+    --------
+    snadra._core.commands.exit
+    snadra._core.commands.help
     """
 
     @property
-    @classmethod
     @abc.abstractmethod
-    def keywords(cls) -> FrozenSet[str]:
+    def keywords(self) -> Set[str]:
         """
         Keywords for the new command.
 
@@ -43,15 +29,14 @@ class CommandABC(abc.ABC):
 
         Returns
         -------
-        frozenset of str
+        set of str
             Keywords for the command.
         """
         return NotImplementedError
 
     @property
-    @classmethod
     @abc.abstractmethod
-    def description(cls) -> str:
+    def description(self) -> str:
         """
         Command description.
 
@@ -63,9 +48,8 @@ class CommandABC(abc.ABC):
         return NotImplementedError
 
     @property
-    @classmethod
     @abc.abstractmethod
-    def long_help(cls) -> str:
+    def long_help(self) -> str:
         """
         Long help text for the new command.
 
@@ -77,14 +61,18 @@ class CommandABC(abc.ABC):
         return NotImplementedError
 
     @property
-    @classmethod
     @abc.abstractmethod
-    def arguments(cls) -> Dict[str, "Parameter"]:
+    def arguments(self) -> Dict[str, "Parameter"]:
         """
         Arguments for the new command.
-        Dictionary of parameter definitions created with the :class:`Parameter` class.
+
+        Dictionary of parameter definitions created with the `Parameter` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
+
+        See Also
+        --------
+        snadra._core.base.Parameter
         """
-        return NotImplementedError
+        return {}

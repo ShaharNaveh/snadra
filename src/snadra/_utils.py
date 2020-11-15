@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 console = Console()
 
 
-class CommandABC(abc.ABC):
+class CommandMeta(metaclass=abc.ABCMeta):
     """
     Abstract base class for command line commands.
 
@@ -32,7 +32,7 @@ class CommandABC(abc.ABC):
         set of str
             Keywords for the command.
         """
-        return NotImplementedError
+        ...
 
     @property
     @abc.abstractmethod
@@ -45,7 +45,7 @@ class CommandABC(abc.ABC):
         str
             The description for the command.
         """
-        return NotImplementedError
+        ...
 
     @property
     @abc.abstractmethod
@@ -58,7 +58,7 @@ class CommandABC(abc.ABC):
         str
             Long help text for the command.
         """
-        return NotImplementedError
+        ...
 
     @property
     @abc.abstractmethod
@@ -75,4 +75,13 @@ class CommandABC(abc.ABC):
         --------
         snadra._core.base.Parameter
         """
-        return {}
+        ...
+
+    @abc.abstractmethod
+    def run(self) -> None:
+        """
+        Implementation for the new command.
+
+        This is responsible for the actual action of the command.
+        """
+        ...

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Set
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from snadra._core.base import CommandDefinition, Complete, Parameter
+from snadra._core.base import Complete, Parameter
 from snadra._core.commands import Commands
 import snadra._utils as snutils
 from snadra._utils import CommandMeta
@@ -12,34 +12,35 @@ if TYPE_CHECKING:
     import argparse
 
 
+def _all_available_keywords(commands: Commands, help_keywords: Set[str]) -> Set[str]:
+    """
+    All the available keywords, of the core commands.
+
+    Parameters
+    ----------
+    commands : snadra._core.commands.Commands
+        Commands objecs.
+    help_keywords : set of str
+        Keywords of the `help` command.
+
+    Returns
+    -------
+    set of str
+        All the available, core command's keywords.
+
+    See Also
+    --------
+    snadra._core.commands.Commands
+    """
+    commands_keywords = commands.keywords
+    all_available_keywords = commands_keywords.union(help_keywords)
+    return all_available_keywords
+
+
 class Command(CommandMeta):
     """
     The command `help`, for displaying help information about other commands.
     """
-
-    def _all_available_keywords(commands: Commands, help_keywords: Set[str]) -> Set[str]:
-        """
-        All the available keywords, of the core commands.
-
-        Parameters
-        ----------
-        commands : snadra._core.commands.Commands
-            Commands objecs.
-        help_keywords : set of str
-            Keywords of the `help` command.
-
-        Returns
-        -------
-        set of str
-            All the available, core command's keywords.
-
-        See Also
-        --------
-        snadra._core.commands.Commands
-        """
-        commands_keywords = commands.keywords
-        all_available_keywords = commands_keywords.union(help_keywords)
-        return sorted(all_available_keywords)
 
     # TODO: Add tests
 
@@ -55,7 +56,9 @@ class Command(CommandMeta):
             "help",  # Skipping "help" so we won't make a circular import
         }
     )
-    _available_keywords = _all_available_keywords(commands=_core_commands, help_keywords=keywords)
+    _available_keywords = sorted(
+        _all_available_keywords(commands=_core_commands, help_keywords=keywords)
+    )
     arguments = {
         "topic": Parameter(
             Complete.CHOICES,

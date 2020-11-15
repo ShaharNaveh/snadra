@@ -1,13 +1,11 @@
 import abc
-from typing import TYPE_CHECKING, Dict, Set
+import argparse
+import functools
+from typing import Dict, Set
 
 from rich.console import Console
-import argparse
+
 from snadra._core.base import Parameter
-
-if TYPE_CHECKING:
-
-    from snadra._core.base import Parameter
 
 console = Console()
 
@@ -21,6 +19,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
     snadra._core.commands.exit
     snadra._core.commands.help
     """
+
     def __init__(self) -> None:
         # Create the parser object
         if self.arguments is not None:
@@ -79,14 +78,13 @@ class CommandMeta(metaclass=abc.ABCMeta):
 
         parser.set_defaults(**self.defaults)
 
-
-
     @property
     def defaults(self):
         """
         foo bar baz.
         """
         return {}
+
     @property
     @abc.abstractmethod
     def keywords(self) -> Set[str]:

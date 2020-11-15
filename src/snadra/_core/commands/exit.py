@@ -3,7 +3,7 @@ The command to exit snadra.
 """
 from typing import TYPE_CHECKING
 
-from snadra._core.base import CommandDefinition, Complete, Parameter
+from snadra._core.base import Complete, Parameter
 import snadra._utils as snutils
 from snadra._utils import CommandMeta
 

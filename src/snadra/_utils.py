@@ -2,9 +2,10 @@ import abc
 from typing import TYPE_CHECKING, Dict, Set
 
 from rich.console import Console
+import argparse
+from snadra._core.base import Parameter
 
 if TYPE_CHECKING:
-    import argparse
 
     from snadra._core.base import Parameter
 
@@ -20,7 +21,72 @@ class CommandMeta(metaclass=abc.ABCMeta):
     snadra._core.commands.exit
     snadra._core.commands.help
     """
+    def __init__(self) -> None:
+        # Create the parser object
+        if self.arguments is not None:
+            for keyword in self.keywords:
+                self.parser = argparse.ArgumentParser(
+                    prog=keyword,
+                    description=self.description,
+                    formatter_class=argparse.RawDescriptionHelpFormatter,
+                )
+                self.build_parser(self.parser, self.arguments)
+        else:
+            self.parser = None  # type: ignore
 
+    def build_parser(
+        self,
+        parser: argparse.ArgumentParser,
+        args: Dict[str, Parameter],
+    ) -> None:
+        """
+        Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
+        for this command. You should not need to overload this.
+
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            Parser object to add arguments to.
+        args : Dict[str, snadra._core.base.Parameter]
+            `ARGS` dictionary.
+        """
+        for arg, param in args.items():
+            names = arg.split(",")
+            group = parser
+
+            # Patch choice to work with a callable
+            if "choices" in param.kwargs and callable(param.kwargs["choices"]):
+                method = param.kwargs["choices"]
+
+                class wrapper:
+                    def __init__(wself, method) -> None:
+                        wself.method = method
+
+                    def __iter__(wself):
+                        yield from wself.method(self)
+
+                param.kwargs["choices"] = wrapper(method)
+
+            # Patch "type" so we can see "self"
+            if (
+                "type" in param.kwargs
+                and isinstance(param.kwargs["type"], tuple)
+                and param.kwargs["type"][0] == "method"
+            ):
+                param.kwargs["type"] = functools.partial(param.kwargs["type"][1], self)
+
+            group.add_argument(*names, *param.args, **param.kwargs)
+
+        parser.set_defaults(**self.defaults)
+
+
+
+    @property
+    def defaults(self):
+        """
+        foo bar baz.
+        """
+        return {}
     @property
     @abc.abstractmethod
     def keywords(self) -> Set[str]:
@@ -80,7 +146,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def run(self, args: "argparse.Namespace") -> None:
+    def run(self, args: argparse.Namespace) -> None:
         """
         Implementation for the new command.
 

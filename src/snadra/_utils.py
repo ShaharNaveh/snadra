@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Dict, Set
 from rich.console import Console
 
 if TYPE_CHECKING:
+    import argparse
+
     from snadra._core.base import Parameter
 
 console = Console()
@@ -78,7 +80,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def run(self) -> None:
+    def run(self, args: "argparse.Namespace") -> None:
         """
         Implementation for the new command.
 

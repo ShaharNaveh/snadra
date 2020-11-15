@@ -38,7 +38,7 @@ class TestCommands:
             if command in seen_commands:
                 continue
             seen_commands.add(command)
-            for keyword in command.KEYWORDS:
+            for keyword in command.keywords:
                 result.append(keyword)
 
         expected = list(set(result))

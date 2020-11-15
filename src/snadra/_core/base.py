@@ -52,35 +52,35 @@ class CommandDefinition:
 
     Attributes
     ----------
-    KEYWORDS : Set[str]
+    keywords : set of str
         Set of the keywords for the new command.
-    DESCRIPTION : str
+    description : str
         Help text for the new command.
-    LONG_HELP : str
+    long_help : str
         Long help for the command.
-    ARGS : Dict[str, snadra._core.base.Parameter]
+    arguments : Dict[str, snadra._core.base.Parameter]
         Dictionary of parameter definitions created with the :class:`Parameter` class.
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
     """
 
-    KEYWORDS: Set[str] = {"unimplemented"}
-    DESCRIPTION: str = ""
-    LONG_HELP: str = ""
-    ARGS: Dict[str, Parameter] = {}
-    DEFAULTS: Dict = {}
+    keywords: Set[str] = {"unimplemented"}
+    description: str = ""
+    long_help: str = ""
+    arguments: Dict[str, Parameter] = {}
+    defaults: Dict = {}
 
     def __init__(self) -> None:
         # Create the parser object
-        if self.ARGS is not None:
-            for keyword in self.KEYWORDS:
+        if self.arguments is not None:
+            for keyword in self.keywords:
                 self.parser = argparse.ArgumentParser(
                     prog=keyword,
-                    description=self.DESCRIPTION,
+                    description=self.description,
                     formatter_class=argparse.RawDescriptionHelpFormatter,
                 )
-                self.build_parser(self.parser, self.ARGS)
+                self.build_parser(self.parser, self.arguments)
         else:
             self.parser = None  # type: ignore
 
@@ -144,4 +144,4 @@ class CommandDefinition:
 
             group.add_argument(*names, *param.args, **param.kwargs)
 
-        parser.set_defaults(**self.DEFAULTS)
+        parser.set_defaults(**self.defaults)

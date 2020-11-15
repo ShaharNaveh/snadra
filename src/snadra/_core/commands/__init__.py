@@ -125,7 +125,7 @@ class Commands:
         """
         for module in fetched_modules:
             command = module.Command  # type: ignore
-            for keyword in command.KEYWORDS:
+            for keyword in command.keywords:
                 yield keyword, module
 
     @staticmethod

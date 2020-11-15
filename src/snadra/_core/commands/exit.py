@@ -3,23 +3,24 @@ The command to exit snadra.
 """
 from typing import TYPE_CHECKING
 
-from snadra._core.base import CommandDefinition, Complete, Parameter
+from snadra._core.base import Complete, Parameter
 import snadra._utils as snutils
+from snadra._utils import CommandMeta
 
 if TYPE_CHECKING:
     import argparse
 
 
-class Command(CommandDefinition):
+class Command(CommandMeta):
     """
-    Help message for "exit"
+    Help message for "exit".
     """
 
-    KEYWORDS = {"exit", "quit"}
-    DESCRIPTION = "Exit the console"
-    LONG_HELP = "LONG HELP FOR EXIT COMMAND"
+    keywords = {"exit", "quit"}
+    description = "Exit the console"
+    long_help = "LONG HELP FOR EXIT COMMAND"
 
-    ARGS = {
+    arguments = {
         "-y,--yes": Parameter(
             complete=Complete.NONE, action="store_true", help="Confirm to exit"
         )

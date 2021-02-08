@@ -46,7 +46,7 @@ jobs:
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
@@ -108,7 +108,7 @@ jobs:
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
@@ -168,7 +168,7 @@ jobs:
           echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}

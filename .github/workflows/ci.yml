@@ -2,9 +2,11 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
   pull_request:
-    branches: ["main"]
+    branches:
+      - "main"
 
 defaults:
   run:
@@ -21,7 +23,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - 3.8
+          - 3.9
         os:
           - ubuntu-latest
 
@@ -78,9 +80,9 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - 3.7
           - 3.8
           - 3.9
+          - 3.10
         os:
           - ubuntu-latest
           - windows-latest
@@ -138,7 +140,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - 3.8
+          - 3.9
         os:
           - ubuntu-latest
 

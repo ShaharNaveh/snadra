@@ -1,5 +1,5 @@
 import shlex
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -34,7 +34,8 @@ class CommandParser:
             history=InMemoryHistory(),
         )
 
-    def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma
+    # TODO: Remove this "pragma: no cover"
+    def run(self) -> None:  # pragma: no cover
         """
         The main loop.
 
@@ -71,13 +72,12 @@ class CommandParser:
             return
 
         if self.commands.is_valid_keyword(argv[0]):
-            # NOTE: Here is where we initialize the command
             command = self.commands.get_command(argv[0])()  # type: ignore
         else:
             snutils.console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return
 
-        args: Union[str, List[str]] = argv[1:]
+        args: Union[str, list[str]] = argv[1:]
         args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
 
         try:
@@ -91,7 +91,7 @@ class CommandParser:
             return
 
     @staticmethod
-    def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
+    def _parse_line(line: str) -> Optional[tuple[list[str], str]]:
         """
         Parameters
         ----------

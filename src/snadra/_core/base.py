@@ -1,7 +1,6 @@
 import argparse
 import enum
 import functools
-from typing import Dict, Set
 
 import pygments.token as ptoken
 
@@ -65,14 +64,13 @@ class CommandDefinition:
         removing the leading command name.
     """
 
-    keywords: Set[str] = {"unimplemented"}
+    keywords: set[str] = {"unimplemented"}
     description: str = ""
     long_help: str = ""
-    arguments: Dict[str, Parameter] = {}
-    defaults: Dict = {}
+    arguments: dict[str, Parameter] = {}
+    defaults: dict = {}
 
     def __init__(self) -> None:
-        # Create the parser object
         if self.arguments is not None:
             for keyword in self.keywords:
                 self.parser = argparse.ArgumentParser(
@@ -104,7 +102,7 @@ class CommandDefinition:
     def build_parser(
         self,
         parser: argparse.ArgumentParser,
-        args: Dict[str, Parameter],
+        args: dict[str, Parameter],
     ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -121,7 +119,6 @@ class CommandDefinition:
             names = arg.split(",")
             group = parser
 
-            # Patch choice to work with a callable
             if "choices" in param.kwargs and callable(param.kwargs["choices"]):
                 method = param.kwargs["choices"]
 
@@ -134,7 +131,6 @@ class CommandDefinition:
 
                 param.kwargs["choices"] = wrapper(method)
 
-            # Patch "type" so we can see "self"
             if (
                 "type" in param.kwargs
                 and isinstance(param.kwargs["type"], tuple)

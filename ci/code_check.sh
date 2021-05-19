@@ -125,8 +125,8 @@ then
 	echo "Mypy version"
 	mypy --version
 
-	MSG='Performing static type checking on src/ and tests/' ; echo $MSG
-	mypy src/ tests/
+	MSG='Performing static type checking on src/' ; echo $MSG
+	mypy src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""

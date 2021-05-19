@@ -42,7 +42,7 @@ class CommandParser:
         This is an infitine loop, until the user decides to exit.
         """
         self.running = True
-        
+
         while self.running:
             try:
                 with patch_stdout():

@@ -10,6 +10,7 @@ or
 $ python -m snadra
 """
 import asyncio
+
 from snadra._core.parsers import CommandParser
 
 if __name__ == "__main__":

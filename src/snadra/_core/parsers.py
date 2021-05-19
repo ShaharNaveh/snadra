@@ -19,12 +19,8 @@ class CommandParser:
 
     def __init__(self) -> None:
         self.commands = Commands()
-        self.__prompt: "PromptSession[str]" = PromptSession(
-            "snadra > ",
-            auto_suggest=AutoSuggestFromHistory(),
-            history=InMemoryHistory())
 
-    def setup_prompt(self) -> None:  # pragma: no cover
+    def _setup_prompt(self) -> None:  # pragma: no cover
         """
         See Notes section.
 
@@ -33,7 +29,7 @@ class CommandParser:
         The only reason for this being in a seperate function is that it changes
         the `sys.stdout` and `sys.stderr` which disturbes `pytest`.
         """
-        self.prompt: "PromptSession[str]" = PromptSession(
+        self.__prompt: "PromptSession[str]" = PromptSession(
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
@@ -46,9 +42,11 @@ class CommandParser:
         This is an infitine loop, until the user decides to exit.
         """
         self.running = True
+        
         while self.running:
             try:
-                line = await self.__prompt.prompt_async()
+                with patch_stdout():
+                    line = await self.__prompt.prompt_async()
                 line = line.strip()
                 if line == "":
                     continue

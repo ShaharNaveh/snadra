@@ -1,0 +1,13 @@
+#!/bin/bash
+
+virt="docker"
+
+if [ $OS != "Windows_NT" ]
+then
+	if command -s podman
+	then
+		virt="podman"
+	fi
+fi
+
+$virt build . -t snadra

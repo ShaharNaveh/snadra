@@ -37,3 +37,4 @@ fi
 
 $virt compose up -d && $virt compose run --rm app $action
 $virt compose down
+$virt rmi snadra_app

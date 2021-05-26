@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Editor temporary/working/backup files
+.#*
+*\#*\#
+[#]*#
+*~
+*$
+*.bak
+*.log
+*.swp
+.tags
+.cache/
+.vscode/

@@ -40,7 +40,7 @@ header = """\
 .. currentmodule:: snadra
 .. ipython:: python
    :suppress:
-   import snadra
+   #import snadra
 """
 
 

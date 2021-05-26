@@ -51,11 +51,11 @@ jobs:
         uses: actions/cache@v2.1.5
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade -r requirements/style.txt
+          python -m pip install -r requirements/style.txt
 
       - name: Pip list
         run: |
@@ -112,15 +112,15 @@ jobs:
         uses: actions/cache@v2.1.5
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
       - name: Install test dependencies
         run: |
-          python -m pip install --upgrade -r requirements/tests.txt
+          python -m pip install -r requirements/tests.txt
 
       - name: Install snadra
         run: |
-          python -m pip install --upgrade --editable .
+          python -m pip install .
 
       - name: Pip list
         run: |
@@ -172,15 +172,15 @@ jobs:
         uses: actions/cache@v2.1.5
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirement/*.txt') }}
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade -r requirements/docs.txt
+          python -m pip install -r requirements/docs.txt
 
       - name: Install snadra
         run: |
-          python -m pip install --upgrade --editable .
+          python -m pip install .
 
       - name: Pip list
         run: |

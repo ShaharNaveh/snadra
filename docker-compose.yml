@@ -10,7 +10,7 @@ services:
         environment:
             POSTGRES_USER: user
             POSTGRES_PASSWORD: super_secret_password_maybe_you_should_change_this_but_thats_just_a_suggestion_you_dont_have_to
-    
+
     app:
         build: .
 

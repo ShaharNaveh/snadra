@@ -84,7 +84,7 @@ class CommandDefinition:
         else:
             self.parser = None  # type: ignore
 
-    def run(self, args: argparse.Namespace):
+    async def run(self, args: argparse.Namespace):
         """
         This is what gets run for each command.
 

@@ -4,6 +4,8 @@ import sys
 
 import snadra
 
+sys.setrecursionlimit(10_000)
+
 snadra_root = os.path.dirname(snadra.__file__)
 sys.path.insert(0, snadra_root)
 

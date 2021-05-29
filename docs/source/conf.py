@@ -3,9 +3,6 @@ import datetime
 import os
 import sys
 
-import rich
-from rich.console import Console
-
 import snadra
 
 sys.setrecursionlimit(10_000)

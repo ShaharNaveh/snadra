@@ -8,7 +8,6 @@ from rich.console import Console
 from snadra._core.base import Parameter
 
 
-
 class CommandMeta(metaclass=abc.ABCMeta):
     """
     Abstract base class for command line commands.

@@ -1,6 +1,10 @@
+#!/usr/bin/env python3
 import datetime
 import os
 import sys
+
+import rich
+from rich.console import Console
 
 import snadra
 
@@ -31,10 +35,12 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
+"""
 intersphinx_mapping = {
     "pygments": ("https://pygments.org", None),
     "python": ("https://docs.python.org/3", None),
 }
+"""
 
 templates_path = ["_templates"]
 

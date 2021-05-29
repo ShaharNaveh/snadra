@@ -27,7 +27,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",  # Needs to be loaded after napoleon
-    #"sphinx.ext.viewcode",
+    # "sphinx.ext.viewcode",
 ]
 
 """

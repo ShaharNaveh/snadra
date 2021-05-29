@@ -5,8 +5,6 @@ import sys
 
 import snadra
 
-sys.setrecursionlimit(10_000)
-
 snadra_root = os.path.dirname(snadra.__file__)
 sys.path.insert(0, snadra_root)
 
@@ -29,7 +27,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",  # Needs to be loaded after napoleon
-    "sphinx.ext.viewcode",
+    #"sphinx.ext.viewcode",
 ]
 
 """

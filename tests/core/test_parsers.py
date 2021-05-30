@@ -24,9 +24,10 @@ class TestCommandParser:
             " \n " * 3,
         ],
     )
-    def test_dispatch_line_empty(self, line):
+    @pytest.mark.asyncio
+    async def test_dispatch_line_empty(self, line):
         command_parser = CommandParser()
-        result = command_parser.dispatch_line(line)
+        result = await command_parser.dispatch_line(line)
         assert result is None
 
     @pytest.mark.parametrize(
@@ -84,11 +85,12 @@ class TestCommandParser:
             "_",
         ],
     )
-    def test_dispatch_line_invalid_keyword(self, capfd, line):
+    @pytest.mark.asyncio
+    async def test_dispatch_line_invalid_keyword(self, capfd, line):
         command_parser = CommandParser()
         expected_out = "unknown command"
         expected_err = ""
-        command_parser.dispatch_line(line)
+        await command_parser.dispatch_line(line)
 
         captured = capfd.readouterr()
         captured_out, captured_err = captured.out, captured.err

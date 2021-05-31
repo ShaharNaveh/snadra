@@ -5,8 +5,6 @@ import sys
 
 import snadra
 
-sys.setrecursionlimit(1_000_000_000)
-
 snadra_root = os.path.dirname(snadra.__file__)
 sys.path.insert(0, snadra_root)
 
@@ -29,15 +27,13 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",  # Needs to be loaded after napoleon
-    # "sphinx.ext.viewcode",
+    "sphinx.ext.viewcode",
 ]
 
-"""
 intersphinx_mapping = {
     "pygments": ("https://pygments.org", None),
     "python": ("https://docs.python.org/3", None),
 }
-"""
 
 templates_path = ["_templates"]
 
@@ -45,7 +41,7 @@ header = """\
 .. currentmodule:: snadra
 .. ipython:: python
    :suppress:
-   #import snadra
+   import snadra
 """
 
 

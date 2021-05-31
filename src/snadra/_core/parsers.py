@@ -50,7 +50,7 @@ class CommandParser:
                 line = line.strip()
                 if line == "":
                     continue
-                self.dispatch_line(line)
+                await self.dispatch_line(line)
             except EOFError:
                 self.running = False
                 continue
@@ -61,7 +61,7 @@ class CommandParser:
                 snutils.console.print_exception(width=None, show_locals=True)
                 continue
 
-    def dispatch_line(self, line: str) -> None:
+    async def dispatch_line(self, line: str) -> None:
         """
         Execute each command that was entered to the console.
 
@@ -90,7 +90,7 @@ class CommandParser:
                 args = command.parser.parse_args(args)
             else:
                 args = pline
-            command.run(args)
+            await command.run(args)
         except SystemExit:
             snutils.console.log("Incorrect arguments")
             return

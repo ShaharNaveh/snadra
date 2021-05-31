@@ -26,7 +26,7 @@ class Command(CommandMeta):
         )
     }
 
-    def run(self, args: "argparse.Namespace") -> None:
+    async def run(self, args: "argparse.Namespace") -> None:
         """
         Exit `snadra`.
 

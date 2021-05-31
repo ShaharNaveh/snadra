@@ -41,11 +41,12 @@ class TestCommands:
         seen_commands = set()
         for command_keyword in commands.keywords:
             command = commands.get_command(command_keyword)
-            if command in seen_commands:
-                continue
-            seen_commands.add(command)
-            for keyword in command.keywords:
-                result.append(keyword)
+            if command is not None:
+                if command in seen_commands:
+                    continue
+                seen_commands.add(command)
+                for keyword in command.keywords:
+                    result.append(keyword)
 
         expected = list(set(result))
         assert sorted(result) == sorted(expected)

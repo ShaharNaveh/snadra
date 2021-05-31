@@ -142,7 +142,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def run(self, args: argparse.Namespace) -> None:
+    async def run(self, args: argparse.Namespace) -> None:
         """
         Implementation for the new command.
 

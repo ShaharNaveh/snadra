@@ -51,7 +51,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
 
       - name: Install dependencies
         run: |
@@ -112,7 +112,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
 
       - name: Install test dependencies
         run: |
@@ -172,7 +172,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('setup.py') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
+          key: pip|${{ runner.os }}|${{ matrix.python-version }}|${{ hashFiles('setup.cfg') }}|${{ hashFiles('requirements-dev.txt') }}|${{ hashFiles('requirements/*.txt') }}
 
       - name: Install dependencies
         run: |

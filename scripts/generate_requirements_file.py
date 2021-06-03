@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# TODO:
+# Add tests for this script.
+
+# TODO:
+# Integrate this script with the CI
+
 import configparser
 import pathlib
 from typing import Union

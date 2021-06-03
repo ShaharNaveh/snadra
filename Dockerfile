@@ -1,10 +1,14 @@
 FROM docker.io/python:3.9-slim-buster
 
-WORKDIR		/root/app
+WORKDIR /root/app
 
-COPY	. .
+# Caching the dependencies
+COPY requirements.txt ./
+RUN python -m pip install --requirement requirements.txt
 
-RUN	python -m pip install --upgrade .
+COPY . .
+
+RUN python -m pip install --upgrade .
 
 # now specified in start.sh
 # CMD [ "python", "-m", "snadra" ]

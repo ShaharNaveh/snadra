@@ -1,0 +1,7 @@
+# This file is auto-generated from scripts/generate_requirements_file.py, do not edit directly.
+# If you wish to edit the dependencies, edit the 'install_requires' in 'setup.cfg'.
+
+
+prompt_toolkit
+pygments
+rich

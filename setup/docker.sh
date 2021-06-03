@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# TODO: Remove all the "podman" stuff.
+# This should be "docker" (or "docker-compose") specific.
 
 virt="docker"
 

@@ -140,3 +140,6 @@ dmypy.json
 .tags
 .cache/
 .vscode/
+
+# Podman
+.data_volume

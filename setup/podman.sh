@@ -2,7 +2,7 @@
 _BASE_DIR="$(dirname $0)/.."
 BASE_DIR=$(realpath $_BASE_DIR)
 
-podman pod create --hostname=snadra_pod --name snadra --publish 5432:5432 # Postgres port
+podman pod create --hostname=snadra_pod --name snadra --publish 5432:5432 2>/dev/null # In case pod already exist
 
 POSTGRES_DATA_DIR="${BASE_DIR}/.data_volume"
 mkdir $POSTGRES_DATA_DIR 2>/dev/null

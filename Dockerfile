@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster
+FROM docker.io/python:3.9-slim-buster
 
 WORKDIR		/root/app
 

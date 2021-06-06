@@ -14,6 +14,7 @@ defaults:
 
 env:
   HYPOTHESIS_PROFILE: CI
+  SQLALCHEMY_WARN_20: 1
 
 jobs:
   # Style job

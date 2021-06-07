@@ -2,6 +2,9 @@
 # If you wish to edit the dependencies, edit the 'install_requires' in 'setup.cfg'.
 
 
-prompt_toolkit
+asyncpg
+prompt_toolkit>=3.0
 pygments
 rich
+rtoml
+SQLAlchemy>=1.4.0

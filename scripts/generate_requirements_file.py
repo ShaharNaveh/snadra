@@ -5,8 +5,11 @@
 # TODO:
 # Integrate this script with the CI
 
+import argparse
 import configparser
+import os
 import pathlib
+import sys
 from typing import Union
 
 BASE_DIR = pathlib.Path(__file__).parents[1]
@@ -33,7 +36,7 @@ def requirements_content(
     return file_content
 
 
-def main():
+def main(args):
     config_file = (BASE_DIR / "setup.cfg").resolve()
     configuration = get_config(config_file=config_file)
 
@@ -41,9 +44,36 @@ def main():
 
     data = requirements_content(configuration=configuration, header=WARNING)
 
+    if args.check:
+        if not req_file.is_file():
+            sys.exit(1)
+
+        with req_file.open(mode="r") as file_obj:
+            current_data = file_obj.read()
+
+        if current_data == data:
+            print("'requirements.txt' file is up to data")
+            sys.exit(0)
+        else:
+            prefix = ""
+            if os.environ["GITHUB_ACTIONS"] == "true":
+                prefix = "##[error] "
+            print(f"{prefix}'requirements.txt' file is not up to data", file=sys.stderr)
+            sys.exit(1)
+
     with req_file.open(mode="w") as file_obj:
         file_obj.write(data)
 
 
 if __name__ == "__main__":
-    main()
+    argparser = argparse.ArgumentParser(description="Generate 'requirements.txt' file")
+    argparser.add_argument(
+        "-c",
+        "--check",
+        default=False,
+        action="store_true",
+        help="Check if the current 'requirements.txt' file is updated",
+    )
+
+    args = argparser.parse_args()
+    main(args)

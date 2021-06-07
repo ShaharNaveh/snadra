@@ -9,6 +9,8 @@
 # ./ci/code_check.sh lint		# Run lint checks
 # ./ci/code_checks.sh type		# Run typing checks
 
+_BASE_DIR="$(dirname $0)/.."
+BASE_DIR=$(realpath $_BASE_DIR)
 RET_SUM=0
 CHECK_TYPE=$1
 
@@ -38,6 +40,10 @@ fi
 # lint
 if [[ -z "$CHECK_TYPE" || "$CHECK_TYPE" == "lint" ]]
 then
+	MSG="Checking if 'requirements.txt' file is up to date" ; echo $MSG
+	python scripts/generate_requirements_file.py --check
+	RET_SUM=$(($RET_SUM + $?))
+
 	# Black
 	echo "Black version"
 	black --version

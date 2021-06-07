@@ -4,7 +4,7 @@ import typing
 import rtoml
 
 
-def parse_config_file(path: pathlib.Path) -> typing.Dict:
+def parse_config_file(path: pathlib.Path):
     with path.open() as f:
         config_file_data = rtoml.loads(f.read())
 

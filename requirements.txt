@@ -6,4 +6,5 @@ asyncpg
 prompt_toolkit>=3.0
 pygments
 rich
+rtoml
 SQLAlchemy>=1.4.0

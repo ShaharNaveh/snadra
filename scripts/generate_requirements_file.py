@@ -7,6 +7,7 @@
 
 import argparse
 import configparser
+import os
 import pathlib
 import sys
 from typing import Union
@@ -54,7 +55,10 @@ def main(args):
             print("'requirements.txt' file is up to data")
             sys.exit(0)
         else:
-            print("'requirements.txt' file is not up to data", file=sys.stderr)
+            prefix = ""
+            if os.environ["GITHUB_ACTIONS"] == "true":
+                prefix = "##[error] "
+            print(f"{prefix}'requirements.txt' file is not up to data", file=sys.stderr)
             sys.exit(1)
 
     with req_file.open(mode="w") as file_obj:
@@ -70,5 +74,6 @@ if __name__ == "__main__":
         action="store_true",
         help="Check if the current 'requirements.txt' file is updated",
     )
+
     args = argparser.parse_args()
     main(args)

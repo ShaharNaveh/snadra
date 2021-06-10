@@ -100,7 +100,7 @@ class Commands:
                 continue
 
             module_spec = importlib.util.spec_from_file_location(module_name, path)
-            module = importlib.util.module_from_spec(module_spec)
+            module = importlib.util.module_from_spec(module_spec)  # type: ignore
             module_spec.loader.exec_module(module)  # type: ignore
             yield module
 

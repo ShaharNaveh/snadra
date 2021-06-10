@@ -1,6 +1,3 @@
-"""
-Just a placeholder for now.
-"""
-# from snadra._core.db.models.credential import Credential
+from snadra._core.db.models.workspace import Workspace
 
-# __all__ = ["Credential"]
+__all__ = ["Workspace"]

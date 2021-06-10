@@ -1,3 +1,3 @@
-from _snadra.config.utils import parse_config_file
+from _snadra.config.utils import config_file_location, parse_config_file
 
-__all__ = ["parse_config_file"]
+__all__ = ["config_file_location", "parse_config_file"]

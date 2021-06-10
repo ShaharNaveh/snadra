@@ -5,9 +5,7 @@ from typing import Dict, Set
 
 from rich.console import Console
 
-from _snadra.core.base import Parameter
-
-console = Console()
+from _snadra.cmd.base import Parameter
 
 
 class CommandMeta(metaclass=abc.ABCMeta):

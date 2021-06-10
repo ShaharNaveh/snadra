@@ -15,7 +15,7 @@ from typing import (
     Union,
 )
 
-import _snadra.utils as snutils
+from _snadra.base import app
 
 if TYPE_CHECKING:
     import os
@@ -95,8 +95,9 @@ class Commands:
         for path in file_paths:
             module_name = path.stem  # type: ignore
             if module_name in sys.modules:
-                # TODO: Do we ever reach here?
-                snutils.console.log(f"Skiping already loaded module {module_name}")
+                # TODO:
+                # Do we ever reach here?
+                app._console.log(f"Skiping already loaded module {module_name}")
                 continue
 
             module_spec = importlib.util.spec_from_file_location(module_name, path)

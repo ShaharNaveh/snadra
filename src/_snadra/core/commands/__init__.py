@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     import os
     import types
 
-    from snadra._core.base import CommandDefinition
-    from snadra._typing import StrPath
+    from _snadra.core.base import CommandDefinition
+    from _snadra.typing import StrPath
 
 
 class Commands:

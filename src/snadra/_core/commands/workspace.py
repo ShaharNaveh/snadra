@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from rich import box as rich_box
 from rich.table import Table as RichTable
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
 
 from snadra._core.base import Complete, Parameter
 from snadra._core.db.config import async_session

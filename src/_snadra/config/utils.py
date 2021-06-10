@@ -1,9 +1,13 @@
 import pathlib
+from typing import TYPE_CHECKING
 
 import rtoml
 
+if TYPE_CHECKING:
+    import os
 
-def parse_config_file(path: pathlib.Path):
+
+def parse_config_file(path: "os.PathLike[str]"):
     with path.open() as file_obj:
         config_file_data = rtoml.load(file_obj)
 
@@ -25,8 +29,9 @@ def config_file_location() -> pathlib.Path:
         "./default_config.toml",
     ]
 
-    locations = [pathlib.Path(location) for location in _locations]
+    locations = [pathlib.Path(location).expanduser() for location in _locations]
 
     for location in locations:
+        print(location)
         if location.exists():
             return location

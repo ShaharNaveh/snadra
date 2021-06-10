@@ -6,8 +6,8 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from snadra._core.commands import Commands
-import snadra._utils as snutils
+from _snadra.core.commands import Commands
+import _snadra.utils as snutils
 
 
 class CommandParser:

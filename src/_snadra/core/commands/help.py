@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Set
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from snadra._core.base import Complete, Parameter
-from snadra._core.commands import Commands
-import snadra._utils as snutils
-from snadra._utils import CommandMeta
+from _snadra.core.base import Complete, Parameter
+from _snadra.core.commands import Commands
+import _snadra.utils as snutils
+from _snadra.utils import CommandMeta
 
 if TYPE_CHECKING:
     import argparse

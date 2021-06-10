@@ -5,7 +5,7 @@ from typing import Dict, Set
 
 from rich.console import Console
 
-from snadra._core.base import Parameter
+from _snadra.core.base import Parameter
 
 
 class CommandMeta(metaclass=abc.ABCMeta):
@@ -151,5 +151,5 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ...
 
 
-if __name__ == "snadra._utils":
+if __name__ == "_snadra.utils":
     console = Console()

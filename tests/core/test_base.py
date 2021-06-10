@@ -7,7 +7,7 @@ from hypothesis import assume, given
 import hypothesis.strategies as st
 import pytest
 
-from snadra._core.commands import Commands
+from _snadra.core.commands import Commands
 
 
 class TestCommands:

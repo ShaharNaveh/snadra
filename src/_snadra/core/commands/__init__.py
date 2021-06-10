@@ -15,7 +15,7 @@ from typing import (
     Union,
 )
 
-import snadra._utils as snutils
+import _snadra.utils as snutils
 
 if TYPE_CHECKING:
     import os

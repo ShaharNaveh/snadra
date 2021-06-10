@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, Sequence, String, Text
 from sqlalchemy.sql import func
 
-from snadra._core.db.config import Base
+from _snadra.core.db.config import Base
 
 
 class Workspace(Base):  # type: ignore

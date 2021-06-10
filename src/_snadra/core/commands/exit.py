@@ -3,9 +3,9 @@ The command to exit snadra.
 """
 from typing import TYPE_CHECKING
 
-from snadra._core.base import Complete, Parameter
-import snadra._utils as snutils
-from snadra._utils import CommandMeta
+from _snadra.core.base import Complete, Parameter
+import _snadra.utils as snutils
+from _snadra.utils import CommandMeta
 
 if TYPE_CHECKING:
     import argparse

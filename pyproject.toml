@@ -31,7 +31,7 @@ sections = [
 	"FIRSTPARTY",
 	"LOCALFOLDER",
 ]
-src_paths = ["src", "tests"]
+src_paths = ["scripts", "src", "tests"]
 
 [tool.pytest.ini_options]
 doctest_optionflags = [
@@ -46,6 +46,7 @@ junit_family = "xunit2"
 minversion = 6.0
 python_files = "test_*.py"
 testpaths = [
-	"tests",
+  "scripts",
+  "tests",
 ]
 xfail_strict = true

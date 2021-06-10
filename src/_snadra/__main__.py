@@ -11,9 +11,9 @@ $ python -m snadra
 """
 import asyncio
 
-from _snadra.core.db.config import async_session, engine
-from _snadra.core.db.utils import insert_default_rows, start_db
-from _snadra.core.parsers import CommandParser
+from snadra._core.db.config import async_session, engine
+from snadra._core.db.utils import insert_default_rows, start_db
+from snadra._core.parsers import CommandParser
 
 
 async def main():

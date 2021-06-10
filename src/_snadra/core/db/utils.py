@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.future import select
 
-from snadra._core.db.config import Base, async_session
-from snadra._core.db.models import Workspace
-import snadra._utils as snutils
+from _snadra.core.db.config import Base, async_session
+from _snadra.core.db.models import Workspace
+import _snadra.utils as snutils
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 async def start_db(engine: "AsyncEngine"):
     async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
 

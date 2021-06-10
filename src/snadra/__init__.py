@@ -1,5 +1,1 @@
-"""
-A metasploit clone written in python.
-"""
-
-__version__ = "0.0a1"
+from _snadra import __version__  # noqa: F401

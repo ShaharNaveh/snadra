@@ -7,6 +7,8 @@ from rich.console import Console
 
 from _snadra.core.base import Parameter
 
+console = Console()
+
 
 class CommandMeta(metaclass=abc.ABCMeta):
     """
@@ -149,7 +151,3 @@ class CommandMeta(metaclass=abc.ABCMeta):
         This is responsible for the actual action of the command.
         """
         ...
-
-
-if __name__ == "_snadra.utils":
-    console = Console()

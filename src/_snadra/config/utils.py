@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 def parse_config_file(path: "pathlib.Path"):
-    with path.open() as f:
-        config_file_data = rtoml.loads(f.read())
+    with path.open() as file_obj:
+        config_file_data = rtoml.load(file_obj)
 
     return config_file_data

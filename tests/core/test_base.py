@@ -16,7 +16,7 @@ class TestCommands:
         Test if all the expected keywords of the commands, are in `Commands.keywords`.
         """
         commands = Commands()
-        expected = {"exit", "help", "quit"}
+        expected = {"exit", "help", "quit", "workspace"}
         result = commands.keywords
 
         assert result == expected

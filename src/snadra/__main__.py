@@ -11,8 +11,8 @@ $ python -m snadra
 """
 import asyncio
 
-from snadra._core.db.base import start_db
-from snadra._core.db.config import engine
+from snadra._core.db.config import async_session, engine
+from snadra._core.db.utils import insert_default_rows, start_db
 from snadra._core.parsers import CommandParser
 
 
@@ -21,6 +21,7 @@ async def main():
     snadra_console._setup_prompt()
 
     await asyncio.create_task(start_db(engine=engine))
+    await asyncio.create_task(insert_default_rows(session=async_session))
     await snadra_console.run()
 
 

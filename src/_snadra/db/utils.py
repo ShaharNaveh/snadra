@@ -2,9 +2,8 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.future import select
 
-from _snadra.core.db.config import Base, async_session
-from _snadra.core.db.models import Workspace
-import _snadra.utils as snutils
+from _snadra.db.config import Base, async_session
+from _snadra.db.models import Workspace
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession

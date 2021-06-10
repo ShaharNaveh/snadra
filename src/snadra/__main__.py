@@ -11,13 +11,12 @@ $ python -m snadra
 """
 import asyncio
 
-from _snadra.app import SnadraApplication
+from _snadra.base import app
 from _snadra.db.config import async_session, engine
 from _snadra.db.utils import insert_default_rows, start_db
 
 
 async def main():
-    app = SnadraApplication()
     app._setup_prompt()
 
     await asyncio.create_task(start_db(engine=engine))

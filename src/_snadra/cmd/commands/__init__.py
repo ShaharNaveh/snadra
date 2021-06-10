@@ -15,14 +15,11 @@ from typing import (
     Union,
 )
 
-from _snadra.base import app
-
 if TYPE_CHECKING:
     import os
     import types
 
     from _snadra.core.base import CommandDefinition
-    from _snadra.typing import StrPath
 
 
 class Commands:
@@ -31,7 +28,7 @@ class Commands:
 
     Parameters
     ----------
-    path : snadra._typing.StrPath, optional.
+    path : os.PathLike[str], optional.
         Path to the directory with the commands to load.
         If not specified, the snadra's core commands directory is being loaded.
         Sequence containing strings of paths to the command directories.
@@ -47,7 +44,7 @@ class Commands:
 
     def __init__(
         self,
-        path: Optional["StrPath"] = None,
+        path: Optional["os.PathLike[str]"] = None,
         *,
         skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]] = None,
     ) -> None:
@@ -97,7 +94,7 @@ class Commands:
             if module_name in sys.modules:
                 # TODO:
                 # Do we ever reach here?
-                app._console.log(f"Skiping already loaded module {module_name}")
+                print(f"Skiping already loaded module {module_name}")
                 continue
 
             module_spec = importlib.util.spec_from_file_location(module_name, path)

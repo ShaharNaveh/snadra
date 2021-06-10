@@ -6,7 +6,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from _snadra.cmd import CommandParser, SnadraConsole
+from _snadra.cmd import SnadraConsole
 from _snadra.config import parse_config_file
 
 if TYPE_CHECKING:
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 class SnadraApplication:
     def __init__(self, config_file: "os.PathLike[str]"):
         self._console = SnadraConsole()
-        self.__parser = CommandParser()
         # TODO:
         # Uncomment this
         # self.config = parse_config_file(config_file)

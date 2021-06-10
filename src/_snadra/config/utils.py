@@ -1,19 +1,16 @@
-from typing import TYPE_CHECKING
+import pathlib
 
 import rtoml
 
-if TYPE_CHECKING:
-    import pathlib
 
-
-def parse_config_file(path: "pathlib.Path"):
+def parse_config_file(path: pathlib.Path):
     with path.open() as file_obj:
         config_file_data = rtoml.load(file_obj)
 
     return config_file_data
 
 
-def config_file_location() -> "pathlib.Path":
+def config_file_location() -> pathlib.Path:
     """
     Gets the location of the configuration file.
 

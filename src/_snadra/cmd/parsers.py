@@ -7,7 +7,6 @@ from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
 from _snadra.cmd.commands import Commands
-import _snadra.utils as snutils
 
 
 class CommandParser:

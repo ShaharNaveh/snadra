@@ -1,0 +1,6 @@
+[database]
+database= "snadra"
+db_password = "snadra"
+db_user = "snadra"
+port = 5432
+type = "postgres"

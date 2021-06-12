@@ -6,8 +6,8 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from _snadra.core.commands import Commands
-import _snadra.utils as snutils
+from _snadra.cmd import SnadraConsole
+from _snadra.cmd.commands import Commands
 
 
 class CommandParser:
@@ -41,9 +41,9 @@ class CommandParser:
 
         This is an infitine loop, until the user decides to exit.
         """
-        self.running = True
+        self.__running = True
 
-        while self.running:
+        while self.__running:
             try:
                 with patch_stdout():
                     line = await self.__prompt.prompt_async()
@@ -52,14 +52,13 @@ class CommandParser:
                     continue
                 await self.dispatch_line(line)
             except EOFError:
-                self.running = False
+                self.__running = False
                 continue
             except KeyboardInterrupt:
                 continue
             except Exception:
                 # Unexpected errors, we catch them so the application won't crash.
-                snutils.console.print_exception(width=None, show_locals=True)
-                continue
+                SnadraConsole().print_exception(width=None, show_locals=True)
 
     async def dispatch_line(self, line: str) -> None:
         """
@@ -79,7 +78,7 @@ class CommandParser:
             # NOTE: Here is where we initialize the command
             command = self.commands.get_command(argv[0])()  # type: ignore
         else:
-            snutils.console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
+            SnadraConsole().log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return
 
         args: Union[str, List[str]] = argv[1:]
@@ -92,7 +91,7 @@ class CommandParser:
                 args = pline
             await command.run(args)
         except SystemExit:
-            snutils.console.log("Incorrect arguments")
+            SnadraConsole().log("Incorrect arguments")
             return
 
     @staticmethod
@@ -133,7 +132,7 @@ class CommandParser:
         try:
             argv = shlex.split(line)
         except ValueError as err:
-            snutils.console.log(f"[red]Error[/red]: {err.args[0]}")
+            SnadraConsole().log(f"[red]Error[/red]: {err.args[0]}")
             return None
 
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))

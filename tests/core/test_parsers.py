@@ -4,7 +4,7 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from _snadra.core.parsers import CommandParser
+from _snadra.cmd.parsers import CommandParser
 
 
 class TestCommandParser:

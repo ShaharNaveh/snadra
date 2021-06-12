@@ -7,11 +7,10 @@ from rich import box as rich_box
 from rich.table import Table as RichTable
 from sqlalchemy.future import select
 
-from _snadra.core.base import Complete, Parameter
-from _snadra.core.db.config import async_session
-from _snadra.core.db.models import Workspace
-import _snadra.utils as snutils
-from _snadra.utils import CommandMeta
+from _snadra.cmd import CommandMeta, SnadraConsole
+from _snadra.cmd.base import Complete, Parameter
+from _snadra.db.config import async_session
+from _snadra.db.models import Workspace
 
 if TYPE_CHECKING:
     import argparse
@@ -65,4 +64,4 @@ class Command(CommandMeta):
 
             workspace_display_table.add_row(name, description, created_at, updated_at)
 
-        snutils.console.print(workspace_display_table)
+        SnadraConsole().print(workspace_display_table)

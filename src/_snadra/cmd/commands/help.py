@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Set
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from _snadra.core.base import Complete, Parameter
-from _snadra.core.commands import Commands
-import _snadra.utils as snutils
-from _snadra.utils import CommandMeta
+from _snadra.cmd import SnadraConsole
+from _snadra.cmd.base import Complete, Parameter
+from _snadra.cmd.commands import Commands
+from _snadra.cmd.utils import CommandMeta
 
 if TYPE_CHECKING:
     import argparse
@@ -78,11 +78,11 @@ class Command(CommandMeta):
         """
         if args.topic:
             if args.topic in self.keywords:
-                snutils.console.print(self.long_help)
+                SnadraConsole().print(self.long_help)
             else:
                 # Here we are counting on "argparse" choices for validation.
                 target_command = self._core_commands.get_command(args.topic)
-                snutils.console.print(target_command.long_help)  # type: ignore
+                SnadraConsole().print(target_command.long_help)  # type: ignore
 
         elif args:
             help_table = RichTable(title="Help menu", box=rich_box.SIMPLE)
@@ -97,4 +97,4 @@ class Command(CommandMeta):
 
                 help_table.add_row(keyword, command_description)
 
-            snutils.console.print(help_table)
+            SnadraConsole().print(help_table)

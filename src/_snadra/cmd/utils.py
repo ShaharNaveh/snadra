@@ -3,8 +3,6 @@ import argparse
 import functools
 from typing import Dict, Set
 
-from rich.console import Console
-
 from _snadra.cmd.base import Parameter
 
 

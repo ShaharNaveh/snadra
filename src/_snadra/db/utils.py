@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.future import select
 
+from _snadra.cmd.console import SnadraConsole
 from _snadra.db.config import Base, async_session
 from _snadra.db.models import Workspace
 
@@ -31,4 +32,4 @@ async def insert_default_rows(session: "AsyncSession") -> None:
                 session.add(default_workspace)
                 await session.commit()
             else:
-                snutils.console.log("Found default workspace, skipping")
+                SnadraConsole().log("Found default workspace, skipping")

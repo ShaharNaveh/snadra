@@ -10,6 +10,7 @@ or
 $ python -m snadra
 """
 import asyncio
+import sys
 
 from _snadra.cmd import CommandParser
 from _snadra.db.config import async_session, engine
@@ -26,4 +27,6 @@ async def main():
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

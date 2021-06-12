@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
@@ -33,6 +34,7 @@ class CommandParser:
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
+            completer=WordCompleter(self.commands.keywords),  # type: ignore
         )
 
     async def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma

@@ -42,12 +42,14 @@ class Command(CommandMeta):
         return bool(workspace)
 
     async def add_workspace(self, target: str, desc: str) -> None:
-
         async with async_session() as session:
             async with session.begin():
                 workspace = Workspace(name=target, description=desc)
                 session.add(workspace)
                 await session.commit()
+
+    async def delete_workspace(self, target: str) -> None:
+        pass
 
     async def run(self, args: "argparse.Namespace") -> None:
         """

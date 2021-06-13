@@ -32,6 +32,23 @@ class Command(CommandMeta):
         "-s,--search": {"help": "Search a workspace"},
     }
 
+    async def is_workspace_exists(self, target: str) -> bool:
+        async with async_session() as session:
+            async with session.begin():
+                stmt = select(Workspace).where(Workspace.name == target)
+                result = await session.execute(stmt)
+        workspace = result.scalar_one_or_none()
+
+        return bool(workspace)
+
+    async def add_workspace(self, target: str, desc: str) -> None:
+
+        async with async_session() as session:
+            async with session.begin():
+                workspace = Workspace(name=target, description=desc)
+                session.add(workspace)
+                await session.commit()
+
     async def run(self, args: "argparse.Namespace") -> None:
         """
         Manage workspaces.
@@ -41,6 +58,22 @@ class Command(CommandMeta):
         args : :class:`argparse.Namespace`
             The arguments for the command.
         """
+        target = args.target
+        if args.action == "add":
+            if target is None:
+                # TODO:
+                # Argparse should handle this.
+                SnadraConsole().log("Missing argument 'target'")
+                return
+
+            is_exists = await self.is_workspace_exists(target=target)
+            if is_exists:
+                SnadraConsole().log("Workspace already exists!")
+                return
+            else:
+                await self.add_workspace(target=args.target, desc=args.description)
+
+        SnadraConsole().log(args)
         workspace_display_table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
         workspace_display_table.add_column("Name")
         workspace_display_table.add_column("Description")

@@ -17,7 +17,6 @@ class CommandMeta(metaclass=abc.ABCMeta):
     """
 
     def __init__(self) -> None:
-        # Create the parser object
         if self.arguments is not None:
             for keyword in self.keywords:
                 self.parser = argparse.ArgumentParser(

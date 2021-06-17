@@ -1,7 +1,4 @@
-import argparse
 import enum
-import functools
-from typing import Dict, Set
 
 import pygments.token as ptoken
 

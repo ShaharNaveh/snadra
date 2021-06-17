@@ -1,12 +1,8 @@
 import abc
 import argparse
-from typing import TYPE_CHECKING, Dict, Optional, Set
+from typing import Any, Dict, Optional, Set
 
 from rich.console import Console
-
-if TYPE_CHECKING:
-    from _snadra.cmd.base import Parameter
-
 
 console = Console()
 
@@ -17,20 +13,18 @@ class CommandMeta(metaclass=abc.ABCMeta):
     """
 
     def __init__(self) -> None:
+        self.parser = argparse.ArgumentParser(
+            prog=self.keyword,
+            description=self.description,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
         if self.arguments is not None:
-            self.parser = argparse.ArgumentParser(
-                prog=self.keyword,
-                description=self.description,
-                formatter_class=argparse.RawDescriptionHelpFormatter,
-            )
             self.build_parser(self.parser, self.arguments)
-        else:
-            self.parser = None  # type: ignore
 
     def build_parser(
         self,
         parser: argparse.ArgumentParser,
-        args: Dict[str, "Parameter"],
+        args: Dict[str, Dict[str, Any]],
     ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -40,14 +34,14 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ----------
         parser : argparse.ArgumentParser
             Parser object to add arguments to.
-        args : Dict[str, _snadra.cmd.base.Parameter]
+        args : Dict[str, Dict]
             `ARGS` dictionary.
         """
         for arg, param in args.items():
             names = arg.split(",")
             group = parser
 
-            group.add_argument(*names, *param.args, **param.kwargs)
+            group.add_argument(*names, **param)
 
         if self.defaults is not None:
             parser.set_defaults(**self.defaults)
@@ -71,7 +65,6 @@ class CommandMeta(metaclass=abc.ABCMeta):
     def keyword(self) -> str:
         """
         Keyword for the new command.
-
 
         Returns
         -------
@@ -115,6 +108,12 @@ class CommandMeta(metaclass=abc.ABCMeta):
         """
         Long help text for the new command.
 
+        This gets displayed when:
+
+        $ help <command>
+
+        is ran.
+
         Returns
         -------
         str
@@ -123,19 +122,14 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ...
 
     @property
-    @abc.abstractmethod
-    def arguments(self) -> Dict[str, "Parameter"]:
+    def arguments(self) -> Optional[Dict[str, Dict[str, Any]]]:
         """
         Arguments for the new command.
 
-        Dictionary of parameter definitions created with the `Parameter` class.
+        Parameters to pass into :meth:`argparse.ArgumentParser.add_argument`
         If this is None, your command will receive the
         raw argument string and no processing will be done except
         removing the leading command name.
-
-        See Also
-        --------
-        snadra._core.base.Parameter
         """
         ...
 

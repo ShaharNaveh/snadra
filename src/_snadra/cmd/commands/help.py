@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from _snadra.cmd.base import Complete, Parameter
 from _snadra.cmd.commands import Commands
 from _snadra.cmd.utils import CommandMeta, console
 
@@ -26,11 +25,7 @@ class Command(CommandMeta):
     available_keywords = __commands.keywords.union({keyword}).union(aliases)
 
     arguments = {
-        "topic": Parameter(
-            Complete.CHOICES,
-            choices=sorted(available_keywords),
-            nargs="?",
-        )
+        "topic": {"choices": sorted(available_keywords), "nargs": "?"},
     }
 
     async def run(self, args: "argparse.Namespace") -> None:

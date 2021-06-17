@@ -8,7 +8,6 @@ from rich.table import Table as RichTable
 from sqlalchemy.future import select
 
 from _snadra.cmd import CommandMeta
-from _snadra.cmd.base import Complete, Parameter
 from _snadra.cmd.utils import console
 from _snadra.db.config import async_session
 from _snadra.db.models import Workspace
@@ -28,9 +27,9 @@ class Command(CommandMeta):
     long_help = "LONG HELP FOR WORKSPACE COMMAND"
 
     arguments = {
-        "-a,--add": Parameter(complete=Complete.NONE, help="Add a workspace"),
-        "-d,--delete": Parameter(complete=Complete.NONE, help="Delete a workspace"),
-        "-s,--search": Parameter(complete=Complete.NONE, help="Search a workspace"),
+        "-a,--add": {"help": "Add a workspace"},
+        "-d,--delete": {"help": "Delete a workspace"},
+        "-s,--search": {"help": "Search a workspace"},
     }
 
     async def run(self, args: "argparse.Namespace") -> None:

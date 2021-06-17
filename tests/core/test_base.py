@@ -24,7 +24,7 @@ class TestCommands:
         Test if all the expected aliases of the commands, are in `Commands.keywords`.
         """
         commands = Commands()
-        expected = {"/?", "?", "HELP", "quit", "workspaces"}
+        expected = {"HELP", "quit", "workspaces"}
         result = commands.aliases
 
         assert result == expected

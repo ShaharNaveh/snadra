@@ -18,7 +18,7 @@ class Command(CommandMeta):
     """
 
     keyword = "help"
-    aliases = {"HELP", "?", "/?"}
+    aliases = {"HELP"}
     description = "List all known commands and print their help message"
     long_help = "THE LONG HELP MESSAGE OF 'help'"
 

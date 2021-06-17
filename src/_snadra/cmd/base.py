@@ -21,16 +21,25 @@ class Complete(enum.Enum):
 
 # TODO:
 # Make this a namedtuple.
-class Parameter:
+def parameter(
+    complete: Complete,
+    token=ptoken.Name.Label,
+    *args,
+    **kwargs,
+):
     """
     Representation of a parameter for the command parsing.
 
     Attributes
     ----------
-    complete : snadra._core.base.Complete
+    complete : Complete
     token : pygments:token.Name.Label
-    group : str, optional
     """
+    pass
+
+
+class Parameter:
+    """ """
 
     def __init__(
         self,
@@ -43,3 +52,4 @@ class Parameter:
         self.token = token
         self.args = args
         self.kwargs = kwargs
+        print(f"{self.args=}\t{self.kwargs=}")

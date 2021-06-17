@@ -1,6 +1,5 @@
 import abc
 import argparse
-import functools
 from typing import TYPE_CHECKING, Dict, Optional, Set
 
 from rich.console import Console
@@ -47,25 +46,6 @@ class CommandMeta(metaclass=abc.ABCMeta):
         for arg, param in args.items():
             names = arg.split(",")
             group = parser
-
-            if "choices" in param.kwargs and callable(param.kwargs["choices"]):
-                method = param.kwargs["choices"]
-
-                class wrapper:
-                    def __init__(wself, method) -> None:
-                        wself.method = method
-
-                    def __iter__(wself):
-                        yield from wself.method(self)
-
-                param.kwargs["choices"] = wrapper(method)
-
-            if (
-                "type" in param.kwargs
-                and isinstance(param.kwargs["type"], tuple)
-                and param.kwargs["type"][0] == "method"
-            ):
-                param.kwargs["type"] = functools.partial(param.kwargs["type"][1], self)
 
             group.add_argument(*names, *param.args, **param.kwargs)
 

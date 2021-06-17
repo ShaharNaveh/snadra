@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     import os
     import types
 
-    from _snadra.core.base import CommandDefinition
+    from _snadra.cmd.utils import CommandMeta
 
 
 class Commands:
@@ -175,7 +175,7 @@ class Commands:
         """
         return set(self.commands.keys())
 
-    def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
+    def get_command(self, keyword: str) -> Optional["CommandMeta"]:
         """
         Get the command that is mapped to a keyword.
 
@@ -186,7 +186,7 @@ class Commands:
 
         Returns
         -------
-        Optional[:class:`CommandDefinition`]
+        Optional[:class:`CommandMeta`]
             The command that is mapped to ``keyword``,
             if ``keyword`` is not mapped to any command, `None` is returned.
         """

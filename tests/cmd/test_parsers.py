@@ -4,8 +4,6 @@ Testing for the functions and classes that are in:
 """
 import pytest
 
-from _snadra.cmd.parsers import CommandParser
-
 
 class TestCommandParser:
     @pytest.mark.parametrize(
@@ -25,8 +23,7 @@ class TestCommandParser:
         ],
     )
     @pytest.mark.asyncio
-    async def test_dispatch_line_empty(self, line):
-        command_parser = CommandParser()
+    async def test_dispatch_line_empty(self, line, command_parser):
         result = await command_parser.dispatch_line(line)
         assert result is None
 
@@ -46,8 +43,7 @@ class TestCommandParser:
             " \n " * 3,
         ],
     )
-    def test_parse_line_empty(self, line):
-        command_parser = CommandParser()
+    def test_parse_line_empty(self, line, command_parser):
         result = command_parser._parse_line(line)
         assert result is None
 
@@ -72,8 +68,7 @@ class TestCommandParser:
             ),
         ],
     )
-    def test_parse_line(self, line, expected):
-        command_parser = CommandParser()
+    def test_parse_line(self, line, expected, command_parser):
         result = command_parser._parse_line(line)
         assert result == expected
 
@@ -86,8 +81,7 @@ class TestCommandParser:
         ],
     )
     @pytest.mark.asyncio
-    async def test_dispatch_line_invalid_keyword(self, capfd, line):
-        command_parser = CommandParser()
+    async def test_dispatch_line_invalid_keyword(self, capfd, line, command_parser):
         expected_out = "unknown command"
         expected_err = ""
         await command_parser.dispatch_line(line)
@@ -107,7 +101,6 @@ class TestCommandParser:
             '"command',
         ],
     )
-    def test_parse_line_shlex_split(self, line):
-        command_parser = CommandParser()
+    def test_parse_line_shlex_split(self, line, command_parser):
         result = command_parser._parse_line(line)
         assert result is None

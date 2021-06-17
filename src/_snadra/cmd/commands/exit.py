@@ -16,7 +16,8 @@ class Command(CommandMeta):
     Help message for "exit".
     """
 
-    keywords = {"exit", "quit"}
+    keyword = "exit"
+    aliases = {"quit"}
     description = "Exit the console"
     long_help = "LONG HELP FOR EXIT COMMAND"
 

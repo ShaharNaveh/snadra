@@ -1,8 +1,6 @@
 """
 Testing general things about the commands
 """
-from typing import List
-
 from hypothesis import assume, given
 import hypothesis.strategies as st
 import pytest
@@ -16,8 +14,18 @@ class TestCommands:
         Test if all the expected keywords of the commands, are in `Commands.keywords`.
         """
         commands = Commands()
-        expected = {"exit", "help", "quit", "workspace"}
+        expected = {"exit", "help", "workspace"}
         result = commands.keywords
+
+        assert result == expected
+
+    def test_aliases(self):
+        """
+        Test if all the expected aliases of the commands, are in `Commands.keywords`.
+        """
+        commands = Commands()
+        expected = {"/?", "?", "HELP", "quit", "workspaces"}
+        result = commands.aliases
 
         assert result == expected
 
@@ -29,24 +37,25 @@ class TestCommands:
     @given(keyword=st.text())
     def test_is_valid_keyword_invalid(self, keyword):
         commands = Commands()
-        assume(keyword not in commands.keywords)
+        assume(keyword not in commands.all_keywords)
         assert not commands.is_valid_keyword(keyword)
 
-    def test_no_duplicate_keywords(self):
+    def test_no_duplicate_keywords_and_aliases(self):
         """
-        Check if two commands or more are sharing the same keyword.
+        Check if two commands or more are sharing the same keyword or alias.
         """
         commands = Commands()
-        result: List[str] = []
+        result = []
         seen_commands = set()
-        for command_keyword in commands.keywords:
-            command = commands.get_command(command_keyword)
-            if command is not None:
-                if command in seen_commands:
-                    continue
-                seen_commands.add(command)
-                for keyword in command.keywords:
-                    result.append(keyword)
+
+        for keyword in commands.all_keywords:
+            command = commands.get_command(keyword)
+            if command in seen_commands:
+                continue
+            seen_commands.add(command)
+            result.append(command.keyword)
+            for alias in command.aliases:
+                result.append(alias)
 
         expected = list(set(result))
         assert sorted(result) == sorted(expected)
@@ -54,6 +63,6 @@ class TestCommands:
     @given(keyword=st.text())
     def test_get_command_invalid(self, keyword):
         commands = Commands()
-        assume(keyword not in commands.keywords)
+        assume(keyword not in commands.all_keywords)
         result = commands.get_command(keyword)
         assert result is None

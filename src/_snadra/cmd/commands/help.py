@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Set
+from typing import TYPE_CHECKING
 
 from rich import box as rich_box
 from rich.table import Table as RichTable
@@ -12,57 +12,24 @@ if TYPE_CHECKING:
     import argparse
 
 
-def _all_available_keywords(commands: Commands, help_keywords: Set[str]) -> Set[str]:
-    """
-    All the available keywords, of the core commands.
-
-    Parameters
-    ----------
-    commands : snadra._core.commands.Commands
-        Commands objecs.
-    help_keywords : set of str
-        Keywords of the `help` command.
-
-    Returns
-    -------
-    set of str
-        All the available, core command's keywords.
-
-    See Also
-    --------
-    snadra._core.commands.Commands
-    """
-    commands_keywords = commands.keywords
-    all_available_keywords = commands_keywords.union(help_keywords)
-    return all_available_keywords
-
-
 class Command(CommandMeta):
     """
     The command `help`, for displaying help information about other commands.
     """
 
-    # TODO: Add tests
-
-    keywords = {"help"}
+    keyword = "help"
+    aliases = {"HELP", "?", "/?"}
     description = "List all known commands and print their help message"
     long_help = "THE LONG HELP MESSAGE OF 'help'"
 
-    # TODO: Get rid of this 'choices' and make better handling and
-    # display better information about the commands and how to use the help command.
-    _core_commands = Commands(
-        skip={
-            "__init__",
-            "help",  # Skipping "help" so we won't make a circular import
-        }
-    )
-    _available_keywords = sorted(
-        _all_available_keywords(commands=_core_commands, help_keywords=keywords)
-    )
+    # Skipping "help" so we won't make a circular import
+    __commands = Commands(skip={"help"})
+    available_keywords = __commands.keywords.union({keyword}).union(aliases)
+
     arguments = {
         "topic": Parameter(
             Complete.CHOICES,
-            choices=_available_keywords,
+            choices=sorted(available_keywords),
             nargs="?",
         )
     }
@@ -77,11 +44,11 @@ class Command(CommandMeta):
             The arguments for the command.
         """
         if args.topic:
-            if args.topic in self.keywords:
+            if args.topic in self.available_keywords:
                 SnadraConsole().print(self.long_help)
             else:
                 # Here we are counting on "argparse" choices for validation.
-                target_command = self._core_commands.get_command(args.topic)
+                target_command = self.__commands.get_command(args.topic)
                 SnadraConsole().print(target_command.long_help)  # type: ignore
 
         elif args:
@@ -89,11 +56,11 @@ class Command(CommandMeta):
             help_table.add_column("Command")
             help_table.add_column("Description")
 
-            for keyword in self._available_keywords:
-                if keyword in self.keywords:
+            for keyword in self.available_keywords:
+                if keyword == self.keyword or keyword in self.aliases:
                     command_description = self.description
                 else:
-                    command_description = self._core_commands.get_command(keyword).description  # type: ignore # noqa: E501
+                    command_description = self.__commands.get_command(keyword).description  # type: ignore # noqa: E501
 
                 help_table.add_row(keyword, command_description)
 

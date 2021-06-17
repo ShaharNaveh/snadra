@@ -21,7 +21,8 @@ class Command(CommandMeta):
     Help message for "workspace".
     """
 
-    keywords = {"workspace"}
+    keyword = "workspace"
+    aliases = {"workspaces"}
     description = "Manage workspaces"
     long_help = "LONG HELP FOR WORKSPACE COMMAND"
 

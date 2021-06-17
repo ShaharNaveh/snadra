@@ -1,38 +1,32 @@
 import abc
 import argparse
 import functools
-from typing import Dict, Set
+from typing import TYPE_CHECKING, Dict, Optional, Set
 
-from _snadra.cmd.base import Parameter
+if TYPE_CHECKING:
+    from _snadra.cmd.base import Parameter
 
 
 class CommandMeta(metaclass=abc.ABCMeta):
     """
     Abstract base class for command line commands.
-
-    See Also
-    --------
-    snadra._core.commands.exit
-    snadra._core.commands.help
     """
 
     def __init__(self) -> None:
-        # Create the parser object
         if self.arguments is not None:
-            for keyword in self.keywords:
-                self.parser = argparse.ArgumentParser(
-                    prog=keyword,
-                    description=self.description,
-                    formatter_class=argparse.RawDescriptionHelpFormatter,
-                )
-                self.build_parser(self.parser, self.arguments)
+            self.parser = argparse.ArgumentParser(
+                prog=self.keyword,
+                description=self.description,
+                formatter_class=argparse.RawDescriptionHelpFormatter,
+            )
+            self.build_parser(self.parser, self.arguments)
         else:
             self.parser = None  # type: ignore
 
     def build_parser(
         self,
         parser: argparse.ArgumentParser,
-        args: Dict[str, Parameter],
+        args: Dict[str, "Parameter"],
     ) -> None:
         """
         Parse the ARGS and DEFAULTS dictionaries to build an argparse ArgumentParser
@@ -42,14 +36,13 @@ class CommandMeta(metaclass=abc.ABCMeta):
         ----------
         parser : argparse.ArgumentParser
             Parser object to add arguments to.
-        args : Dict[str, snadra._core.base.Parameter]
+        args : Dict[str, _snadra.cmd.base.Parameter]
             `ARGS` dictionary.
         """
         for arg, param in args.items():
             names = arg.split(",")
             group = parser
 
-            # Patch choice to work with a callable
             if "choices" in param.kwargs and callable(param.kwargs["choices"]):
                 method = param.kwargs["choices"]
 
@@ -62,7 +55,6 @@ class CommandMeta(metaclass=abc.ABCMeta):
 
                 param.kwargs["choices"] = wrapper(method)
 
-            # Patch "type" so we can see "self"
             if (
                 "type" in param.kwargs
                 and isinstance(param.kwargs["type"], tuple)
@@ -72,27 +64,50 @@ class CommandMeta(metaclass=abc.ABCMeta):
 
             group.add_argument(*names, *param.args, **param.kwargs)
 
-        parser.set_defaults(**self.defaults)
+        if self.defaults is not None:
+            parser.set_defaults(**self.defaults)
 
     @property
-    def defaults(self):
+    def defaults(self) -> Dict:
         """
-        foo bar baz.
-        """
-        return {}
+        Set default value for the specific argument.
 
-    @property
-    @abc.abstractmethod
-    def keywords(self) -> Set[str]:
-        """
-        Keywords for the new command.
-
-        Can be treated as command "aliases".
+        This is the same as:
+        parser.set_defaults(foo='spam')
 
         Returns
         -------
-        set of str
-            Keywords for the command.
+        Dict
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def keyword(self) -> str:
+        """
+        Keyword for the new command.
+
+
+        Returns
+        -------
+        str
+            Keyword for the command.
+        """
+        ...
+
+    @property
+    @abc.abstractmethod
+    def aliases(self) -> Optional[Set[str]]:
+        """
+        Aliases for the command.
+
+        The main difference between "keyword" and "aliases", is that the aliases
+        do not apear (by default) in the help menu.
+
+        Returns
+        -------
+        set of str, or None
+            Aliases for the command.
         """
         ...
 

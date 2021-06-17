@@ -34,7 +34,7 @@ class CommandParser:
             "snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
-            completer=WordCompleter(self.commands.keywords),
+            completer=WordCompleter(self.commands.keywords),  # type: ignore
         )
 
     async def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma

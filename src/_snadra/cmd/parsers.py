@@ -7,8 +7,8 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from _snadra.cmd import SnadraConsole
 from _snadra.cmd.commands import Commands
+from _snadra.cmd.utils import console
 
 
 class CommandParser:
@@ -60,7 +60,7 @@ class CommandParser:
                 continue
             except Exception:
                 # Unexpected errors, we catch them so the application won't crash.
-                SnadraConsole().print_exception(width=None, show_locals=True)
+                console.print_exception(width=None, show_locals=True)
 
     async def dispatch_line(self, line: str) -> None:
         """
@@ -80,7 +80,7 @@ class CommandParser:
             # NOTE: Here is where we initialize the command
             command = self.commands.get_command(argv[0])()  # type: ignore
         else:
-            SnadraConsole().log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
+            console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
             return
 
         args: Union[str, List[str]] = argv[1:]
@@ -93,7 +93,7 @@ class CommandParser:
                 args = pline
             await command.run(args)
         except SystemExit:
-            SnadraConsole().log("Incorrect arguments")
+            console.log("Incorrect arguments")
             return
 
     @staticmethod
@@ -134,7 +134,7 @@ class CommandParser:
         try:
             argv = shlex.split(line)
         except ValueError as err:
-            SnadraConsole().log(f"[red]Error[/red]: {err.args[0]}")
+            console.log(f"[red]Error[/red]: {err.args[0]}")
             return None
 
         pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))

@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from _snadra.cmd import SnadraConsole
 from _snadra.cmd.base import Complete, Parameter
 from _snadra.cmd.commands import Commands
-from _snadra.cmd.utils import CommandMeta
+from _snadra.cmd.utils import CommandMeta, console
 
 if TYPE_CHECKING:
     import argparse
@@ -45,11 +44,11 @@ class Command(CommandMeta):
         """
         if args.topic:
             if args.topic in self.available_keywords:
-                SnadraConsole().print(self.long_help)
+                console.print(self.long_help)
             else:
                 # Here we are counting on "argparse" choices for validation.
                 target_command = self.__commands.get_command(args.topic)
-                SnadraConsole().print(target_command.long_help)  # type: ignore
+                console.print(target_command.long_help)  # type: ignore
 
         elif args:
             help_table = RichTable(title="Help menu", box=rich_box.SIMPLE)
@@ -64,4 +63,4 @@ class Command(CommandMeta):
 
                 help_table.add_row(keyword, command_description)
 
-            SnadraConsole().print(help_table)
+            console.print(help_table)

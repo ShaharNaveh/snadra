@@ -19,6 +19,8 @@ class Complete(enum.Enum):
     NONE = enum.auto()
 
 
+# TODO:
+# Make this a namedtuple.
 class Parameter:
     """
     Representation of a parameter for the command parsing.

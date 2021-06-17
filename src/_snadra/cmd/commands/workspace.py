@@ -7,8 +7,9 @@ from rich import box as rich_box
 from rich.table import Table as RichTable
 from sqlalchemy.future import select
 
-from _snadra.cmd import CommandMeta, SnadraConsole
+from _snadra.cmd import CommandMeta
 from _snadra.cmd.base import Complete, Parameter
+from _snadra.cmd.utils import console
 from _snadra.db.config import async_session
 from _snadra.db.models import Workspace
 
@@ -65,4 +66,4 @@ class Command(CommandMeta):
 
             workspace_display_table.add_row(name, description, created_at, updated_at)
 
-        SnadraConsole().print(workspace_display_table)
+        console.print(workspace_display_table)

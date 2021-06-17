@@ -3,8 +3,13 @@ import argparse
 import functools
 from typing import TYPE_CHECKING, Dict, Optional, Set
 
+from rich.console import Console
+
 if TYPE_CHECKING:
     from _snadra.cmd.base import Parameter
+
+
+console = Console()
 
 
 class CommandMeta(metaclass=abc.ABCMeta):

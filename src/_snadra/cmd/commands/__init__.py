@@ -6,6 +6,7 @@ import sys
 from typing import TYPE_CHECKING, FrozenSet, Iterable, Optional, Sequence, Set, Union
 
 if TYPE_CHECKING:
+    import argparse
     import os
     import types
 
@@ -207,3 +208,20 @@ class Commands:
             Whether or not the keyword is mapped to a valid command.
         """
         return keyword in self.commands
+
+    def get_parser(self, keyword: str) -> "argparse.ArgumentParser":
+        """
+        Get the parser of the command.
+
+        Parameters
+        ----------
+        keyword : str
+            Command keyword to get the parser from.
+
+        Returns
+        -------
+        argparse.ArgumentParser
+            The argument parser of the command specified.
+        """
+        command = self.get_command(keyword)
+        return command.parser

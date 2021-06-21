@@ -11,6 +11,36 @@ from _snadra.cmd.commands import Commands
 from _snadra.cmd.utils import console
 
 
+def parse_line(line: str) -> Optional[List[str]]:
+    """
+    Parameters
+    ----------
+    line : str
+        The full command (including arguments).
+
+    Returns
+    -------
+    List[str]
+        Line parsed (with shlex) as a list.
+
+    See Also
+    --------
+    shlex.split
+
+    Examples
+    --------
+    >>> line = "command --target 127.0.0.1 --port 80"
+    >>> CommandParser._parse_line(line)
+    ['command', '--target', '127.0.0.1', '--port', '80']
+    """
+    line = line.strip()
+    if line == "":
+        return None
+
+    parsed_line = shlex.split(line)
+    return parsed_line
+
+
 class CommandParser:
     """
     Responsible for handling the commands entered.

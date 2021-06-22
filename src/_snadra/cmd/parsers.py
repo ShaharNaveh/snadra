@@ -11,6 +11,36 @@ from _snadra.cmd.commands import Commands
 from _snadra.cmd.utils import console
 
 
+async def dispatch_line(line: str, *, commands: Commands) -> None:
+    """
+    Execute each command that was entered to the console.
+
+    Parameters
+    ----------
+    line : str
+        The full command (including arguments) as a string.
+    commands : Commands
+        Commands object.
+    """
+    pline = parse_line(line=line)
+    if pline is None:
+        return
+
+    target_command = pline[0]
+
+    if commands.is_valid_keyword(target_command):
+        command = commands.get_command(target_command)()  # type: ignore
+        parser = command.parser
+    else:
+        console.log(f"[red]Error[/red]: {repr(target_command)} unknown command")
+        return
+
+    command_arguments = pline[1:]
+    args_namespace = parser.parse_args(command_arguments)
+
+    await command.run(args_namespace)
+
+
 def parse_line(line: str) -> Optional[List[str]]:
     """
     Parameters
@@ -30,7 +60,7 @@ def parse_line(line: str) -> Optional[List[str]]:
     Examples
     --------
     >>> line = "command --target 127.0.0.1 --port 80"
-    >>> CommandParser._parse_line(line)
+    >>> parse_line(line)
     ['command', '--target', '127.0.0.1', '--port', '80']
     """
     line = line.strip()
@@ -82,7 +112,7 @@ class CommandParser:
                 line = line.strip()
                 if line == "":
                     continue
-                await self.dispatch_line(line)
+                await dispatch_line(line, commands=self.commands)
             except EOFError:
                 self.__running = False
                 continue
@@ -91,81 +121,3 @@ class CommandParser:
             except Exception:
                 # Unexpected errors, we catch them so the application won't crash.
                 console.print_exception(width=None, show_locals=True)
-
-    async def dispatch_line(self, line: str) -> None:
-        """
-        Execute each command that was entered to the console.
-
-        Parameters
-        ----------
-        line : str
-            The full command (including arguments) as a string.
-        """
-        try:
-            argv, pline = CommandParser._parse_line(line=line)  # type: ignore
-        except TypeError:
-            return
-
-        if self.commands.is_valid_keyword(argv[0]):
-            # NOTE: Here is where we initialize the command
-            command = self.commands.get_command(argv[0])()  # type: ignore
-        else:
-            console.log(f"[red]Error[/red]: {repr(argv[0])} unknown command")
-            return
-
-        args: Union[str, List[str]] = argv[1:]
-        args = [arg.encode("utf-8").decode("unicode_escape") for arg in args]
-
-        try:
-            if command.parser:
-                args = command.parser.parse_args(args)
-            else:
-                args = pline
-            await command.run(args)
-        except SystemExit:
-            console.log("Incorrect arguments")
-            return
-
-    @staticmethod
-    def _parse_line(line: str) -> Optional[Tuple[List[str], str]]:
-        """
-        Parameters
-        ----------
-        line : str
-            The full command (including arguments).
-
-        Returns
-        -------
-        List[str]
-            Line parsed as a list. (with shlex)
-        str
-
-        Raises
-        ------
-        ValueError
-            If could not parse the line correctly.
-
-        See Also
-        --------
-        shlex.split
-
-        Examples
-        --------
-        >>> line = "command --target 127.0.0.1 --port 80"
-        >>> CommandParser._parse_line(line)
-        (\
-['command', '--target', '127.0.0.1', '--port', '80'], \
-'command --target 127.0.0.1 --port 80')
-        """
-        line = line.strip()
-        if line == "":
-            return None
-
-        try:
-            argv = shlex.split(line)
-        except ValueError as err:
-            console.log(f"[red]Error[/red]: {err.args[0]}")
-            return None
-
-        pline = f"{argv[0]} ".join(line.split(f"{argv[0]} "))
-        return (argv, pline)

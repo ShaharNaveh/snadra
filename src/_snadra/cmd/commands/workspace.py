@@ -7,8 +7,8 @@ from rich import box as rich_box
 from rich.table import Table as RichTable
 from sqlalchemy.future import select
 
-from _snadra.cmd import CommandMeta, SnadraConsole
-from _snadra.cmd.base import Complete, Parameter
+from _snadra.cmd import CommandMeta
+from _snadra.cmd.utils import console
 from _snadra.db.config import async_session
 from _snadra.db.models import Workspace
 
@@ -21,11 +21,13 @@ class Command(CommandMeta):
     Help message for "workspace".
     """
 
-    keywords = {"workspace"}
+    keyword = "workspace"
+    aliases = {"workspaces"}
     description = "Manage workspaces"
     long_help = "LONG HELP FOR WORKSPACE COMMAND"
 
     arguments = {
+<<<<<<< HEAD
         "action": Parameter(
             Complete.CHOICES,
             choices=sorted({"add", "delete", "info", "search"}),
@@ -40,6 +42,11 @@ class Command(CommandMeta):
             action="store_true",
             complete=Complete.NONE,
         ),
+=======
+        "-a,--add": {"help": "Add a workspace"},
+        "-d,--delete": {"help": "Delete a workspace"},
+        "-s,--search": {"help": "Search a workspace"},
+>>>>>>> origin/main
     }
 
     async def is_workspace_exists(self, target: str) -> bool:
@@ -110,4 +117,4 @@ class Command(CommandMeta):
 
             workspace_display_table.add_row(name, description, created_at, updated_at)
 
-        SnadraConsole().print(workspace_display_table)
+        console.print(workspace_display_table)

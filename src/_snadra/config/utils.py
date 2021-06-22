@@ -1,40 +1,24 @@
 import pathlib
-from typing import TYPE_CHECKING
+from typing import Any, Dict
 
 import rtoml
 
-if TYPE_CHECKING:
-    import os
 
-
-def parse_config_file(path: "os.PathLike[str]"):
-    with path.open() as file_obj:  # type: ignore
-        config_file_data = rtoml.load(file_obj)
-
-    return config_file_data
-
-
-def config_file_location() -> pathlib.Path:
+def parse_config_file(path: pathlib.Path) -> Dict[str, Any]:
     """
-    Gets the location of the configuration file.
+    Parse the configuration file.
 
-    The search hierarchy is:
-        * $HOME/.config/snadra/snadra_config.toml
-        * $HOME/.snadra_config.toml
-        * ./default_config.toml
+    Parameters
+    ----------
+    path : pathlib.Path
+        Path to the configuration file.
+
+    Returns
+    -------
+    Dict[str, Any]
+        Dictionary of the configuration file.
     """
-    locations = [
-        pathlib.Path("~/.config/snadra/snadra_config.toml").expanduser(),
-        pathlib.Path("~/.snadra_config.toml").expanduser(),
-    ]
+    with path.open() as file_obj:
+        config = rtoml.load(file_obj)
 
-    for location in locations:
-        print(location)
-        if location.exists():
-            return location
-
-    default_config_file_location = (
-        pathlib.Path(__file__).parent / "default_config.toml"
-    ).resolve()
-
-    return default_config_file_location
+    return config

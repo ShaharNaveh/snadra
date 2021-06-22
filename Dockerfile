@@ -11,7 +11,7 @@ RUN python -m pip install --requirement requirements.txt
 
 COPY . .
 
-RUN python -m pip install --upgrade .
+RUN python -m pip install --use-feature=in-tree-build --upgrade .
 
 # now specified in start.sh
 # CMD [ "python", "-m", "snadra" ]

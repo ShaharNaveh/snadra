@@ -3,23 +3,13 @@ from importlib.machinery import SOURCE_SUFFIXES
 import importlib.util
 import pathlib
 import sys
-from typing import (
-    TYPE_CHECKING,
-    Dict,
-    FrozenSet,
-    Iterable,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, FrozenSet, Iterable, Optional, Sequence, Set, Union
 
 if TYPE_CHECKING:
     import os
     import types
 
-    from _snadra.core.base import CommandDefinition
+    from _snadra.cmd.utils import CommandMeta
 
 
 class Commands:
@@ -40,33 +30,49 @@ class Commands:
     The module names inside `skip`, should not be with a file suffix.
     """
 
-    __slots__ = {"_commands_dict", "_path", "_skip"}
+    __slots__ = {
+        "_commands_alias",
+        "_commands_core",
+        "_path",
+        "_skip",
+        "commands",
+    }
 
     def __init__(
         self,
         path: Optional["os.PathLike[str]"] = None,
         *,
-        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]] = None,
+        skip: Optional[Set[str]] = None,
     ) -> None:
+        this_file = pathlib.Path(__file__)
         if path is None:
-            self._path = pathlib.Path(__file__).parent.resolve()
+            self._path = this_file.parent.resolve()
         else:
             self._path = pathlib.Path(path)
 
-        if skip:
-            self._skip = skip
-        else:
-            self._skip = frozenset({"__init__"})
+        self._skip: Set[str] = {this_file.stem}
 
-        fetched_modules = Commands._fetch_modules(
+        if skip is not None:
+            self._skip = self._skip.union(skip)
+
+        modules = Commands._fetch_modules(
             file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
         )
-        self._commands_dict: Dict[str, "CommandDefinition"] = {
-            keyword: module.Command  # type: ignore
-            for keyword, module in Commands._module_aliases(
-                fetched_modules=fetched_modules
-            )
-        }
+
+        self._commands_core = {}
+        self._commands_alias = {}
+
+        for module in modules:
+            command = module.Command  # type: ignore
+            core_keyword = command.keyword
+            self._commands_core[core_keyword] = command
+            if command.aliases is None:
+                continue
+
+            for alias in command.aliases:
+                self._commands_alias[alias] = command
+
+        self.commands = {**self._commands_alias, **self._commands_core}
 
     @staticmethod
     def _fetch_modules(
@@ -103,30 +109,6 @@ class Commands:
             yield module
 
     @staticmethod
-    def _module_aliases(
-        fetched_modules: Iterable["types.ModuleType"],
-    ) -> Iterable[Tuple[str, "types.ModuleType"]]:
-        """
-        Exctracting the alias of each Command module.
-
-        Parameters
-        ----------
-        fetched_modules : Iterable[:class:`types.ModuleType`]
-            Generator of modules containing a `Command` class.
-
-        Yields
-        ------
-        str
-            Command alias.
-        :class:`types.ModuleType`
-            Module containing a `Command` class.
-        """
-        for module in fetched_modules:
-            command = module.Command  # type: ignore
-            for keyword in command.keywords:
-                yield keyword, module
-
-    @staticmethod
     def iter_dir(
         path: "os.PathLike",
         *,
@@ -158,20 +140,44 @@ class Commands:
             yield child
 
     @property
+    def aliases(self) -> Set[str]:
+        """
+        Get all keywords that are aliases.
+
+        Returns
+        -------
+        Set[str]
+            All aliases keywords.
+        """
+        return set(self._commands_alias.keys())
+
+    @property
     def keywords(self) -> Set[str]:
         """
-        Get all the available keywords.
+        Get all core keywords.
+
+        Returns
+        -------
+        Set[str]
+            All core keywords.
+        """
+        return set(self._commands_core.keys())
+
+    @property
+    def all_keywords(self) -> Set[str]:
+        """
+        Get both the core keywords and the aliases keywords.
 
         Returns
         -------
         Set[str]
             All the available keywords.
         """
-        return set(self._commands_dict.keys())
+        return set(self.commands.keys())
 
-    def get_command(self, keyword: str) -> Optional["CommandDefinition"]:
+    def get_command(self, keyword: str) -> Optional["CommandMeta"]:
         """
-        Get the command that mapped to a keyword.
+        Get the command that is mapped to a keyword.
 
         Parameters
         ----------
@@ -180,11 +186,11 @@ class Commands:
 
         Returns
         -------
-        Optional[:class:`CommandDefinition`]
+        Optional[:class:`CommandMeta`]
             The command that is mapped to ``keyword``,
             if ``keyword`` is not mapped to any command, `None` is returned.
         """
-        return self._commands_dict.get(keyword)
+        return self.commands.get(keyword)
 
     def is_valid_keyword(self, keyword: str) -> bool:
         """
@@ -200,4 +206,4 @@ class Commands:
         bool
             Whether or not the keyword is mapped to a valid command.
         """
-        return keyword in self._commands_dict
+        return keyword in self.commands

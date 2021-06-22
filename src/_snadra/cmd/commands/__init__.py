@@ -6,7 +6,6 @@ import sys
 from typing import TYPE_CHECKING, FrozenSet, Iterable, Optional, Sequence, Set, Union
 
 if TYPE_CHECKING:
-    import argparse
     import os
     import types
 

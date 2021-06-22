@@ -63,5 +63,10 @@ def parse_line(line: str) -> Optional[List[str]]:
     if line == "":
         return None
 
-    parsed_line = shlex.split(line)
+    try:
+        parsed_line = shlex.split(line)
+    except ValueError as err:
+        console.log(f"[red]Error[/red]: {err.args[0]}")
+        return None
+
     return parsed_line

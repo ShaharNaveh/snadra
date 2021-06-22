@@ -9,8 +9,7 @@
 # ./ci/code_check.sh lint		# Run lint checks
 # ./ci/code_checks.sh type		# Run typing checks
 
-_BASE_DIR="$(dirname $0)/.."
-BASE_DIR=$(realpath $_BASE_DIR)
+BASE_DIR="$(dirname $0)/.."
 RET_SUM=0
 CHECK_TYPE=$1
 
@@ -27,9 +26,9 @@ if [[ -z "$CHECK_TYPE" || "$CHECK_TYPE" == "doctest" ]]
 then
 	echo "pytest version"
 	pytest --version
-
+	
 	MSG='Doctests src/' ; echo $MSG
-	pytest -q --doctest-modules src/
+	pytest -q --doctest-modules $BASE_DIR/src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""
@@ -41,7 +40,7 @@ fi
 if [[ -z "$CHECK_TYPE" || "$CHECK_TYPE" == "lint" ]]
 then
 	MSG="Checking if 'requirements.txt' file is up to date" ; echo $MSG
-	python scripts/generate_requirements_file.py --check
+	python $BASE_DIR/scripts/generate_requirements_file.py --check
 	RET_SUM=$(($RET_SUM + $?))
 
 	# Black
@@ -49,15 +48,15 @@ then
 	black --version
 
 	MSG='Checking black formatting on docs/' ; echo $MSG
-	black --check docs/
+	black --check $BASE_DIR/docs/
 	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Checking black formatting on src/' ; echo $MSG
-	black --check src/
+	black --check $BASE_DIR/src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Checking black formatting on tests/' ; echo $MSG
-	black --check tests/
+	black --check $BASE_DIR/tests/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""
@@ -68,15 +67,15 @@ then
 	flake8 --version
 
 	MSG='Check linting on docs/' ; echo $MSG
-	flake8 --format="$FLAKE8_FORMAT" docs/
+	flake8 --format="$FLAKE8_FORMAT" $BASE_DIR/docs/
 	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Check linting on src/' ; echo $MSG
-	flake8 --format="$FLAKE8_FORMAT" src/
+	flake8 --format="$FLAKE8_FORMAT" $BASE_DIR/src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	MSG='Check linting on tests/' ; echo $MSG
-	flake8 --format="$FLAKE8_FORMAT" tests/
+	flake8 --format="$FLAKE8_FORMAT" $BASE_DIR/tests/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""
@@ -88,7 +87,7 @@ then
 	isort --version-number
 
 	MSG='Check import formatting on docs/' ; echo $MSG
-	ISORT_CMD="isort --quiet --check-only docs/"
+	ISORT_CMD="isort --quiet --check-only $BASE_DIR/docs/"
 	if [[ "$GITHUB_ACTIONS" == "true" ]]
 	then
 		eval $ISORT_CMD | awk '{print "##[error]" $0}'
@@ -99,7 +98,7 @@ then
 	fi
 
 	MSG='Check import formatting on src/' ; echo $MSG
-	ISORT_CMD="isort --quiet --check-only src/"
+	ISORT_CMD="isort --quiet --check-only $BASE_DIR/src/"
 	if [[ "$GITHUB_ACTIONS" == "true" ]]
 	then
 		eval $ISORT_CMD | awk '{print "##[error]" $0}'
@@ -110,7 +109,7 @@ then
 	fi
 
 	MSG='Check import formatting on tests/' ; echo $MSG
-	ISORT_CMD="isort --quiet --check-only tests/"
+	ISORT_CMD="isort --quiet --check-only $BASE_DIR/tests/"
 	if [[ "$GITHUB_ACTIONS" == "true" ]]
 	then
 		eval $ISORT_CMD | awk '{print "##[error]" $0}'
@@ -131,8 +130,9 @@ then
 	echo "Mypy version"
 	mypy --version
 
+
 	MSG='Performing static type checking on src/' ; echo $MSG
-	mypy src/
+	mypy --config-file $BASE_DIR/setup.cfg $BASE_DIR/src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""

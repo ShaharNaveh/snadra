@@ -28,7 +28,7 @@ class SnadraApplication:
             try:
                 with patch_stdout():
                     line = await self.__prompt.prompt_async()
-                    await dispatch_line(line, commands=self.commands)
+                await dispatch_line(line, commands=self.commands)
             except EOFError:
                 self.__running = False
             except KeyboardInterrupt:

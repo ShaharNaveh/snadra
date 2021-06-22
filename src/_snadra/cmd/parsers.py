@@ -32,9 +32,9 @@ async def dispatch_line(line: str, *, commands: "Commands") -> None:
         return
 
     command_arguments = pline[1:]
-    args_namespace = parser.parse_args(command_arguments)
+    args = parser.parse_args(command_arguments)
 
-    await command.run(args_namespace)
+    await command.run(args)
 
 
 def parse_line(line: str) -> Optional[List[str]]:

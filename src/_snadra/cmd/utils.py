@@ -1,25 +1,10 @@
 import abc
 import argparse
-import sys as _sys
 from typing import Any, Dict, Optional, Set
 
 from rich.console import Console
 
 console = Console(emoji=False)
-
-
-class SnadraArgumentParser(argparse.ArgumentParser):
-    """
-    This class is just for fixing the
-     `exit` method, so it won't use sys.exit.
-
-    https://github.com/python/cpython/blob/bc6c12c72a9536acc96e7b9355fd69d1083a43c1/Lib/argparse.py#L2559
-
-    """
-
-    def exit(self, status=0, message=None):
-        if message:
-            self._print_message(message, _sys.stderr)
 
 
 class CommandMeta(metaclass=abc.ABCMeta):
@@ -28,7 +13,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
     """
 
     def __init__(self) -> None:
-        self.parser = SnadraArgumentParser(
+        self.parser = argparse.ArgumentParser(
             prog=self.keyword,
             description=self.description,
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -54,9 +39,8 @@ class CommandMeta(metaclass=abc.ABCMeta):
         """
         for arg, param in args.items():
             names = arg.split(",")
-            group = parser
 
-            group.add_argument(*names, **param)
+            parser.add_argument(*names, **param)
 
         if self.defaults is not None:
             parser.set_defaults(**self.defaults)

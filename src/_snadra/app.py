@@ -29,7 +29,7 @@ class SnadraApplication:
                 with patch_stdout():
                     line = await self.__prompt.prompt_async()
                 await dispatch_line(line, commands=self.commands)
-            except EOFError:
+            except (EOFError, SystemExit):
                 self.__running = False
             except KeyboardInterrupt:
                 pass

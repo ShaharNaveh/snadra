@@ -32,9 +32,12 @@ async def dispatch_line(line: str, *, commands: "Commands") -> None:
         return
 
     command_arguments = pline[1:]
-    args_namespace = parser.parse_args(command_arguments)
 
-    await command.run(args_namespace)
+    # TODO:
+    # Maybe warn the user if got unknown args?
+    known_args, _ = parser.parse_known_args(command_arguments)
+
+    await command.run(known_args)
 
 
 def parse_line(line: str) -> Optional[List[str]]:

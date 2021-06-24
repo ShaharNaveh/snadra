@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Set
 
 from rich.console import Console
 
-console = Console()
+console = Console(emoji=False)
 
 
 class CommandMeta(metaclass=abc.ABCMeta):
@@ -39,9 +39,8 @@ class CommandMeta(metaclass=abc.ABCMeta):
         """
         for arg, param in args.items():
             names = arg.split(",")
-            group = parser
 
-            group.add_argument(*names, **param)
+            parser.add_argument(*names, **param)
 
         if self.defaults is not None:
             parser.set_defaults(**self.defaults)

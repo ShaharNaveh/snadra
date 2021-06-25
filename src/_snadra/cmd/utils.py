@@ -39,10 +39,10 @@ def iter_dir(
         skip = set()
 
     # TODO(maybe): Add recursive for dirs?
-    for child in path.iterdir():  # type: ignore
+    for child in path.iterdir():
         if child.is_dir():
             continue
-        if child.stem in skip:  # type: ignore
+        if child.stem in skip:
             continue
         if child.suffix not in include_suffixes:
             continue

@@ -84,7 +84,7 @@ class Commands:
         Skipping already loaded modules.
         """
         for path in file_paths:
-            module_name = path.stem  # type: ignore
+            module_name = path.stem
             if module_name in sys.modules:
                 # TODO:
                 # Do we ever reach here?

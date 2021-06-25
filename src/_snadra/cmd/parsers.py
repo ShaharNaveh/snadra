@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List, Optional
 from _snadra.cmd.utils import console
 
 if TYPE_CHECKING:
-    from _snadra.cmd.commands import Commands
+    from _snadra.cmd.base import Commands
 
 
 async def dispatch_line(line: str, *, commands: "Commands") -> None:

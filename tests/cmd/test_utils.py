@@ -1,5 +1,3 @@
-import pytest
-
 from _snadra.cmd.utils import iter_dir
 
 

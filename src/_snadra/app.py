@@ -13,7 +13,6 @@ class SnadraApplication:
     def __init__(self):
         self.commands = Commands()
         self.config = ""
-        self.console = console
         self.current_workspace = ""
 
     async def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma

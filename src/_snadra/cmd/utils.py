@@ -18,6 +18,7 @@ class CommandMeta(metaclass=abc.ABCMeta):
             description=self.description,
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
+
         if self.arguments is not None:
             self.build_parser(self.parser, self.arguments)
 
@@ -42,6 +43,8 @@ class CommandMeta(metaclass=abc.ABCMeta):
 
             parser.add_argument(*names, **param)
 
+        # TODO:
+        # Delete this (and all defaults)
         if self.defaults is not None:
             parser.set_defaults(**self.defaults)
 

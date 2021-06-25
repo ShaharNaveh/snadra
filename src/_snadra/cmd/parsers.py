@@ -25,6 +25,8 @@ async def dispatch_line(line: str, *, commands: "Commands") -> None:
     target_command = pline[0]
 
     if commands.is_valid_keyword(target_command):
+        # TODO:
+        # Add memozation
         command = commands.get_command(target_command)()  # type: ignore
         parser = command.parser
     else:

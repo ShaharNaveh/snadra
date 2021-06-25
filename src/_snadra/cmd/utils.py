@@ -1,5 +1,6 @@
 import abc
 import argparse
+from importlib.machinery import SOURCE_SUFFIXES
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Set
 
 from rich.console import Console
@@ -12,7 +13,7 @@ console = Console(emoji=False)
 
 def iter_dir(
     path: "pathlib.Path",
-    include_suffixes=Iterable[str],
+    include_suffixes: Optional[Iterable[str]] = None,
     skip: Optional[Set[str]] = None,
 ) -> Iterable["pathlib.Path"]:
     """
@@ -32,8 +33,11 @@ def iter_dir(
     pathlib.Path
         File paths that have not got skipped over.
     """
+    if include_suffixes is None:
+        include_suffixes = SOURCE_SUFFIXES
     if skip is None:
         skip = set()
+
     # TODO(maybe): Add recursive for dirs?
     for child in path.iterdir():  # type: ignore
         if child.is_dir():

@@ -1,5 +1,4 @@
 import importlib
-from importlib.machinery import SOURCE_SUFFIXES
 import importlib.util
 import pathlib
 import sys
@@ -45,7 +44,7 @@ class Commands:
         if path is None:
             path = pathlib.Path(__file__).parent / "commands"
 
-        module_paths = iter_dir(path=path, skip=skip, include_suffixes=SOURCE_SUFFIXES)
+        module_paths = iter_dir(path=path, skip=skip)
         modules = Commands.fetch_modules(file_paths=module_paths)
 
         self._commands_core = {}

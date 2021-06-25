@@ -1,6 +1,6 @@
 import pytest
 
-from _snadra.cmd.commands import Commands
+from _snadra.cmd.base import Commands
 
 
 @pytest.fixture(scope="class")

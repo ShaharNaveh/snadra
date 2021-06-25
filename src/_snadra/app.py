@@ -4,7 +4,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from _snadra.cmd.commands import Commands
+from _snadra.cmd.base import Commands
 from _snadra.cmd.parsers import dispatch_line
 from _snadra.cmd.utils import console
 

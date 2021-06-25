@@ -3,10 +3,11 @@ from importlib.machinery import SOURCE_SUFFIXES
 import importlib.util
 import pathlib
 import sys
-from typing import TYPE_CHECKING, FrozenSet, Iterable, Optional, Sequence, Set, Union
+from typing import TYPE_CHECKING, Iterable, Optional, Set
+
+from _snadra.cmd.utils import iter_dir
 
 if TYPE_CHECKING:
-    import os
     import types
 
     from _snadra.cmd.utils import CommandMeta
@@ -18,7 +19,7 @@ class Commands:
 
     Parameters
     ----------
-    path : os.PathLike[str], optional.
+    path : pathlib.Path, optional.
         Path to the directory with the commands to load.
         If not specified, the snadra's core commands directory is being loaded.
         Sequence containing strings of paths to the command directories.
@@ -33,31 +34,19 @@ class Commands:
     __slots__ = {
         "_commands_alias",
         "_commands_core",
-        "_path",
-        "_skip",
         "commands",
     }
 
     def __init__(
         self,
-        path: Optional["os.PathLike[str]"] = None,
-        *,
+        path: Optional[pathlib.Path] = None,
         skip: Optional[Set[str]] = None,
     ) -> None:
-        this_file = pathlib.Path(__file__)
         if path is None:
-            self._path = this_file.parent.resolve()
-        else:
-            self._path = pathlib.Path(path)
+            path = pathlib.Path(__file__).parent / "commands"
 
-        self._skip: Set[str] = {this_file.stem}
-
-        if skip is not None:
-            self._skip = self._skip.union(skip)
-
-        modules = Commands._fetch_modules(
-            file_paths=Commands.iter_dir(path=self._path, skip=self._skip)
-        )
+        module_paths = iter_dir(path=path, skip=skip, include_suffixes=SOURCE_SUFFIXES)
+        modules = Commands.fetch_modules(file_paths=module_paths)
 
         self._commands_core = {}
         self._commands_alias = {}
@@ -75,15 +64,15 @@ class Commands:
         self.commands = {**self._commands_alias, **self._commands_core}
 
     @staticmethod
-    def _fetch_modules(
-        file_paths: Iterable["os.PathLike"],
+    def fetch_modules(
+        file_paths: Iterable[pathlib.Path],
     ) -> Iterable["types.ModuleType"]:
         """
         Get all modules from an iterable of file paths.
 
         Parameters
         ----------
-        file_paths : Iterable[:class:`os.PathLike`]
+        file_paths : Iterable[pathlib.Path]
             Iterable of file paths of python modules, that will be loaded.
 
         Yields
@@ -107,37 +96,6 @@ class Commands:
             module = importlib.util.module_from_spec(module_spec)  # type: ignore
             module_spec.loader.exec_module(module)  # type: ignore
             yield module
-
-    @staticmethod
-    def iter_dir(
-        path: "os.PathLike",
-        *,
-        skip: Optional[Union[Sequence[str], Set[str], FrozenSet[str]]],
-    ) -> Iterable["os.PathLike"]:
-        """
-        Iterating over a directory, skipping specified file names.
-
-        Parameters
-        ----------
-        path : :class:`os.PathLike`
-            Path of the direcory to iterate over.
-        skip : Union[Sequence[str], Set[str], FrozenSet[str]], optional
-            File names to skip.
-
-        Yields
-        ------
-        :class:`os.PathLike`
-            File paths that have not got skipped over.
-        """
-        # TODO(maybe): Add recursive for dirs?
-        for child in path.iterdir():  # type: ignore
-            if child.is_dir():
-                continue
-            if child.stem in skip:  # type: ignore
-                continue
-            if child.suffix not in SOURCE_SUFFIXES:
-                continue
-            yield child
 
     @property
     def aliases(self) -> Set[str]:

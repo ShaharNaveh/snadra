@@ -7,6 +7,7 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from _snadra.cmd.commands import Commands
 from _snadra.cmd.parsers import dispatch_line
 from _snadra.cmd.utils import console
+from _snadra.state import state
 
 
 class SnadraApplication:
@@ -47,8 +48,11 @@ class SnadraApplication:
         the `sys.stdout` and `sys.stderr` which disturbes `pytest`.
         """
         self.__prompt: "PromptSession[str]" = PromptSession(
-            "snadra > ",
+            f"({state['current_workspace']}) snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
             completer=WordCompleter(self.commands.keywords),
         )
+
+    def update_active_workspace(self) -> None:
+        self.__prompt.message = f"({state['current_workspace']}) snadra > "

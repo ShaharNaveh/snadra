@@ -27,8 +27,8 @@ class Command(CommandMeta):
     long_help = "LONG HELP FOR WORKSPACE COMMAND"
 
     arguments = {
-        "-a,--add": {"help": "Add a workspace"},
-        "-d,--delete": {"help": "Delete a workspace"},
+        "-a,--add": {"help": "Add a workspace", "action": "store_true"},
+        "-d,--delete": {"help": "Delete a workspace", "action": "store_true"},
         "-s,--search": {"help": "Search a workspace"},
     }
 

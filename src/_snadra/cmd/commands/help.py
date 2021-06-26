@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from rich import box as rich_box
 from rich.table import Table as RichTable
 
-from _snadra.cmd.commands import Commands
+from _snadra.cmd.base import Commands
 from _snadra.cmd.utils import CommandMeta, console
 
 if TYPE_CHECKING:

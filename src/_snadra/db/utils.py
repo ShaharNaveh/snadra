@@ -18,7 +18,6 @@ async def start_db(engine: "AsyncEngine"):
 
 
 async def insert_default_rows(session: "AsyncSession") -> None:
-
     async with async_session() as session:
         async with session.begin():
             stmt = select(Workspace).where(Workspace.name == "default")

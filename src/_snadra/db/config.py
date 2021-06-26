@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from _snadra.config import DE
 
-# TODO: Integrate with the config system
+# TODO: Integrate with the active config of the state
 __db_user = "snadra"
 __db_password = "snadra"
 __db_host = "127.0.0.1"

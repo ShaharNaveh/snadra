@@ -27,9 +27,9 @@ class Command(CommandMeta):
     long_help = "LONG HELP FOR WORKSPACE COMMAND"
 
     arguments = {
-        "-a,--add": {"help": "Add a workspace"},
-        "-d,--delete": {"help": "Delete a workspace"},
-        "-s,--search": {"help": "Search a workspace"},
+        "target": {"metavar": "target", "nargs": "?"},
+        "-a,--add": {"action": "store_true", "help": "Add a workspace"},
+        "-d,--delete": {"action": "store_true", "help": "Delete a workspace"},
     }
 
     async def is_workspace_exists(self, target: str) -> bool:
@@ -51,6 +51,7 @@ class Command(CommandMeta):
     async def delete_workspace(self, target: str) -> None:
         pass
 
+
     async def run(self, args: "argparse.Namespace") -> None:
         """
         Manage workspaces.
@@ -61,21 +62,30 @@ class Command(CommandMeta):
             The arguments for the command.
         """
         target = args.target
+        do_add = args.add
+        do_delete = args.delete
+
+
+
+
+
+        if target is not None:
+            pass
         if args.action == "add":
             if target is None:
                 # TODO:
                 # Argparse should handle this.
-                SnadraConsole().log("Missing argument 'target'")
+                console.log("Missing argument 'target'")
                 return
 
             is_exists = await self.is_workspace_exists(target=target)
             if is_exists:
-                SnadraConsole().log("Workspace already exists!")
+                console.log("Workspace already exists!")
                 return
             else:
                 await self.add_workspace(target=args.target, desc=args.description)
 
-        SnadraConsole().log(args)
+        console.log(args)
         workspace_display_table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
         workspace_display_table.add_column("Name")
         workspace_display_table.add_column("Description")

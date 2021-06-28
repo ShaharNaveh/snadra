@@ -26,6 +26,8 @@ class SnadraApplication:
 
         while self.__running:
             try:
+                current_workspace = state["current_workspace"]
+                self.__prompt.message = f"({current_workspace}) snadra > "
                 with patch_stdout():
                     line = await self.__prompt.prompt_async()
                 await dispatch_line(line, commands=self.commands)
@@ -46,12 +48,10 @@ class SnadraApplication:
         The only reason for this being in a seperate function is that it changes
         the `sys.stdout` and `sys.stderr` which disturbes `pytest`.
         """
+        current_workspace = state["current_workspace"]
         self.__prompt: "PromptSession[str]" = PromptSession(
-            f"({state['current_workspace']}) snadra > ",
+            f"({current_workspace}) snadra > ",
             auto_suggest=AutoSuggestFromHistory(),
             history=InMemoryHistory(),
             completer=WordCompleter(self.commands.keywords),
         )
-
-    def update_active_workspace(self) -> None:
-        self.__prompt.message = f"({state['current_workspace']}) snadra > "

@@ -17,6 +17,7 @@ from _snadra.state import state
 if TYPE_CHECKING:
     import argparse
 
+    from sqlalchemy.engine.result import ChunkedIteratorResult
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -67,7 +68,18 @@ class Command(CommandMeta):
                 await session.execute(stmt)
 
     @staticmethod
-    async def workspace_table(*, async_session: "AsyncSession") -> RichTable:
+    async def all_workspaces(
+        *, async_session: "AsyncSession"
+    ) -> "ChunkedIteratorResult":
+        async with async_session() as session:
+            async with session.begin():
+                stmt = select(Workspace)
+                result = await session.execute(stmt)
+
+        return result
+
+    @staticmethod
+    def workspace_table(workspaces: "ChunkedIteratorResult") -> RichTable:
         # TODO:
         # Have this with cache
         table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
@@ -76,12 +88,7 @@ class Command(CommandMeta):
         table.add_column("Created at")
         table.add_column("Updated at")
 
-        async with async_session() as session:
-            async with session.begin():
-                stmt = select(Workspace)
-                result = await session.execute(stmt)
-
-        for workspace_metadata in result.scalars():
+        for workspace_metadata in workspaces.scalars():
             name = workspace_metadata.name
             description = workspace_metadata.description
             created_at = workspace_metadata.created_at.strftime("%d/%m/%Y, %H:%M:%S")
@@ -154,6 +161,8 @@ class Command(CommandMeta):
                 return
             else:
                 # Show workspaces
-                table = await Command.workspace_table(async_session=async_session)
+                workspaces = await Command.all_workspaces(async_session=async_session)
+
+                table = Command.workspace_table(workspaces=workspaces)
                 console.print(table)
                 return

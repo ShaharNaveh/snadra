@@ -52,7 +52,7 @@ def main(args):
             current_data = file_obj.read()
 
         if current_data == data:
-            print("'requirements.txt' file is up to data")
+            print("'requirements.txt' file is up to date")
             sys.exit(0)
         else:
             prefix = ""

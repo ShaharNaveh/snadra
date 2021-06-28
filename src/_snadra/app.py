@@ -4,7 +4,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from _snadra.cmd.commands import Commands
+from _snadra.cmd.base import Commands
 from _snadra.cmd.parsers import dispatch_line
 from _snadra.cmd.utils import console
 
@@ -13,7 +13,6 @@ class SnadraApplication:
     def __init__(self):
         self.commands = Commands()
         self.config = ""
-        self.console = console
         self.current_workspace = ""
 
     async def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma
@@ -28,8 +27,8 @@ class SnadraApplication:
             try:
                 with patch_stdout():
                     line = await self.__prompt.prompt_async()
-                    await dispatch_line(line, commands=self.commands)
-            except EOFError:
+                await dispatch_line(line, commands=self.commands)
+            except (EOFError, SystemExit):
                 self.__running = False
             except KeyboardInterrupt:
                 pass

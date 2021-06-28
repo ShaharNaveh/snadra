@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List, Optional
 from _snadra.cmd.utils import console
 
 if TYPE_CHECKING:
-    from _snadra.cmd.commands import Commands
+    from _snadra.cmd.base import Commands
 
 
 async def dispatch_line(line: str, *, commands: "Commands") -> None:
@@ -25,6 +25,8 @@ async def dispatch_line(line: str, *, commands: "Commands") -> None:
     target_command = pline[0]
 
     if commands.is_valid_keyword(target_command):
+        # TODO:
+        # Add memozation
         command = commands.get_command(target_command)()  # type: ignore
         parser = command.parser
     else:
@@ -32,9 +34,12 @@ async def dispatch_line(line: str, *, commands: "Commands") -> None:
         return
 
     command_arguments = pline[1:]
-    args_namespace = parser.parse_args(command_arguments)
 
-    await command.run(args_namespace)
+    # TODO:
+    # Maybe warn the user if got unknown args?
+    known_args, _ = parser.parse_known_args(command_arguments)
+
+    await command.run(known_args)
 
 
 def parse_line(line: str) -> Optional[List[str]]:

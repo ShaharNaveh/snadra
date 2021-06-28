@@ -11,9 +11,12 @@ from _snadra.cmd import CommandMeta
 from _snadra.cmd.utils import console
 from _snadra.db.config import async_session
 from _snadra.db.models import Workspace
+from _snadra.state import state
 
 if TYPE_CHECKING:
     import argparse
+
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class Command(CommandMeta):
@@ -30,9 +33,13 @@ class Command(CommandMeta):
         "target": {"help": "Target workspace", "metavar": "target", "nargs": "?"},
         "-a,--add": {"action": "store_true", "help": "Add a workspace"},
         "-d,--delete": {"action": "store_true", "help": "Delete a workspace"},
+        "--desc,--description": {"help": "Description for the workspace"},
     }
 
-    async def is_workspace_exists(self, target: str) -> bool:
+    @staticmethod
+    async def is_workspace_exists(
+        target: str, *, async_session: "AsyncSession"
+    ) -> bool:
         async with async_session() as session:
             async with session.begin():
                 stmt = select(Workspace).where(Workspace.name == target)
@@ -41,51 +48,32 @@ class Command(CommandMeta):
 
         return bool(workspace)
 
-    async def add_workspace(self, target: str, desc: str) -> None:
+    @staticmethod
+    async def add_workspace(
+        target: str, desc: str, *, async_session: "AsyncSession"
+    ) -> None:
         async with async_session() as session:
             async with session.begin():
                 workspace = Workspace(name=target, description=desc)
                 session.add(workspace)
                 await session.commit()
 
-    async def delete_workspace(self, target: str) -> None:
-        pass
+    @staticmethod
+    async def delete_workspace(target: str, *, async_session: "AsyncSession") -> None:
+        async with async_session() as session:
+            async with session.begin():
+                stmt = select(Workspace)
+                result = await session.execute(stmt)
 
-    async def run(self, args: "argparse.Namespace") -> None:
-        """
-        Manage workspaces.
-
-        Parameters
-        ----------
-        args : :class:`argparse.Namespace`
-            The arguments for the command.
-        """
-        target = args.target
-        do_add = args.add
-        do_delete = args.delete
-
-        if target is not None:
-            pass
-        if args.action == "add":
-            if target is None:
-                # TODO:
-                # Argparse should handle this.
-                console.log("Missing argument 'target'")
-                return
-
-            is_exists = await self.is_workspace_exists(target=target)
-            if is_exists:
-                console.log("Workspace already exists!")
-                return
-            else:
-                await self.add_workspace(target=args.target, desc=args.description)
-
-        console.log(args)
-        workspace_display_table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
-        workspace_display_table.add_column("Name")
-        workspace_display_table.add_column("Description")
-        workspace_display_table.add_column("Created at")
-        workspace_display_table.add_column("Updated at")
+    @staticmethod
+    async def workspace_table(*, async_session: "AsyncSession") -> RichTable:
+        # TODO:
+        # Have this with cache
+        table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
+        table.add_column("Name")
+        table.add_column("Description")
+        table.add_column("Created at")
+        table.add_column("Updated at")
 
         async with async_session() as session:
             async with session.begin():
@@ -103,6 +91,68 @@ class Command(CommandMeta):
             else:
                 updated_at = updated_at.strftime("%d/%m/%Y, %H:%M:%S")
 
-            workspace_display_table.add_row(name, description, created_at, updated_at)
+            table.add_row(name, description, created_at, updated_at)
 
-        console.print(workspace_display_table)
+        return table
+
+    async def run(self, args: "argparse.Namespace") -> None:
+        """
+        Manage workspaces.
+
+        Parameters
+        ----------
+        args : :class:`argparse.Namespace`
+            The arguments for the command.
+        """
+        target = args.target
+        do_add = args.add
+        do_delete = args.delete
+
+        if do_add and do_delete:
+            # Error: conflicting flags
+            console.log("[red]Error[/red]: Conflicting flags 'add' and 'delete'")
+
+        if target is not None:
+            is_exists = await self.is_workspace_exists(
+                target=target, async_session=async_session
+            )
+            if do_add:
+                # Add workspace
+                if is_exists:
+                    console.log("Workspace already exists!")
+                    return
+                await Command.add_workspace(
+                    target=target, desc=args.description, async_session=async_session
+                )
+            elif do_delete:
+                # Delete workspace
+                if not is_exists:
+                    console.log(
+                        f"[red]Error[/red]: Workspace {repr(target)} does not exists!"
+                    )
+                    return
+                await Command.delete_workspace(
+                    target=target, async_session=async_session
+                )
+            else:
+                # Switch to workspace
+                if not is_exists:
+                    console.log(
+                        f"[red]Error[/red]: Workspace {repr(target)} does not exists!"
+                    )
+                    return
+                state["current_workspace"] = target
+        else:
+            if do_add:
+                # Error: missing argument
+                console.log("Missing argument 'target'")
+                return
+            elif do_delete:
+                # Error: missing argument
+                console.log("Missing argument 'target'")
+                return
+            else:
+                # Show workspaces
+                table = Command.workspace_table()
+                console.print(table)
+                return

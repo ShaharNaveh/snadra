@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from rich import box as rich_box
 from rich.table import Table as RichTable
+from sqlalchemy import delete
 from sqlalchemy.future import select
 
 from _snadra.cmd import CommandMeta
@@ -62,8 +63,8 @@ class Command(CommandMeta):
     async def delete_workspace(target: str, *, async_session: "AsyncSession") -> None:
         async with async_session() as session:
             async with session.begin():
-                stmt = select(Workspace)
-                result = await session.execute(stmt)
+                stmt = delete(Workspace).where(Workspace.name == target)
+                await session.execute(stmt)
 
     @staticmethod
     async def workspace_table(*, async_session: "AsyncSession") -> RichTable:
@@ -122,7 +123,7 @@ class Command(CommandMeta):
                     console.log("Workspace already exists!")
                     return
                 await Command.add_workspace(
-                    target=target, desc=args.description, async_session=async_session
+                    target=target, desc=args.desc, async_session=async_session
                 )
             elif do_delete:
                 # Delete workspace
@@ -153,6 +154,6 @@ class Command(CommandMeta):
                 return
             else:
                 # Show workspaces
-                table = Command.workspace_table()
+                table = await Command.workspace_table(async_session=async_session)
                 console.print(table)
                 return

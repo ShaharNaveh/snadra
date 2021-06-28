@@ -1,6 +1,7 @@
 """
 Manage workspaces.
 """
+import functools
 from typing import TYPE_CHECKING
 
 from rich import box as rich_box
@@ -79,9 +80,8 @@ class Command(CommandMeta):
         return result
 
     @staticmethod
+    @functools.lru_cache
     def workspace_table(workspaces: "ChunkedIteratorResult") -> RichTable:
-        # TODO:
-        # Have this with cache
         table = RichTable(title="Workspaces", box=rich_box.SIMPLE)
         table.add_column("Name")
         table.add_column("Description")
@@ -154,15 +154,12 @@ class Command(CommandMeta):
             if do_add:
                 # Error: missing argument
                 console.log("Missing argument 'target'")
-                return
             elif do_delete:
                 # Error: missing argument
                 console.log("Missing argument 'target'")
-                return
             else:
                 # Show workspaces
                 workspaces = await Command.all_workspaces(async_session=async_session)
 
                 table = Command.workspace_table(workspaces=workspaces)
                 console.print(table)
-                return

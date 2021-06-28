@@ -13,8 +13,6 @@ from _snadra.state import state
 class SnadraApplication:
     def __init__(self):
         self.commands = Commands()
-        self.config = ""
-        self.current_workspace = ""
 
     async def run(self) -> None:  # pragma: no cover # TODO: Remove this pragma
         """

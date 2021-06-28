@@ -10,6 +10,8 @@ DEFAULT_CONFIG = {
     }
 }
 
-DEFAULT_CONFIG_FILE_PATH = pathlib.Path(
-    "~/.config/snadra/snadra_config.toml"
-).expanduser()
+CONFIG_DIR = pathlib.Path("~/.config/snadra/").expanduser()
+
+DEFAULT_CONFIG_FILE_PATH = CONFIG_DIR / "snadra_config.toml"
+
+DEFUALT_SQLITE_DB_PATH = CONFIG_DIR / "snadra_db.sqlite"

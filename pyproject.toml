@@ -6,7 +6,10 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.black]
-target-version = ['py38', 'py39']
+target-version = [
+	"py38", 
+	"py39"
+]
 exclude = '''
 (
 	\.egg
@@ -50,3 +53,56 @@ testpaths = [
   "tests",
 ]
 xfail_strict = true
+
+[tool.mypy]
+# Display
+color_output = true
+error_summary = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+
+# Meta
+incremental = true
+show_traceback = true
+warn_unused_configs = true
+
+# Mode
+show_none_errors = true
+strict_optional = true
+strict_equality = true
+check_untyped_defs = true
+ignore_missing_imports = true
+
+# Allow
+disallow_any_decorated = false
+disallow_any_explicit = false
+disallow_any_expr = false
+
+# Deny
+allow_redefinition = false
+allow_untyped_globals = false
+disallow_subclassing_any = true
+disallow_untyped_decorators = true
+
+# Warn
+#warn_return_any = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unreachable = true
+warn_unused_ignores = true
+
+#disallow_any_decorated = true
+#disallow_any_generics = true
+#disallow_any_unimported = true
+#disallow_incomplete_defs = true
+#disallow_untyped_calls = true
+#disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "_snadra",
+    "snadra"
+]
+ignore_missing_imports = false

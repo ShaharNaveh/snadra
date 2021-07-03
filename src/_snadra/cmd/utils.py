@@ -85,8 +85,6 @@ class CommandMeta(metaclass=abc.ABCMeta):
 
             parser.add_argument(*names, **param)
 
-        # TODO:
-        # Delete this (and all defaults)
         if self.defaults is not None:
             parser.set_defaults(**self.defaults)
 

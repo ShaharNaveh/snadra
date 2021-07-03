@@ -1,7 +1,7 @@
 import pathlib
 import pkgutil
 import sys
-from typing import TYPE_CHECKING, Iterable, Optional, Set
+from typing import TYPE_CHECKING, Iterable, Optional, Set, Union
 
 if TYPE_CHECKING:
     import types
@@ -37,12 +37,10 @@ class Commands:
         if path is None:
             path = pathlib.Path(__file__).parent / "commands"
 
-        modules = Commands.fetch_modules(path, skip=skip)
-
         self._commands_core = {}
         self._commands_alias = {}
 
-        for module in modules:
+        for module in Commands.fetch_modules(path, skip=skip):
             command = module.Command  # type: ignore
             core_keyword = command.keyword
             self._commands_core[core_keyword] = command
@@ -56,7 +54,7 @@ class Commands:
 
     @staticmethod
     def fetch_modules(
-        *paths: Iterable[pathlib.Path],
+        *paths: Union[pathlib.Path, Iterable[pathlib.Path]],
         _prefix: str = None,
         skip: Optional[Set[str]] = None,
     ) -> Iterable["types.ModuleType"]:
@@ -94,7 +92,7 @@ class Commands:
                 continue
 
             if module_name not in sys.modules:
-                module = loader.find_module(module_name).load_module(module_name)
+                module = loader.find_module(module_name).load_module(module_name)  # type: ignore # noqa: E501
             else:
                 module = sys.modules[module_name]
 

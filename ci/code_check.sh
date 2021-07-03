@@ -132,7 +132,7 @@ then
 
 
 	MSG='Performing static type checking on src/' ; echo $MSG
-	mypy --config-file $BASE_DIR/setup.cfg $BASE_DIR/src/
+	mypy --config-file $BASE_DIR/pyproject.toml $BASE_DIR/src/
 	RET_SUM=$(($RET_SUM + $?))
 
 	echo ""

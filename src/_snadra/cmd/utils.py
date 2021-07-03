@@ -1,52 +1,10 @@
 import abc
 import argparse
-from importlib.machinery import SOURCE_SUFFIXES
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Set
+from typing import Any, Dict, Optional, Set
 
 from rich.console import Console
 
-if TYPE_CHECKING:
-    import pathlib
-
 console = Console(emoji=False)
-
-
-def iter_dir(
-    path: "pathlib.Path",
-    include_suffixes: Optional[Iterable[str]] = None,
-    skip: Optional[Set[str]] = None,
-) -> Iterable["pathlib.Path"]:
-    """
-    Iterating over a directory, skipping specified file names.
-
-    Parameters
-    ----------
-    path : pathlib.Path
-        Path of the direcory to iterate over.
-    include_suffixes : Iterable[str]
-        Suffixes to include.
-    skip : Set[str], optional
-        File names to skip.
-
-    Yields
-    ------
-    pathlib.Path
-        File paths that have not got skipped over.
-    """
-    if include_suffixes is None:
-        include_suffixes = SOURCE_SUFFIXES
-    if skip is None:
-        skip = set()
-
-    # TODO(maybe): Add recursive for dirs?
-    for child in path.iterdir():
-        if child.is_dir():
-            continue
-        if child.stem in skip:
-            continue
-        if child.suffix not in include_suffixes:
-            continue
-        yield child
 
 
 class CommandMeta(metaclass=abc.ABCMeta):

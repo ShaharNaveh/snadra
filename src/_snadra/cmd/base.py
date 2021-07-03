@@ -1,10 +1,7 @@
-import importlib
-import importlib.util
 import pathlib
+import pkgutil
 import sys
 from typing import TYPE_CHECKING, Iterable, Optional, Set
-
-from _snadra.cmd.utils import iter_dir
 
 if TYPE_CHECKING:
     import types
@@ -30,11 +27,7 @@ class Commands:
     The module names inside `skip`, should not be with a file suffix.
     """
 
-    __slots__ = {
-        "_commands_alias",
-        "_commands_core",
-        "commands",
-    }
+    __slots__ = {"_commands_alias", "_commands_core", "commands"}
 
     def __init__(
         self,
@@ -44,8 +37,7 @@ class Commands:
         if path is None:
             path = pathlib.Path(__file__).parent / "commands"
 
-        module_paths = iter_dir(path=path, skip=skip)
-        modules = Commands.fetch_modules(file_paths=module_paths)
+        modules = Commands.fetch_modules(path, skip=skip)
 
         self._commands_core = {}
         self._commands_alias = {}
@@ -64,36 +56,48 @@ class Commands:
 
     @staticmethod
     def fetch_modules(
-        file_paths: Iterable[pathlib.Path],
+        *paths: Iterable[pathlib.Path],
+        _prefix: str = None,
+        skip: Optional[Set[str]] = None,
     ) -> Iterable["types.ModuleType"]:
         """
         Get all modules from an iterable of file paths.
 
         Parameters
         ----------
-        file_paths : Iterable[pathlib.Path]
+        paths : Iterable[pathlib.Path]
             Iterable of file paths of python modules, that will be loaded.
+        _prefix : str
+        skip : Set[str]
+            Modules names to skip.
 
         Yields
         ------
-        :class:`types.ModuleType`
+        types.ModuleType
             Module that contains a `Command` class.
 
         Notes
         -----
         Skipping already loaded modules.
         """
-        for path in file_paths:
-            module_name = path.stem
-            if module_name in sys.modules:
-                # TODO:
-                # Do we ever reach here?
-                print(f"Skiping already loaded module {module_name}")
+        if _prefix is None:
+            _prefix = "_snadra.cmd.commands."
+
+        if skip is None:
+            skip = set()
+
+        path_lst = [str(path) for path in paths]
+        for loader, module_name, _ in pkgutil.walk_packages(path_lst, prefix=_prefix):
+            name = module_name.split(_prefix)[1]
+
+            if name in skip:
                 continue
 
-            module_spec = importlib.util.spec_from_file_location(module_name, path)
-            module = importlib.util.module_from_spec(module_spec)  # type: ignore
-            module_spec.loader.exec_module(module)  # type: ignore
+            if module_name not in sys.modules:
+                module = loader.find_module(module_name).load_module(module_name)
+            else:
+                module = sys.modules[module_name]
+
             yield module
 
     @property
